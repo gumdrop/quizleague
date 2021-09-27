@@ -154,7 +154,7 @@ object AllResults extends ResultsComponent with GridSizeComponentConfig{
 }
 
 object FixturesPage extends RouteComponent{
-  val template = """<remaining-fixtures :id="$route.params.id"></remaining-fixtures>"""
+  val template = """<remaining-fixtures :keyval="decode($route.params.key)"></remaining-fixtures>"""
   components(RemainingFixtures) 
 }
 
