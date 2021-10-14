@@ -61,7 +61,7 @@ class TaskEndpoint {
           updateTables(leagueTables, fixture)
 
           if (!isSubsidiary) {
-            fireStatsUpdate(fixture)
+            fireStatsUpdate(f.fixtureKey)
           }
         }
         if (!isSubsidiary) {
@@ -81,7 +81,8 @@ class TaskEndpoint {
   @Path("stats/update/{seasonId}")
   def statsUpdate(body:String, @PathParam("seasonId") seasonId:String){
     
-    val fixtures = deser[List[Fixture]](body)
+    val fixtureKeys = deser[List[Key]](body)
+    val fixtures = fixtureKeys.map(load[Fixture](_))
     val season = load[Season](seasonId)
     
     fixtures.foreach(StatsWorker.perform(_, season))
@@ -122,7 +123,7 @@ class TaskEndpoint {
  }
   
   
-  private def fireStatsUpdate(fixture:Fixture){
+  private def fireStatsUpdate(fixture:Key){
    import io.circe._, io.circe.syntax._
     
    val queue: Queue = QueueFactory.getQueue("stats");
