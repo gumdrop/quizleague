@@ -12,6 +12,7 @@ import quizleague.web.model.{Key, Model}
 import quizleague.web.names.ComponentNames
 import rxscalajs.Observable
 import quizleague.web.util.rx.RefObservable
+import quizleague.web.util.Logging.log
 
 import scala.scalajs.js.{ThisFunction, ThisFunction0}
 
@@ -41,7 +42,9 @@ trait ItemComponentConfig[T <: Model] extends Component{
     val item = c.item
     item.key = service.key(parentKey(c),item.id)
     service.save(c.item)
-    c.$router.back()}
+    c.$router.back()
+  }
+
   def cancel(c:facade) = {service.flush();c.$router.back()}
   
   subscription("item")(c => obsFromParam(c,paramName))

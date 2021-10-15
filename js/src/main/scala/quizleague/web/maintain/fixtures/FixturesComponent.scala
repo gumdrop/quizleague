@@ -113,7 +113,6 @@ object FixturesComponent extends CompetitionComponentConfig{
  
   def venues() = SelectUtils.model[Venue](VenueService)(_.name)
   def teams() = SelectUtils.model[Team](TeamService)(_.name)
-  override def save(c:facade) = {FixturesService.save(c.fxs);super.save(c)}
   
   method("addFixture")({addFixture _ }:js.ThisFunction)
   method("setVenue")({setVenue _ }:js.ThisFunction)
