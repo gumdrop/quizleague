@@ -111,8 +111,8 @@ object FixturesComponent extends CompetitionComponentConfig{
   def teamManager(c:facade) = if(c.teamManager == null) {c.teamManager = new TeamManager(c.teams); c.teamManager} else c.teamManager
 
  
-  def venues() = SelectUtils.model[Venue](VenueService)(_.name)
-  def teams() = SelectUtils.model[Team](TeamService)(_.name)
+  def venues() = SelectUtils.model[Venue](FilteredVenueService)(_.name)
+  def teams() = SelectUtils.model[Team](FilteredTeamService)(_.name)
   
   method("addFixture")({addFixture _ }:js.ThisFunction)
   method("setVenue")({setVenue _ }:js.ThisFunction)

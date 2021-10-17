@@ -23,6 +23,7 @@ import quizleague.web.core.RouteComponent
 import scalajs.js
 import js.JSConverters._
 import quizleague.util.collection._
+import quizleague.web.maintain.fixtures.FilteredTeamService
 import quizleague.web.util.component.{SelectUtils, SelectWrapper}
 
 
@@ -137,7 +138,7 @@ object LeagueTableComponent extends ItemComponentConfig[LeagueTable] with RouteC
   }
 
 
-  def teams() = SelectUtils.model[Team](TeamService)(_.name)
+  def teams() = SelectUtils.model[Team](FilteredTeamService)(_.name)
 
   method("unusedTeams")({unusedTeams _ }:js.ThisFunction)
   method("addRow")({addRow _ }:js.ThisFunction)
