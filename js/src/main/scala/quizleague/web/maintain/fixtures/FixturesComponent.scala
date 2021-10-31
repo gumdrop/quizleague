@@ -113,7 +113,13 @@ object FixturesComponent extends CompetitionComponentConfig{
  
   def venues() = SelectUtils.model[Venue](FilteredVenueService)(_.name)
   def teams() = SelectUtils.model[Team](FilteredTeamService)(_.name)
-  
+  override def save(c:facade):Unit = {
+    val item = c.fxs
+    item.key = FixturesService.key(parentKey(c), item.id)
+    FixturesService.save(item)
+    c.$router.back()
+  }
+
   method("addFixture")({addFixture _ }:js.ThisFunction)
   method("setVenue")({setVenue _ }:js.ThisFunction)
   method("unusedTeams")({unusedTeams _ }:js.ThisFunction)
