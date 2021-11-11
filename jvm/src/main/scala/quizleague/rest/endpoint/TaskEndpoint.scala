@@ -80,10 +80,16 @@ class TaskEndpoint {
   @POST
   @Path("stats/update/{seasonId}")
   def statsUpdate(body:String, @PathParam("seasonId") seasonId:String){
-    
+    logger.warning(s"starting stats update with : $body")
     val fixturesAndKeys = deser[List[(Fixture,Key)]](body)
+
+    logger.warning(s"deserialised : $fixturesAndKeys")
     val fixtures = fixturesAndKeys.map({case (fixture,key) => fixture.withKey(key)})
+
+    logger.warning(s"loaded fixtures : $fixtures")
     val season = load[Season](seasonId)
+
+    logger.warning(s"loaded season : $season")
 
     fixtures.foreach(StatsWorker.perform(_, season))
     

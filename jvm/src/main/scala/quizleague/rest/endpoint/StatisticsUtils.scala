@@ -20,6 +20,8 @@ import scala.collection.mutable.Map
 
 object StatsWorker {
 
+  val LOG: Logger = Logger.getLogger(this.getClass.getName)
+
   def leagueComp(season:Season) = {
     list[Competition](season.key).flatMap((c:Competition) => c match{
       case a:LeagueCompetition => List(a)
@@ -32,12 +34,26 @@ object StatsWorker {
     case _  => List()
   })
 
-  def fixtures(fixture:Fixture) = load[Fixtures](fixture.key.get)
+  def fixtures(fixture:Fixture) = load[Fixtures](fixture.key.flatMap(_.parentKey).map(Key.parse(_)).get)
 
   def seasonStats(season:Season) = list[Statistics].filter(s => s.season.id == season.id)
   
   def perform(fixture: Fixture, season: Season){
-    val stats = new StatsWorker(fixture, fixtures(fixture).date, season, list[LeagueTable](leagueComp(season).key), seasonStats(season)).doIt
+    LOG.warning(s"starting stats regen for : $fixture and $season")
+
+    val fixs = fixtures(fixture)
+    LOG.warning(s"loaded fixtures : $fixs")
+
+
+    val competition = leagueComp(season)
+    LOG.warning(s"loaded competition : $competition")
+    val tables = list[LeagueTable](competition.key)
+    LOG.warning(s"loaded tables : $tables")
+    val statisticses = seasonStats(season)
+    LOG.warning(s"loaded season stats : $statisticses")
+    val stats = new StatsWorker(fixture, fixs.date, season, tables, statisticses).doIt
+    LOG.warning(s"Regen complete : $stats")
+
     saveAll(stats)
   }
 }
@@ -49,7 +65,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
   val cache = Map(stats.map(s => (s.team.id,s)): _*)
 
   def doIt:List[Statistics] = {
-
+    LOG.warning("starting doit")
     if(fixture.result.isDefined){
     
       LOG.warning(s"Building stats for  ${fixture.home.shortName} vs ${fixture.away.shortName} on ${date}")

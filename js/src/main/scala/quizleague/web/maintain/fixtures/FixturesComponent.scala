@@ -117,6 +117,7 @@ object FixturesComponent extends CompetitionComponentConfig{
     val item = c.fxs
     item.key = FixturesService.key(parentKey(c), item.id)
     FixturesService.save(item)
+
     c.$router.back()
   }
 
@@ -164,6 +165,7 @@ object FixtureComponent extends Component{
         <span style="position:relative;top:28px;"><h4>Result :&nbsp;</h4></span>
         <v-text-field label="Home Score" v-model.number="fx.result.homeScore" type="number"></v-text-field>
         <v-text-field label="Away Score" v-model.number="fx.result.awayScore" type="number"></v-text-field>
+        <v-btn icon fab color="primary" v-on:click="save(fx)"><v-icon>mdi-floppy</v-icon>
       </v-layout>
       <v-layout row v-if="showResult && fx.result.reports">
         <span style="position:relative;top:14px;"><h4>Reports :&nbsp;</h4></span><v-btn text v-on:click="editText(report.text.id)" v-for="report in async(fx.result.reports).reports" :key="report.text.id">{{async(report.team).shortName}}...</v-btn>
@@ -183,6 +185,10 @@ object FixtureComponent extends Component{
     FixtureService.save(c.fx)
     c.showResult = true
   }
+
+  def save(fixture:Fixture) = {
+    FixtureService.save(fixture)
+  }
   
   data("showResult", false)
   data("fx")(c => {c.teamManager.take(c.fixture.home);c.teamManager.take(c.fixture.away);c.fixture})
@@ -195,6 +201,7 @@ object FixtureComponent extends Component{
 
   method("editText")({editText _ }:js.ThisFunction)
   method("addResult")({addResult _ }:js.ThisFunction)
+  method("save")({save _})
 
 }
     
