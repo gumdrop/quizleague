@@ -122,28 +122,31 @@ END:VEVENT
 
         val t = team
         val gap = applicationContext()
-
+        val teamComps = teamCompetitions(gap.currentSeason)
+        val teamFixtures = for{
+          c <- teamComps
+          fixtures <- list[Fixtures](c.key)
+          fixtureList = list[Fixture](fixtures.key)
+        }
+        yield (c, fixtures, fixtureList)
 
         builder.append(s"X-WR-CALNAME:${gap.leagueName} calendar for ${t.name}\n")
         for{
-          c <- teamCompetitions(gap.currentSeason)
-          fixtures <- list[Fixtures](c.key)
-          f <- list[Fixture](fixtures.key) if(f.home.id == team.id || f.away.id == team.id)
+          (c, fixtures, fixtureList) <- teamFixtures
+          fixture <- fixtureList if(fixture.home.id == team.id || fixture.away.id == team.id)
         }
         yield{
-          builder.append(formatFixture(f, fixtures ,c,s"${c.name} ${fixtures.description}"))
+          builder.append(formatFixture(fixture, fixtures ,c,s"${c.name} ${fixtures.description}"))
         }
         for{
           c <- singletonCompetitions(gap.currentSeason)
-        
         }
         yield{
           builder.append(c.event.fold("")(formatEvent(_, s"${gap.leagueName} ${c.name}")))
         }
         for{
-          c <- teamCompetitions(gap.currentSeason)
-          fixtures <- list[Fixtures](c.key) if list[Fixture](fixtures.key).isEmpty
-                 }
+          (c, fixtures, fixtureList) <- teamFixtures if fixtureList.isEmpty
+        }
         yield{
           builder.append(formatBlankFixtures(fixtures, c, c.name))
         }
