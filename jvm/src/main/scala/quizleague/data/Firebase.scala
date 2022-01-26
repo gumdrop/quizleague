@@ -2,18 +2,17 @@ package quizleague.data
 
 
 import java.util
-
 import com.google.auth.oauth2.GoogleCredentials
 import quizleague.domain.{Entity, Key, Ref}
 import io.circe._
 
 import reflect._
 import scala.collection.JavaConverters._
-import com.google.cloud.firestore.FirestoreOptions
+import com.google.cloud.firestore.{CollectionGroup, FirestoreOptions, Query}
 import com.google.auth.Credentials
+
 import java.util.logging.{Level, Logger}
 import Level._
-
 import com.google.cloud.TransportOptions
 import com.google.cloud.grpc.GrpcTransportOptions
 import quizleague.firestore.Connection
@@ -78,17 +77,27 @@ object Storage extends StorageUtils {
   def list[T <: Entity](implicit tag: ClassTag[T], decoder: Decoder[T]): List[T] = list(None)
 
   def list[T <: Entity](parent:Option[Key] = None)(implicit tag: ClassTag[T], decoder: Decoder[T]): List[T] = {
+    runQuery(collection(parent))
+  }
+
+  def collection[T <: Entity](parent:Option[Key] = None)(implicit tag: ClassTag[T]) = {
     val key = makeKind(parent)
-    val list = datastore.collection(key).get.get.getDocuments.asScala.map(d => entityToObj(d.getData.asInstanceOf[java.util.Map[String, Any]], decoder).withKey(Key(d.getReference.getPath))).toList
-    if(log.isLoggable(FINEST)) log.finest(s"key : $key \nlist:$list")
+    datastore.collection(key)
+  }
+
+  def runQuery[T <: Entity](query:Query)(implicit tag: ClassTag[T], decoder: Decoder[T]) = {
+    val list = query.get().get().getDocuments.asScala.map(d => entityToObj(d.getData.asInstanceOf[java.util.Map[String, Any]], decoder).withKey(Key(d.getReference.getPath))).toList
+    if(log.isLoggable(FINEST)) log.finest(s"query : $query \nquery results:$list")
     list
   }
 
   def group[T <: Entity](implicit tag: ClassTag[T], decoder: Decoder[T]): List[T] = {
+    runQuery(collectionGroup[T])
+  }
+
+  def collectionGroup[T <: Entity](implicit tag: ClassTag[T]): CollectionGroup = {
     val key = makeKind(None)
-    val list = datastore.collectionGroup(key).get.get.getDocuments.asScala.map(d => entityToObj(d.getData.asInstanceOf[java.util.Map[String, Any]], decoder).withKey(Key(d.getReference.getPath))).toList
-    if(log.isLoggable(FINEST))log.finest(s"key : $key \nlist:$list")
-    list
+    datastore.collectionGroup(key)
   }
 
 

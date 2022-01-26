@@ -8,15 +8,18 @@ import quizleague.data._
 import quizleague.domain._
 import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.conversions.RefConversions._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import quizleague.domain.TeamCompetition
 import quizleague.domain.SingletonCompetition
+
 import java.time._
+import java.util.logging.Logger
 
 
 class CalendarHandler extends HttpServlet{
-  
+  val log = Logger.getLogger(this.getClass.getName)
   val utc = ZoneOffset.UTC
   val local = ZoneId.of("Europe/London")
   val dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(utc)
@@ -25,18 +28,27 @@ class CalendarHandler extends HttpServlet{
       val bits = parts(req)
       val head = bits.head
       val id = bits.tail.head
-      
+
       implicit val context = StorageContext()
-      
-      
-      
-      val contents = head match{
-        
-        case "team" => makeICal(load[Team](id))
-        case _ => ""
-        
+
+      def saveNewIcal() = {
+        val ical = makeICal(load[Team](id))
+        val cache = CalendarCache(id,LocalDateTime.now(), ical)
+        save(cache)
+        ical
       }
-      
+
+      val contents = head match {
+          case "team" => {
+            val dateTime = LocalDateTime.now().minusDays(1).toString
+            val query = collection[CalendarCache](None).whereEqualTo("id",id).whereGreaterThan("updated", dateTime)
+            val results = runQuery[CalendarCache](query)
+
+            results.headOption.fold(saveNewIcal())(_.ical)
+          }
+          case _ => ""
+      }
+
       resp.setContentType("text/calendar")
       resp.getWriter.append(contents)
       resp.getWriter.flush()
