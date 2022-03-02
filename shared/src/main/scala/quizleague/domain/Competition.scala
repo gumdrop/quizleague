@@ -10,7 +10,6 @@ import quizleague.util.json.codecs.ScalaTimeCodecs._
 import quizleague.util.json.codecs.DomainCodecs._
 
 
-@JsonCodec
 sealed trait Competition extends Entity
 {
   val name:String

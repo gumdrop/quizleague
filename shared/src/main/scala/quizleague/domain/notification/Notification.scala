@@ -1,7 +1,6 @@
 package quizleague.domain.notification
 
 import quizleague.domain._
-import io.circe.generic.JsonCodec
 import java.time.LocalDateTime
 
 
@@ -22,7 +21,6 @@ case class Notification(
   
 ) extends Entity
 
-@JsonCodec
 sealed trait Payload
 
 case class ResultPayload(fixtureKey:String) extends Payload
