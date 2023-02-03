@@ -13,21 +13,29 @@ import com.google.auth.Credentials
 
 import java.util.logging.{Level, Logger}
 import Level._
-import com.google.cloud.TransportOptions
+import com.google.cloud.{NoCredentials, TransportOptions}
 import com.google.cloud.grpc.GrpcTransportOptions
+import com.google.cloud.http.HttpTransportOptions
 import quizleague.firestore.Connection
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.cloud.firestore.Firestore
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.cloud.FirestoreClient
+import com.google.firebase.internal.EmulatorCredentials
+
 
 object Storage extends StorageUtils {
 
   val log = Logger.getLogger(this.getClass.toString())
 
-  val options = FirestoreOptions.getDefaultInstance.toBuilder()
-  .setProjectId(Connection.projectId)
-//    .setHost("localhost:8082")
-//    .setChannelProvider(FirestoreOptions.getDefaultTransportChannelProviderBuilder.setEndpoint("http://localhost:8082").build())
-    .build()
 
-  lazy val datastore = options.getService
+  val credentials = if(System.getenv("FIRESTORE_EMULATOR_HOST") != null ) new EmulatorCredentials else GoogleCredentials.getApplicationDefault
+  val options  = FirebaseOptions.builder().setCredentials(credentials).setProjectId(Connection.projectId).build
+
+  FirebaseApp.initializeApp(options)
+
+  private lazy val datastore = FirestoreClient.getFirestore
 
   def delete[T <: Entity](entity: T)(implicit tag: ClassTag[T]): Unit ={
     datastore.document(key(entity).key).delete()

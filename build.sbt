@@ -40,7 +40,7 @@ lazy val quizleague = crossProject.in(file(".")).
 	libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % "test").
   jvmSettings(
      name := "quizleague-jvm",
-     
+
          
 	libraryDependencies += "com.google.appengine" % "appengine-testing" % appengineVersion % "test",
 	libraryDependencies += "com.google.appengine" % "appengine-api-stubs" % appengineVersion % "test",
@@ -49,10 +49,14 @@ lazy val quizleague = crossProject.in(file(".")).
 	libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
     libraryDependencies += "org.glassfish.jersey.containers" % "jersey-container-servlet-core" % "2.25.1",
     libraryDependencies += "org.eclipse.jetty" % "jetty-server" % "9.4.24.v20191120",
-	//libraryDependencies += "io.netty" % "netty-tcnative-boringssl-static" % "2.0.7.Final",
-    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.0.9"
-
-  ).
+    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.7.9",
+    libraryDependencies += "org.apache.tomcat.embed" % "tomcat-embed-core" % "10.0.27",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-core" % "1.2.6",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % "1.0.3",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-netty-server" % "1.2.6",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.7",
+    libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1"
+).
   jsSettings(
     name := "quizleague-js",
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.7",
@@ -77,7 +81,7 @@ lazy val copyFullOpt = taskKey[Unit]("copy release JS")
 
 copyFullOpt := {
   val jsrelease = (fullOptJS in (quizleague.js, Compile)).value
-  jsrelease.data.renameTo(new File(file("."), "jvm/src/main/webapp/quizleague-js-opt.js"))
+  jsrelease.data.renameTo(new File(file("."), "jvm/src/main/resources/webapp/quizleague-js-opt.js"))
   
 }
 

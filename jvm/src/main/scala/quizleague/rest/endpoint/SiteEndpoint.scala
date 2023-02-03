@@ -21,26 +21,23 @@ object SiteEndpoint{
 class SiteEndpoint extends SitePostEndpoints{
   
   implicit val context = StorageContext()
-  
-  @POST
-  @Path("/team-for-email/{email}")
-  @Produces(Array("application/json"))
-  def teamForEmail(@PathParam("email") email: String) = {
-    
+
+  def teamForEmail(email: String): List[Team] = {
+
     val lce = email.toLowerCase()
-    
-    list[Team].filter(t => t.users.exists(_.email.toLowerCase == lce)).asJson.noSpaces
+
+    list[Team].filter(
+      t => t.users.exists(
+        _.email.toLowerCase == lce)
+    )
 
   }
 
-  @POST
-  @Path("/site-user-for-email/{email}")
-  @Produces(Array("application/json"))
-  def siteUserForEmail(@PathParam("email") email:String) ={
+  def siteUserForEmail(email: String): Option[SiteUser] = {
 
-    def createAndSave(user:User):SiteUser = {
+    def createAndSave(user: User): SiteUser = {
       val uuid = UUID.randomUUID().toString
-      val siteUser = SiteUser(uuid,"", SiteEndpoint.defaultAvatar, Some(new Ref[User]("user",user.id)), None).withKey(Key(None,"siteuser",uuid))
+      val siteUser = SiteUser(uuid, "", SiteEndpoint.defaultAvatar, Some(new Ref[User]("user", user.id)), None).withKey(Key(None, "siteuser", uuid))
       save(siteUser)
       siteUser
     }
@@ -49,24 +46,23 @@ class SiteEndpoint extends SitePostEndpoints{
     val lce = email.toLowerCase()
 
     val user = list[User].find(_.email.toLowerCase == lce)
-    def hasTeam(user:User) = list[Team].find(t => t.users.exists(_.id == user.id)).isDefined
+
+    def hasTeam(user: User) = list[Team].find(t => t.users.exists(_.id == user.id)).isDefined
 
     val siteUser = user.filter(hasTeam _).map(u => list[SiteUser].find(su => su.user.filter(_.id == u.id).isDefined))
 
-    val result:Option[SiteUser] = siteUser.flatMap(l => if(l.isDefined) l else user.map(createAndSave _))
+    val result: Option[SiteUser] = siteUser.flatMap(l => if (l.isDefined) l else user.map(createAndSave _))
 
-    result.asJson.noSpaces
+    result
 
- }
+  }
 
   @POST
   @Path("/save-site-user")
   @Produces(Array("application/json"))
-  def saveSiteUser(body:String) ={
+  def saveSiteUser(in: SiteUser): SiteUser = {
 
-    val in:SiteUser = deser[SiteUser](body)
     val existing = load[SiteUser](in.id).copy(handle = in.handle, avatar = in.avatar)
-
     save(existing)
     existing
   }
