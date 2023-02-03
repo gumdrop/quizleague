@@ -1,37 +1,17 @@
 package quizleague.rest.endpoint
 
-import akka.actor.ActorSystem
-import akka.http.javadsl.server.Route
-import com.google.api.gax.core.ResourceCloseException
-
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import akka.http.scaladsl.{Http, server}
-import quizleague.domain.Team
-import quizleague.rest.endpoint.SiteEndpoint
-import sttp.model.MediaType
-import sttp.tapir.stringBody
-import sttp.tapir.endpoint
-import sttp.tapir.Endpoint
-import sttp.tapir._
-import sttp.tapir.generic.auto._
-import sttp.tapir.typelevel._
-import sttp.model._
-import sttp.tapir.static._
-import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
-import sttp.tapir.server.netty.{NettyFutureServer, NettyFutureServerBinding}
-import sttp.tapir.json.circe._
-import quizleague.util.json.codecs.DomainCodecs._
-import quizleague.conversions.RefConversions._
 import quizleague.domain._
+import quizleague.util.json.codecs.DomainCodecs._
+import sttp.model._
+import sttp.tapir.generic.auto._
+import sttp.tapir.json.circe._
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.{Endpoint, endpoint, stringBody, _}
 
-import java.net.InetSocketAddress
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.io.StdIn
+import Future.successful
 
-object SiteEndpointDefinitions {
+private object SiteEndpointDefinitions {
 
   val base = endpoint
     .in("site")
@@ -59,19 +39,19 @@ object SiteEndpointDefinitions {
 }
 
 object SiteEndpointImplementations {
-  val getTeamForEmail = SiteEndpointDefinitions.teamForEmail
+  private val getTeamForEmail = SiteEndpointDefinitions.teamForEmail
     .serverLogic(email => {
-      Future.successful[Either[String, List[Team]]](Right(new SiteEndpoint().teamForEmail(email)))
+      successful[Either[String, List[Team]]](Right(new SiteEndpoint().teamForEmail(email)))
     })
 
-  val getSiteUserForEmail = SiteEndpointDefinitions.siteUserForEmail
+  private val getSiteUserForEmail = SiteEndpointDefinitions.siteUserForEmail
     .serverLogic(email => {
-      Future.successful[Either[String, Option[SiteUser]]](Right(new SiteEndpoint().siteUserForEmail(email)))
+      successful[Either[String, Option[SiteUser]]](Right(new SiteEndpoint().siteUserForEmail(email)))
     })
 
-  val postSaveSiteUser = SiteEndpointDefinitions.saveSiteUser
+  private val postSaveSiteUser = SiteEndpointDefinitions.saveSiteUser
     .serverLogic(in => {
-      Future.successful[Either[String, SiteUser]](Right(new SiteEndpoint().saveSiteUser(in)))
+      successful[Either[String, SiteUser]](Right(new SiteEndpoint().saveSiteUser(in)))
     })
 
   def siteEndpoints: List[ServerEndpoint[Any, Future]] = List(getTeamForEmail, getSiteUserForEmail, postSaveSiteUser)
