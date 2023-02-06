@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
   organization := "quizleague",
   version := "0.0.1",
   scalaVersion := "2.12.3",
-  scalacOptions ++= Seq("-deprecation","-unchecked","-feature"),
+  scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ypartial-unification"),
   resolvers += Resolver.sonatypeRepo("snapshots")
   
 )
@@ -55,7 +55,9 @@ lazy val quizleague = crossProject.in(file(".")).
     libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % "1.0.3",
     libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-netty-server" % "1.2.6",
     libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.7",
-    libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1"
+    libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1",
+    libraryDependencies += "com.lihaoyi" %% "castor" % "0.1.7",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.2.7"
 ).
   jsSettings(
     name := "quizleague-js",

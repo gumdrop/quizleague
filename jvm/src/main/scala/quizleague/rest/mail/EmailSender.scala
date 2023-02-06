@@ -1,20 +1,15 @@
 package quizleague.rest.mail
 
-import java.util.Properties
-import javax.mail.Session
-import javax.mail.internet.MimeMessage
-import javax.mail.internet.InternetAddress
-import quizleague.domain._
-import javax.mail.Address
-import java.util.logging.Logger
-import java.util.logging.Level
-import javax.mail.Message.RecipientType
-import javax.mail.Transport
-import quizleague.data.Storage._
-import quizleague.conversions.RefConversions._
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.conversions.RefConversions.{StorageContext, _}
 import quizleague.data._
-import quizleague.conversions.RefConversions.StorageContext
+import quizleague.domain._
+import quizleague.util.json.codecs.DomainCodecs._
+
+import java.util.Properties
+import java.util.logging.{Level, Logger}
+import javax.mail.Message.RecipientType
+import javax.mail.{Address, Session, Transport}
+import javax.mail.internet.{InternetAddress, MimeMessage}
 
 object EmailSender{
   
@@ -37,9 +32,6 @@ private class EmailSender {
     try {
 
       sendMail(sender, text, applicationContext(), RecipientType.TO, team.users.map(user => new InternetAddress(user.email)).toList)
-      return
-
-      LOG.fine("No matching addressees for any recipients");
 
     } catch {
       case e: Exception => LOG.log(Level.SEVERE, "Failure sending mail", e);

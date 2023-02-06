@@ -1,33 +1,24 @@
 package quizleague.rest.calendar
 
-import javax.servlet.http.HttpServlet
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import quizleague.conversions.RefConversions._
 import quizleague.data.Storage._
 import quizleague.data._
 import quizleague.domain._
 import quizleague.util.json.codecs.DomainCodecs._
-import quizleague.conversions.RefConversions._
-
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import quizleague.domain.TeamCompetition
-import quizleague.domain.SingletonCompetition
 
 import java.time._
+import java.time.format.DateTimeFormatter
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
 
 
-class CalendarHandler extends HttpServlet{
+object CalendarHandler {
   val log = Logger.getLogger(this.getClass.getName)
   val utc = ZoneOffset.UTC
   val local = ZoneId.of("Europe/London")
   val dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(utc)
-  override def doPost(req: HttpServletRequest, resp: HttpServletResponse) = {}  
-  override def doGet(req: HttpServletRequest, resp: HttpServletResponse) = {
-      val bits = parts(req)
-      val head = bits.head
-      val id = bits.tail.head
+
+  def teamCalendar(id:String): String = {
 
       implicit val context = StorageContext()
 
@@ -38,20 +29,12 @@ class CalendarHandler extends HttpServlet{
         ical
       }
 
-      val contents = head match {
-          case "team" => {
-            val dateTime = LocalDateTime.now().minusDays(1).toString
-            val query = collection[CalendarCache](None).whereEqualTo("id",id).whereGreaterThan("updated", dateTime)
-            val results = runQuery[CalendarCache](query)
+      val dateTime = LocalDateTime.now().minusDays(1).toString
+      val query = collection[CalendarCache](None).whereEqualTo("id",id).whereGreaterThan("updated", dateTime)
+      val results = runQuery[CalendarCache](query)
 
-            results.headOption.fold(saveNewIcal())(_.ical)
-          }
-          case _ => ""
-      }
+      results.headOption.fold(saveNewIcal())(_.ical)
 
-      resp.setContentType("text/calendar")
-      resp.getWriter.append(contents)
-      resp.getWriter.flush()
     }
     
     private def formatEvent(event:BaseEvent, text:String)(implicit context:StorageContext):String = {

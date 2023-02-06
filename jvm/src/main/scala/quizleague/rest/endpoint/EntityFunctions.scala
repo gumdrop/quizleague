@@ -1,29 +1,22 @@
 package quizleague.rest.endpoint
 
-import javax.ws.rs.Path
-import quizleague.rest.MaintainPostEndpoints
-import javax.ws.rs.POST
-import quizleague.domain.container.{NestedDomainContainer}
-import scala.reflect.ClassTag
+import io.circe._
+import quizleague.conversions.RefConversions._
 import quizleague.data.Storage
-import Storage._
+import quizleague.data.Storage._
 import quizleague.domain._
-import javax.ws.rs.PathParam
-import quizleague.domain._
+import quizleague.domain.container.NestedDomainContainer
 import quizleague.domain.stats._
 import quizleague.domain.util._
+import quizleague.rest.deser
+import quizleague.rest.task.TaskQueue.taskQueue
 import quizleague.util.json.codecs.DomainCodecs._
-import quizleague.conversions.RefConversions._
-import quizleague.rest._ 
-import io.circe._
-import javax.ws.rs.GET
-import javax.ws.rs.Produces
-import com.google.appengine.api.taskqueue._
-import com.google.appengine.api.taskqueue.TaskOptions.Builder._
-import java.util.logging.Logger
 
-@Path("/entity")
-class EntityEndpoint extends MaintainPostEndpoints{
+import java.util.logging.Logger
+import scala.reflect.ClassTag
+import io.circe.syntax.EncoderOps
+
+class EntityFunctions {
   
   val LOG:Logger = Logger.getLogger(this.getClass.getName)
   
@@ -31,10 +24,9 @@ class EntityEndpoint extends MaintainPostEndpoints{
   
 
 
-  @POST
-  @Path("/dbupload")
-  def nesteddbupload(json:String) = {
+  def nestedDbUpload(json:String): Unit = {
 
+    val container = deser[NestedDomainContainer](json)
 
     def withKey[T <: Entity](pair:(String,T)):T =  {val (key,entity) = pair; entity.withKey(Key(key))}
 
@@ -63,9 +55,6 @@ class EntityEndpoint extends MaintainPostEndpoints{
     deleteAll[Statistics]
     deleteAll[CompetitionStatistics]
 
-    val container = deser[NestedDomainContainer](json)
-
-
     saveAll(container.applicationcontext)
     saveAll(container.competition)
     saveAll(container.fixture)
@@ -82,19 +71,15 @@ class EntityEndpoint extends MaintainPostEndpoints{
     saveAll(container.chat)
     saveAll(container.chatMessage)
   }
-  
-  @GET
-  @Path("/dbdownload/dump.json")
-  @Produces(Array("application/json"))
-  def dbdownload() = {
+
+  def dbDownload(): String = {
     import Storage.list
-    import io.circe.syntax._
+
     import scala.language.implicitConversions
 
-    def toTuple[T <: Entity](entity:T) = (entity.key.get.key, entity)
-    implicit def toMap[T <: Entity](entities:Iterable[T]) = entities.map(toTuple _).toMap
+    def toTuple[T <: Entity](entity: T) = (entity.key.get.key, entity)
 
-    implicit val context = StorageContext()
+    implicit def toMap[T <: Entity](entities: Iterable[T]) = entities.map(toTuple _).toMap
 
     val container = NestedDomainContainer(
       applicationcontext = list[ApplicationContext],
@@ -113,14 +98,11 @@ class EntityEndpoint extends MaintainPostEndpoints{
       report = group[Report],
       competitionStatistics = list[CompetitionStatistics]
     )
-    
+
     container.asJson.noSpaces
   }
   
-  @POST
-  @Path("/recalculate-table/")
-  def recalculateTable(json:String) = {
-        val key =  deser[Key](json)
+  def recalculateTable(key:Key):Unit = {
 
         val table = load[LeagueTable](key)
         val fixtures = list[Fixtures](key.parentKey.map(Key(_))).flatMap(fxs => list[Fixture](fxs.key))
@@ -134,18 +116,8 @@ class EntityEndpoint extends MaintainPostEndpoints{
         recalcTable.foreach(Storage.save(_))
   }
   
-  @POST
-  @Path("/regenerate-stats/{seasonId}")
-  def regenerateStats(@PathParam("seasonId") seasonId: String) {
+  def regenerateStats(seasonId: String) {
 
-   val queue: Queue = QueueFactory.getQueue("stats");
-    
-   queue.add(withUrl(s"/rest/task/stats/regenerate/$seasonId"));
-    
-//    val season = load[Season](seasonId)
-//    
-//    HistoricalStatsAggregator.perform(season)
-   
-
+    taskQueue.send(() => new TaskFunctions().statsRegenerate(seasonId))
   }
 }

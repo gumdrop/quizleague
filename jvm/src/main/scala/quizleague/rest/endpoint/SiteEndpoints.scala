@@ -1,58 +1,86 @@
 package quizleague.rest.endpoint
 
 import quizleague.domain._
+import quizleague.domain.command.{ResultsSubmitCommand, TeamEmailCommand}
+import quizleague.util.json.codecs.CommandCodecs._
 import quizleague.util.json.codecs.DomainCodecs._
-import sttp.model._
 import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.{Endpoint, endpoint, stringBody, _}
 
 import scala.concurrent.Future
-import Future.successful
+import scala.concurrent.Future.successful
 
 private object SiteEndpointDefinitions {
 
   val base = endpoint
-    .in("site")
-    .in(header(Header("Accept-Content", MediaType.ApplicationJson.toString())))
+    .in("rest"/"site")
+    .errorOut(stringBody)
 
   val teamForEmail: Endpoint[Unit, String, String, List[Team], Any] = base
     .post
     .in("team-for-email" / path[String]("email"))
-    .errorOut(stringBody)
     .out(jsonBody[List[Team]])
 
   val siteUserForEmail: Endpoint[Unit, String, String, Option[SiteUser], Any] = base
     .post
     .in("site-user-for-email" / path[String]("email"))
-    .errorOut(stringBody)
     .out(jsonBody[Option[SiteUser]])
 
   val saveSiteUser: Endpoint[Unit, SiteUser, String, SiteUser, Any] = base
     .post
     .in("save-site-user")
     .in(jsonBody[SiteUser])
-    .errorOut(stringBody)
     .out(jsonBody[SiteUser])
 
+
+  val submitResults: Endpoint[Unit, ResultsSubmitCommand, String, List[String], Any] = base
+    .post
+    .in("result"/"submit")
+    .in(jsonBody[ResultsSubmitCommand])
+    .out(jsonBody[List[String]])
+
+  val contactTeam: Endpoint[Unit, TeamEmailCommand, String, List[String], Any] = base
+    .post
+    .in("email"/"team")
+    .in(jsonBody[TeamEmailCommand])
+    .out(jsonBody[List[String]])
 }
 
 object SiteEndpointImplementations {
-  private val getTeamForEmail = SiteEndpointDefinitions.teamForEmail
+
+  import SiteEndpointDefinitions._
+
+  private val getTeamForEmail = teamForEmail
     .serverLogic(email => {
-      successful[Either[String, List[Team]]](Right(new SiteEndpoint().teamForEmail(email)))
+      successful[Either[String, List[Team]]](Right(new SiteFunctions().teamForEmail(email)))
     })
 
-  private val getSiteUserForEmail = SiteEndpointDefinitions.siteUserForEmail
+  private val getSiteUserForEmail = siteUserForEmail
     .serverLogic(email => {
-      successful[Either[String, Option[SiteUser]]](Right(new SiteEndpoint().siteUserForEmail(email)))
+      successful[Either[String, Option[SiteUser]]](Right(new SiteFunctions().siteUserForEmail(email)))
     })
 
-  private val postSaveSiteUser = SiteEndpointDefinitions.saveSiteUser
+  private val postSaveSiteUser = saveSiteUser
     .serverLogic(in => {
-      successful[Either[String, SiteUser]](Right(new SiteEndpoint().saveSiteUser(in)))
+      successful[Either[String, SiteUser]](Right(new SiteFunctions().saveSiteUser(in)))
     })
 
-  def siteEndpoints: List[ServerEndpoint[Any, Future]] = List(getTeamForEmail, getSiteUserForEmail, postSaveSiteUser)
+  private val postSubmitResults = submitResults
+    .serverLogic(in => {
+      successful[Either[String, List[String]]](Right(new SiteFunctions().resultSubmit(in)))
+    })
+
+  private val postContactTeam = contactTeam
+    .serverLogic(in => {
+      successful[Either[String, List[String]]](Right(new SiteFunctions().contactTeam(in)))
+    })
+
+  def siteEndpoints: List[ServerEndpoint[Any, Future]] = List(
+    getTeamForEmail,
+    getSiteUserForEmail,
+    postSaveSiteUser,
+    postSubmitResults,
+    postContactTeam)
 }
