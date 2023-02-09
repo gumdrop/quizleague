@@ -11,6 +11,7 @@ import sttp.tapir.server.netty.NettyFutureServer
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 import java.util.logging.Logger
+import java.util.logging.Level
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.io.StdIn
@@ -20,28 +21,30 @@ object Application extends App{
 
   val LOG = Logger.getLogger(this.getClass.getName)
 
-  val serverPort = Option(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
+  val isLocal = Option(System.getenv("FIRESTORE_EMULATOR_HOST")).isDefined
 
-  try Storage.load[ApplicationContext](ApplicationContext.singletonId)
-  catch {
-    case e: Exception => LOG.severe(s"ApplicationContext not found for id ${ApplicationContext.singletonId}")
-  }
+  val serverPort = Option(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
 
   private val restEndpoints = siteEndpoints  ++
     entityEndpoints ++
     calendarEndpoints
 
-  val swaggerEndpoints = SwaggerInterpreter().fromEndpoints[Future](restEndpoints.map(_.endpoint), "Quizleague", "1.0")
+  val swaggerEndpoints = if(isLocal)
+    SwaggerInterpreter().fromEndpoints[Future](restEndpoints.map(_.endpoint), "Quizleague", "1.0")
+  else
+    List()
 
   val endpoints = restEndpoints ++ resourceEndpoints
 
   val server = NettyFutureServer().port(serverPort).addEndpoints(swaggerEndpoints ++ endpoints).start()
 
   println("Server now online.")
-  println("Press RETURN to stop... (and again)")
-  StdIn.readLine() // let it run until user presses return
-  server
-    .flatMap(_.stop()) // trigger unbinding from the port
+  if(isLocal) {
+    println("Press RETURN to stop... (and again)")
+    StdIn.readLine() // let it run until user presses return
+    server
+      .flatMap(_.stop()) // trigger unbinding from the port
+  }
 }
 
 

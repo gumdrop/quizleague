@@ -1,8 +1,8 @@
 package quizleague.web.site.login
 
 import java.util.regex.Pattern
-
 import com.felstar.scalajs.vue.{VueRxComponent, VuetifyComponent}
+import org.scalajs.dom.ProgressEvent
 import org.scalajs.dom.raw.{File, FileReader, UIEvent}
 import org.scalajs.dom.window.alert
 import quizleague.web.core._
@@ -232,7 +232,7 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
   def uploadFiles(c:facade,file:File) = {
     val reader = new FileReader
     reader.readAsDataURL(file)
-    reader.onload = (e:UIEvent) => {
+    reader.onload = (e:ProgressEvent) => {
       val data = reader.result
       if(data.toString.length <= 1000000){
         c.user.avatar = data.toString

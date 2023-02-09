@@ -1,9 +1,10 @@
 package quizleague.data
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import quizleague.domain.{Key, User}
 
-class StorageSpec extends FlatSpec with Matchers {
+class StorageSpec extends AnyFlatSpec with Matchers {
   val storage = new StorageUtils{}
 
 

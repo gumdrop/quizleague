@@ -4,7 +4,6 @@ import quizleague.conversions.RefConversions._
 import quizleague.data.Storage._
 import quizleague.domain._
 import quizleague.domain.command.{ResultsSubmitCommand, TeamEmailCommand}
-import quizleague.rest.mail.EmailSender
 import quizleague.rest.task.TaskQueue.taskQueue
 import quizleague.util.json.codecs.DomainCodecs._
 
@@ -58,14 +57,6 @@ class SiteFunctions{
     List[String]()
 
   }
-
-  def contactTeam(mail: TeamEmailCommand) = {
-
-    EmailSender(mail.sender, load[Team](mail.teamId), mail.text)
-    List[String]()
-
-  }
-
 
   def saveSiteUser(in: SiteUser): SiteUser = {
 

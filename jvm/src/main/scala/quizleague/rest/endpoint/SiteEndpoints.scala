@@ -41,11 +41,6 @@ private object SiteEndpointDefinitions {
     .in(jsonBody[ResultsSubmitCommand])
     .out(jsonBody[List[String]])
 
-  val contactTeam: Endpoint[Unit, TeamEmailCommand, String, List[String], Any] = base
-    .post
-    .in("email"/"team")
-    .in(jsonBody[TeamEmailCommand])
-    .out(jsonBody[List[String]])
 }
 
 object SiteEndpointImplementations {
@@ -72,15 +67,10 @@ object SiteEndpointImplementations {
       successful[Either[String, List[String]]](Right(new SiteFunctions().resultSubmit(in)))
     })
 
-  private val postContactTeam = contactTeam
-    .serverLogic(in => {
-      successful[Either[String, List[String]]](Right(new SiteFunctions().contactTeam(in)))
-    })
 
   def siteEndpoints: List[ServerEndpoint[Any, Future]] = List(
     getTeamForEmail,
     getSiteUserForEmail,
     postSaveSiteUser,
-    postSubmitResults,
-    postContactTeam)
+    postSubmitResults)
 }

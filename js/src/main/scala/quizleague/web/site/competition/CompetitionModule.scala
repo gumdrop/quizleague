@@ -1,32 +1,19 @@
 package quizleague.web.site.competition
 
+import quizleague.util.collection._
+import quizleague.web.core._
+import quizleague.web.model.{Competition, CompetitionType, Fixtures, Key}
 import quizleague.web.service.competition.CompetitionGetService
 import quizleague.web.site.fixtures.FixturesService
 import quizleague.web.site.leaguetable.LeagueTableService
+import quizleague.web.site.season.{SeasonService, SeasonWatchService}
 import quizleague.web.site.text.TextService
 import quizleague.web.site.venue.VenueService
-import quizleague.web.site.season.SeasonService
-import rxscalajs.Observable._
 import rxscalajs.Observable
-import quizleague.web.model.CompetitionType
-import quizleague.web.core._
-import com.felstar.scalajs.vue.Router
-import quizleague.web.core.RouteConfig
-import quizleague.web.model.Competition
-import scalajs.js
-import js.JSConverters._
-import rxscalajs.Subject
-import rxscalajs.subjects.ReplaySubject
-import quizleague.web.model.Key
-import quizleague.web.site.ApplicationContextService
-import quizleague.web.site.season.SeasonWatchService
+
 import java.time.LocalDate
-import quizleague.web.model.Fixtures
-import quizleague.util.collection._
-import quizleague.web.site.season.SeasonService
-import quizleague.web.util.Logging._
 import scala.reflect.ClassTag
-import scala.reflect.api.TypeTags
+import scala.scalajs.js
 
 object CompetitionModule extends Module {
   

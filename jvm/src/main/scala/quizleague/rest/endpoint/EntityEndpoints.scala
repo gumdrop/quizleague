@@ -12,7 +12,6 @@ import scala.concurrent.Future.successful
 private object EntityEndpointDefinitions {
   val base = endpoint
     .in("rest" / "entity")
-
     .errorOut(stringBody)
 
   val dbupload = base

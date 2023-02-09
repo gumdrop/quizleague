@@ -1,23 +1,10 @@
 package quizleague.web.site.venue
 
-import quizleague.web.core.RouteComponent
-import scalajs.js
-import scala.scalajs.js.JSConverters._
-import js.Dynamic.literal
-import quizleague.web.service.venue._
-import com.felstar.scalajs.vue.Vue
-import quizleague.web.core._
-import rxscalajs.subjects.ReplaySubject
+import quizleague.web.core.{Component, GridSizeComponentConfig, IdComponent, RouteComponent}
 import quizleague.web.model.Venue
-import rxscalajs.Observable
-import scala.scalajs.js.annotation.ScalaJSDefined
-import rxscalajs.Observable
-import rxscalajs.facade.ObservableFacade
-import scala.scalajs.js.ThisFunction0
-import quizleague.web.core.Component
-import quizleague.web.core.IdComponent
-import quizleague.web.core.GridSizeComponentConfig
 import quizleague.web.site.SideMenu
+
+import scala.scalajs.js
 
 
 

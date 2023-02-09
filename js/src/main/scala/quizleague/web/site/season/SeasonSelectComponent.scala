@@ -8,9 +8,6 @@ import quizleague.util.collection._
 import com.felstar.scalajs.vue.VueRxComponent
 import rxscalajs.Subject
 
-import js.UndefOr._
-import scala.scalajs.js.UndefOr
-
 @js.native
 trait SeasonSelectComponent extends VueRxComponent{
   val season:Subject[Season]

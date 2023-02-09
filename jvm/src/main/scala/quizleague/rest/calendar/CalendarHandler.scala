@@ -9,7 +9,6 @@ import quizleague.util.json.codecs.DomainCodecs._
 import java.time._
 import java.time.format.DateTimeFormatter
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
 
 
 object CalendarHandler {
@@ -156,6 +155,5 @@ END:VEVENT
       builder.append("END:VCALENDAR\n").toString()
     }
   
-    def parts(req: HttpServletRequest) = req.getPathInfo().split("\\/").tail;
     def toUtc(dateTime:LocalDateTime) = ZonedDateTime.of(dateTime,local).format(dateFormat)
 }
