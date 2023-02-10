@@ -72,6 +72,7 @@ quizleague.jvm / assembly / assemblyMergeStrategy := {
 }
 
 lazy val release = taskKey[Unit]("release to prod")
+lazy val releaseTest = taskKey[Unit]("release to test")
 lazy val buildLocal = taskKey[Unit]("build for local run")
 lazy val copyFullOpt = taskKey[Unit]("copy release JS")
 lazy val copyFastOpt = taskKey[Unit]("copy test JS")
@@ -88,20 +89,32 @@ copyFastOpt := {
 
 }
 
-lazy val execScript = taskKey[Unit]("Execute the shell script")
+lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
 
-execScript := {
-  "gcloud app deploy jvm/target/scala-2.12/quizleague.jar --quiet "!
+lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
+
+releaseToProd := {
+  "gcloud app deploy jvm/target/scala-2.12/quizleague.jar --quiet"!
+}
+
+releaseToTest := {
+  "gcloud app deploy jvm/target/scala-2.12/quizleague.jar --quiet --project=ql-firestore-gb2"!
 }
 
 buildLocal := Def.sequential(
   copyFastOpt in Compile
 ).value
 
+releaseTest := Def.sequential(
+  copyFullOpt in Compile,
+  assembly in (quizleague.jvm, Compile),
+  releaseToTest
+).value
+
 release := Def.sequential(
   copyFullOpt in Compile,
   assembly in (quizleague.jvm, Compile),
-  execScript
+  releaseToProd
 ).value
 
 

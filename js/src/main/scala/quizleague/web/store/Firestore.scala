@@ -1,14 +1,13 @@
 package quizleague.web.store
 
-import scalajs.js
-import js.Dynamic.literal
-import firebase._
 import _root_.firebase.firestore.Settings
+import firebase._
+import org.scalajs.dom.window
 import quizleague.firestore.{Connection => conn}
 import quizleague.web.core._
-import org.scalajs.dom.window
 
-import scala.scalajs.js.JSConverters._
+import scala.scalajs.js
+import scala.scalajs.js.Dynamic.literal
 
 
 object Firestore {

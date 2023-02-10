@@ -1,17 +1,13 @@
 package quizleague
 
-import quizleague.data.Storage
-import quizleague.domain.ApplicationContext
 import quizleague.rest.calendar.CalendarEndpoints.calendarEndpoints
 import quizleague.rest.endpoint.EntityEndpointImplementations.entityEndpoints
 import quizleague.rest.endpoint.ResourceEndpoints.resourceEndpoints
 import quizleague.rest.endpoint.SiteEndpointImplementations.siteEndpoints
-import quizleague.util.json.codecs.DomainCodecs._
 import sttp.tapir.server.netty.NettyFutureServer
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 import java.util.logging.Logger
-import java.util.logging.Level
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.io.StdIn
@@ -19,11 +15,11 @@ import scala.io.StdIn
 
 object Application extends App{
 
-  val LOG = Logger.getLogger(this.getClass.getName)
+  private val LOG = Logger.getLogger(this.getClass.getName)
 
   val isLocal = Option(System.getenv("FIRESTORE_EMULATOR_HOST")).isDefined
 
-  val serverPort = Option(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
+  private val serverPort = Option(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
 
   private val restEndpoints = siteEndpoints  ++
     entityEndpoints ++
