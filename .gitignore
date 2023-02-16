@@ -17,3 +17,6 @@ firestore.rules
 /.firebaserc
 /jvm/src/main/resources/webapp/quizleague-opt.js
 /jvm/src/main/resources/webapp/quizleague.js
+/jvm/src/main/resources/webapp/quizleague.js.map
+/deploy/quizleague.jar
+/deploy/app.yaml

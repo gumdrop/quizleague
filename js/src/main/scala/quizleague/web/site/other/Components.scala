@@ -1,8 +1,8 @@
 package quizleague.web.site.other
 
-import com.felstar.scalajs.vue.{VueComponent, VueRxComponent, VuetifyComponent}
 import quizleague.web.core._
 import quizleague.web.site._
+import quizleague.web.site.team.TeamService
 
 import scala.scalajs.js
 
@@ -38,43 +38,52 @@ object RulesComponent extends RouteComponent with NoSideMenu with GridSizeCompon
   </v-container>"""
 }
 
-@js.native
-trait ContactUsComponent extends VueRxComponent with VuetifyComponent{
-  var contact:Boolean
-}
+
 object ContactUsComponent extends RouteComponent with NoSideMenu with GridSizeComponentConfig{
-  type facade = ContactUsComponent
   val template = """
   <v-container v-bind="gridSize" fluid>
-  <ql-title>Contact Us</ql-title>
-     <v-layout column>
-       <v-tooltip top><template v-slot:activator="{ on }"><v-btn icon v-on="on" v-on:click="contact=true"><v-icon>mdi-email</v-icon></v-btn></template><span>Contact Us</span></v-tooltip>
-      <ql-league-contact-dialog :show="contact" :contact="'webmaster'" v-on:show="handleShow"></ql-league-contact-dialog>
-      <v-flex><ql-text-box><ql-named-text name="contact-content"></ql-named-text></ql-text-box></v-flex>
+    <ql-title>Contact Us</ql-title>
+    <v-layout column>
+      <ql-alias-contact-dialog :show="contact" :alias="alias" :aliasText="aliasText"></ql-alias-contact-dialog>
+      <v-flex>
+        <ql-text-box>
+          <p>
+            If you would like to start a new team, please contact the <a v-on:click="alias='secretary';aliasText='League Secretary';contact=true">league secretary</a>.
+          </p>
+          <p>
+            To contact an existing team, go to the <router-link to="/team">teams page</router-link>, find your team and click on the email button at the top of the page.
+          </p>
+            <br>
+          <p>
+            For any queries about this website, please contact the <a v-on:click="alias='webmaster';aliasText='the Webmaster';contact=true">webmaster</a>.
+          </p>
+        </ql-text-box>
+      </v-flex>
     </v-layout>
   </v-container>"""
-  components(LeagueContactDialog)
+  components(AliasContactDialog)
   data("contact",false)
-  method("handleShow")({(c:facade,show:Boolean) => c.contact = show}:js.ThisFunction)
+  data("alias",null)
+  data("aliasText",null)
 }
 
 @js.native
-trait LeagueContactDialog extends DialogComponent{
+trait AliasContactDialog extends DialogComponent{
   var email:String
   var text:String
-  val contact:String
+  val alias:String
   var show:Boolean
 }
-object LeagueContactDialog extends Component with DialogComponentConfig{
+object AliasContactDialog extends Component with DialogComponentConfig{
 
   import quizleague.web.util.validation.Functions._
 
-  type facade = LeagueContactDialog
-  val name = "ql-league-contact-dialog"
+  type facade = AliasContactDialog
+  val name = "ql-alias-contact-dialog"
   val template = """
           <v-dialog v-model="show" max-width="60%" v-bind="dialogSize" persistent>
             <v-card>
-              <v-card-title>Contact {{contact}}</v-card-title>
+              <v-card-title>Contact {{aliasText}}</v-card-title>
               <v-card-text>
                 <v-form v-model="valid">
                 <v-container>
@@ -90,13 +99,14 @@ object LeagueContactDialog extends Component with DialogComponentConfig{
          </v-dialog>"""
 
   def submit(c:facade){
-    //TeamService.sendEmailToTeam(c.email, c.text, c.team)
+    TeamService.sendEmailToAlias(c.email, c.text, c.alias)
     c.show = false
     c.text=""
   }
 
 
-  props("contact")
+  props("alias")
+  props("aliasText")
   data("email","")
   data("text","")
   data("valid",false)

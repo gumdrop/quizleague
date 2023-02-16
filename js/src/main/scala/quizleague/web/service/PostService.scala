@@ -26,5 +26,22 @@ trait PostService {
     Observable.ajax(request).map(response => decode[R](response.body).fold(e => {throw e}, u => u))
       .onErrorResumeNext(x => { log(request,s"error in ${request.method} for $path : $x ");null })
   }
+
+  protected def getRequest[R](pathParts: List[String])(implicit decoder: Decoder[R]): Observable[R] = {
+
+    val path = ("/rest" :: pathParts).mkString("/")
+
+    val request = Request(
+      path,
+      headers = Map("Accept-Content" -> "application/json"),
+      method = "GET")
+
+    Observable.ajax(request).map(response => decode[R](response.body).fold(e => {
+      throw e
+    }, u => u))
+      .onErrorResumeNext(x => {
+        log(request, s"error in ${request.method} for $path : $x "); null
+      })
+  }
   
  }

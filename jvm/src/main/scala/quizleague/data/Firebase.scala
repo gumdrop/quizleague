@@ -31,7 +31,10 @@ object Storage extends StorageUtils {
 
 
   val credentials = if(System.getenv("FIRESTORE_EMULATOR_HOST") != null ) new EmulatorCredentials else GoogleCredentials.getApplicationDefault
-  val options  = FirebaseOptions.builder().setCredentials(credentials).setProjectId(Connection.projectId).build
+  val options  = FirebaseOptions.builder()
+    .setCredentials(credentials)
+    .setProjectId(Connection.projectId)
+    .build
 
   FirebaseApp.initializeApp(options)
 

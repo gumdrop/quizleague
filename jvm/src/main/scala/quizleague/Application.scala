@@ -5,7 +5,6 @@ import quizleague.rest.endpoint.EntityEndpointImplementations.entityEndpoints
 import quizleague.rest.endpoint.ResourceEndpoints.resourceEndpoints
 import quizleague.rest.endpoint.SiteEndpointImplementations.siteEndpoints
 import sttp.tapir.server.netty.NettyFutureServer
-import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,11 +23,13 @@ object Application extends App{
   private val restEndpoints = siteEndpoints  ++
     entityEndpoints ++
     calendarEndpoints
+//
+//  val swaggerEndpoints = if(isLocal)
+//    SwaggerInterpreter().fromEndpoints[Future](restEndpoints.map(_.endpoint), "Quizleague", "1.0")
+//  else
+//    List()
 
-  val swaggerEndpoints = if(isLocal)
-    SwaggerInterpreter().fromEndpoints[Future](restEndpoints.map(_.endpoint), "Quizleague", "1.0")
-  else
-    List()
+  val swaggerEndpoints = List()
 
   val endpoints = restEndpoints ++ resourceEndpoints
 

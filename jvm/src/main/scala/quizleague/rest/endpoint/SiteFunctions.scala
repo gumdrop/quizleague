@@ -3,7 +3,8 @@ package quizleague.rest.endpoint
 import quizleague.conversions.RefConversions._
 import quizleague.data.Storage._
 import quizleague.domain._
-import quizleague.domain.command.{ResultsSubmitCommand, TeamEmailCommand}
+import quizleague.domain.command.{ResultsSubmitCommand, TeamEmailCommand, AliasEmailCommand}
+import quizleague.rest.mail.EmailSender
 import quizleague.rest.task.TaskQueue.taskQueue
 import quizleague.util.json.codecs.DomainCodecs._
 
@@ -15,7 +16,6 @@ object SiteFunctions{
 
 class SiteFunctions{
 
-  implicit val context = StorageContext()
 
   def teamForEmail(email: String): List[Team] = {
 
@@ -65,5 +65,17 @@ class SiteFunctions{
     existing
   }
 
+  def contactTeam(mail: TeamEmailCommand) = {
 
+    EmailSender(mail.sender, load[Team](mail.teamId), mail.text)
+    List[String]()
+
+  }
+
+  def contactPerson(mail: AliasEmailCommand) = {
+
+    EmailSender(mail.sender, mail.alias, mail.text)
+    List[String]()
+
+  }
 }

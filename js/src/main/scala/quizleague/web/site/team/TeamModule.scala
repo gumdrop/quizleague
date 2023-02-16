@@ -18,7 +18,7 @@ import quizleague.web.model._
 import quizleague.web.util.rx._
 import rxscalajs.Observable
 import quizleague.web.service.PostService
-import quizleague.domain.command.TeamEmailCommand
+import quizleague.domain.command._
 import chartjs.chart._
 import org.scalajs.dom.ext.Color
 import quizleague.web.site.season._
@@ -81,6 +81,13 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
     
     val cmd = TeamEmailCommand(sender,text,team.id)
     command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(x => Unit)
+  }
+
+  def sendEmailToAlias(sender: String, text: String, alias: String) {
+    import quizleague.util.json.codecs.CommandCodecs._
+
+    val cmd = AliasEmailCommand(sender, text, alias)
+    command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(x => Unit)
   }
   
   def leagueStanding(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get.flatMap(

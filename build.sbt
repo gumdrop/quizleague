@@ -5,6 +5,8 @@ import scala.sys.process._
 val circeVersion = "0.13.0"
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 lazy val commonSettings = Seq(
   organization := "quizleague",
   version := "0.0.1",
@@ -38,7 +40,8 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
 
-    assemblyJarName in assembly := "quizleague.jar",
+    //assemblyJarName in assembly := "quizleague.jar",
+    assemblyOutputPath in assembly := new File(file("."), "deploy/quizleague.jar"),
 
 	  libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
     libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.7.9",
@@ -47,7 +50,9 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.7",
     libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1",
     libraryDependencies += "com.lihaoyi" %% "castor" % "0.1.7",
-    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.2.7"
+    //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.2.7",
+    libraryDependencies += "com.sendgrid" % "sendgrid-java" % "4.9.3",
+    libraryDependencies += "org.apache.james" % "apache-mime4j" % "0.8.9"
   ).
   jsSettings(
     scalaJSUseMainModuleInitializer := false,
@@ -57,6 +62,7 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
     libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.2"
+
   )
 
 quizleague.jvm / assembly / assemblyMergeStrategy := {
@@ -74,18 +80,25 @@ quizleague.jvm / assembly / assemblyMergeStrategy := {
 lazy val release = taskKey[Unit]("release to prod")
 lazy val releaseTest = taskKey[Unit]("release to test")
 lazy val buildLocal = taskKey[Unit]("build for local run")
+lazy val runLocal = taskKey[Unit]("run local server")
 lazy val copyFullOpt = taskKey[Unit]("copy release JS")
 lazy val copyFastOpt = taskKey[Unit]("copy test JS")
+lazy val buildAppFile = taskKey[Unit]("build app.yaml")
+
+val baseJSFilename = "quizleague.js"
 
 copyFullOpt := {
   val jsrelease = (fullOptJS in (quizleague.js, Compile)).value
-  jsrelease.data.renameTo(new File(file("."), "jvm/src/main/resources/webapp/quizleague.js"))
+  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
   
 }
 
 copyFastOpt := {
   val jsrelease = (fastOptJS in (quizleague.js, Compile)).value
-  jsrelease.data.renameTo(new File(file("."), "jvm/src/main/resources/webapp/quizleague.js"))
+
+  val mapFile = new File(file(""), s"${jsrelease.data.getParentFile.getPath}/${jsrelease.data.getName}.map" )
+  mapFile.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/$baseJSFilename.map"))
+  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
 
 }
 
@@ -94,19 +107,26 @@ lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
 lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
 
 releaseToProd := {
-  "gcloud app deploy jvm/target/scala-2.12/quizleague.jar --quiet"!
+  "gcloud app deploy deploy/quizleague.jar --quiet --project=chiltern-ql-firestore"!
 }
 
 releaseToTest := {
-  "gcloud app deploy jvm/target/scala-2.12/quizleague.jar --quiet --project=ql-firestore-gb2"!
+  "gcloud app deploy deploy/app.yaml --quiet --project=ql-firestore-gb2"!
 }
 
 buildLocal := Def.sequential(
   copyFastOpt in Compile
 ).value
 
+buildAppFile := {
+  val content = IO.read(new File(file("."), ("app.yaml")))
+  val out = new File(file("."), "deploy/app.yaml")
+  IO.write(out, content.replace("{SENDGRID_API_KEY}", System.getenv("SENDGRID_API_KEY")))
+}
+
 releaseTest := Def.sequential(
   copyFullOpt in Compile,
+  buildAppFile in Compile,
   assembly in (quizleague.jvm, Compile),
   releaseToTest
 ).value
