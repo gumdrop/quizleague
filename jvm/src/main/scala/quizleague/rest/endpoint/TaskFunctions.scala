@@ -1,45 +1,27 @@
 package quizleague.rest.endpoint
 
-
-import javax.ws.rs.core._
-import javax.ws.rs._
-import quizleague.data._
-import quizleague.data.Storage
-import Storage._
-import quizleague.util.json.codecs.CommandCodecs._
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.conversions.RefConversions._
+import quizleague.data.Storage._
+import quizleague.data._
+import quizleague.domain
 import quizleague.domain._
-import quizleague.domain.stats._
 import quizleague.domain.command._
+import quizleague.domain.notification._
 import quizleague.domain.util._
+import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.rest.task.TaskQueue.taskQueue
+
+import java.time.LocalDateTime
 import java.util.UUID.{randomUUID => uuid}
 import java.util.logging.Logger
 
-import quizleague.rest._
-import io.circe._
-import com.google.appengine.api.taskqueue._
-import com.google.appengine.api.taskqueue.TaskOptions.Builder._
-import javax.ws.rs.PathParam
-import quizleague.domain.notification._
-import java.time.LocalDateTime
 
-import quizleague.domain
-
-
-
-@Path("/task")
-class TaskEndpoint {
+class TaskFunctions {
   
   val logger = Logger.getLogger(this.getClass.getName)
   implicit val context = StorageContext
 
-  @POST
-  @Path("/submitresult")
-  def resultSubmit(body: String) = {
-
-    val result = deser[ResultsSubmitCommand](body)
-
+  def resultSubmit(result: ResultsSubmitCommand) = {
     logger.finest(() => s"submit result arrived : $result")
 
     val haveResults = result.fixtures.exists(f => {
@@ -72,18 +54,11 @@ class TaskEndpoint {
             ResultPayload(fixture.key.get.key)))
         }
       })
-
     }
-
   }
   
-  @POST
-  @Path("stats/update/{seasonId}")
-  def statsUpdate(body:String, @PathParam("seasonId") seasonId:String){
-    logger.warning(s"starting stats update with : $body")
-    val fixturesAndKeys = deser[List[(Fixture,Key)]](body)
+  def statsUpdate(seasonId:String, fixturesAndKeys:List[(Fixture,Key)]){
 
-    logger.warning(s"deserialised : $fixturesAndKeys")
     val fixtures = fixturesAndKeys.map({case (fixture,key) => fixture.withKey(key)})
 
     logger.warning(s"loaded fixtures : $fixtures")
@@ -92,12 +67,9 @@ class TaskEndpoint {
     logger.warning(s"loaded season : $season")
 
     fixtures.foreach(StatsWorker.perform(_, season))
-    
   }
   
-  @POST
-  @Path("stats/regenerate/{seasonId}")
-  def statsRegenerate(@PathParam("seasonId") seasonId:String){
+  def statsRegenerate(seasonId:String){
     
      val season = load[Season](seasonId)
      
@@ -111,7 +83,6 @@ class TaskEndpoint {
          LocalDateTime.now(), 
          MaintainMessagePayload(s"Stats regenerated for ${season.startYear}/${season.endYear}")
       ).withKey(key))
-    
   }
   
   private def tables(fixture:Fixture):List[LeagueTable] =   { 
@@ -125,18 +96,13 @@ class TaskEndpoint {
      case _:domain.SubsidiaryCompetition => true
      case _ => false
    }
-
  }
-  
-  
+
   private def fireStatsUpdate(fixture:Fixture, key:Key){
-   import io.circe._, io.circe.syntax._
-    
-   val queue: Queue = QueueFactory.getQueue("stats");
-    
-   val season =  applicationContext().currentSeason
-    
-   queue.add(withUrl(s"/rest/task/stats/update/${season.id}").payload(List((fixture,key)).asJson.toString));
+
+    val season =  applicationContext().currentSeason
+    taskQueue.send(()=> new TaskFunctions().statsUpdate(season.id, List((fixture,key))))
+
   }
   
   private def updateTables(tables:List[LeagueTable], fixture:Fixture){
@@ -150,7 +116,6 @@ class TaskEndpoint {
     logger.finest(() => s"new tables : \n$newTables") 
     
     Storage.saveAll(newTables)
-    
   }
 
   private def saveFixture(user:User,reportIn:Option[String])(result:ResultValues) = {

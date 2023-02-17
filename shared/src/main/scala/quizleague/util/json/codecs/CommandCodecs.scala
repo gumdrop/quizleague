@@ -10,4 +10,7 @@ object CommandCodecs {
     implicit val resultsSubmitDecoder:Decoder[ResultsSubmitCommand] = deriveDecoder
     implicit val teamEmailEncoder:Encoder[TeamEmailCommand] = deriveEncoder
     implicit val teamEmailDecoder:Decoder[TeamEmailCommand] = deriveDecoder
+    implicit val emailEncoder:Encoder[AliasEmailCommand]  = deriveEncoder
+    implicit val emailDecoder: Decoder[AliasEmailCommand] = deriveDecoder
+
 }

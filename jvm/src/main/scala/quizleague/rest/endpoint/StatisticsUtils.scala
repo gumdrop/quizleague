@@ -1,20 +1,16 @@
 package quizleague.rest.endpoint
 
-import java.time.LocalDate
-
+import quizleague.conversions.RefConversions._
+import quizleague.data.Storage._
 import quizleague.domain._
 import quizleague.domain.stats._
-import quizleague.util.json.codecs.DomainCodecs._
-import quizleague.data.Storage._
-import java.util.logging.Logger
-
-import quizleague.conversions.RefConversions._
-import javax.servlet.http._
-import quizleague.domain.LeagueCompetition
 import quizleague.domain.util.LeagueTableRecalculator
 import quizleague.util.StringUtils._
-import java.util.UUID.{randomUUID => uuid}
+import quizleague.util.json.codecs.DomainCodecs._
 
+import java.time.LocalDate
+import java.util.UUID.{randomUUID => uuid}
+import java.util.logging.Logger
 import scala.collection.mutable.Map
 
 

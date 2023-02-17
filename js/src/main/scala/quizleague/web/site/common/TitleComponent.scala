@@ -5,7 +5,6 @@ import quizleague.web.site.ApplicationContextService
 import scalajs.js
 import com.felstar.scalajs.vue._
 import scala.scalajs.js.UndefOr
-import UndefOr._
 
 @js.native
 trait TitleComponent extends VueRxComponent{

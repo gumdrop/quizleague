@@ -1,19 +1,15 @@
 package quizleague.web.model
 
-import scala.scalajs.js
-import scala.scalajs.js.Date
-import scala.scalajs.js.Any.fromBoolean
-import scala.scalajs.js.Any.fromString
-import scala.scalajs.js.annotation.JSExportAll
 import rxscalajs.Observable
+
+import scala.scalajs.js
 
 object CompetitionType extends Enumeration {
   type CompetitionType = Value
   val league, cup, subsidiary, singleton = Value
 }
 
-import CompetitionType._
-import scala.scalajs.js.annotation.ScalaJSDefined
+import quizleague.web.model.CompetitionType._
 import quizleague.web.util.rx.RefObservable
 
 sealed trait Competition extends Model{

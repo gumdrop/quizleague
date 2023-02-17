@@ -32,7 +32,7 @@ object DatabaseComponent extends RouteComponent{
           </v-card>
         </v-dialog>
        <div>
-        <v-btn text href="/rest/entity/dbdownload/dump.json" color="primary" ><v-icon left>mdi-file-download</v-icon>Download</v-btn>
+        <v-btn text href="/rest/entity/dbdownload" color="primary" disabled ><v-icon left>mdi-file-download</v-icon>Download</v-btn>
         </div>
       </v-layout>
     </v-container>

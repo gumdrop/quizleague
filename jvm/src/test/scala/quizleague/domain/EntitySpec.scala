@@ -1,8 +1,9 @@
 package quizleague.domain
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class EntitySpec  extends FlatSpec with Matchers {
+class EntitySpec  extends AnyFlatSpec with Matchers {
 
   "A domain object" should "have a None key initially" in {
     val user = User("id","name","email")

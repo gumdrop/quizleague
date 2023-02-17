@@ -1,15 +1,17 @@
 package quizleague.domain.util
 
-import org.scalatest._
+
 import quizleague.domain._
 import java.time._
 import quizleague.util.conversions.Conversions._
 import org.scalactic.source.Position.apply
 import java.util.UUID.{randomUUID => uuid}
 import quizleague.conversions.RefConversions.StorageContext
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 
-class LeagueTableCalculatorSpec extends FlatSpec with Matchers {
+class LeagueTableCalculatorSpec extends AnyFlatSpec with Matchers {
 
   "A league table" should "be recalculated correctly" in {
 

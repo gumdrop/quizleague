@@ -1,5 +1,6 @@
 package quizleague.web.maintain.database
 
+import org.scalajs.dom.ProgressEvent
 import quizleague.web.maintain._
 import quizleague.web.core._
 import org.scalajs.dom.raw.File
@@ -23,7 +24,7 @@ object DatabaseService{
   def nestedupload(file:File) = {
     val reader = new FileReader()
     val ret = ReplaySubject[Any]()
-    reader.onload = (event:UIEvent) => {
+    reader.onload = (event:ProgressEvent) => {
 
       log(reader.result)
 

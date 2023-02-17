@@ -1,20 +1,14 @@
 package quizleague.rest.mail
 
-import java.util.Properties
-import javax.mail.Session
-import javax.mail.internet.MimeMessage
-import javax.mail.internet.InternetAddress
-import quizleague.domain._
-import javax.mail.Address
-import java.util.logging.Logger
-import java.util.logging.Level
-import javax.mail.Message.RecipientType
-import javax.mail.Transport
-import quizleague.data.Storage._
-import quizleague.conversions.RefConversions._
-import quizleague.util.json.codecs.DomainCodecs._
+import com.sendgrid._
+import com.sendgrid.helpers.mail.Mail
+import com.sendgrid.helpers.mail.objects._
+import quizleague.conversions.RefConversions.{StorageContext, _}
 import quizleague.data._
-import quizleague.conversions.RefConversions.StorageContext
+import quizleague.domain._
+import quizleague.util.json.codecs.DomainCodecs._
+
+import java.util.logging.{Level, Logger}
 
 object EmailSender{
   
@@ -22,7 +16,7 @@ object EmailSender{
  
   def apply(sender: String, recipientName: String, text: String) = new EmailSender().sendAliasMail(sender, recipientName, text)
   
-  def apply(sender: String, text: String, addressees:List[String], recipientType:RecipientType = RecipientType.TO, subject:String = "") = new EmailSender().sendMail(sender, text, applicationContext(),recipientType ,addressees.map(new InternetAddress(_)),subject)
+  def apply(sender: String, text: String, addressees:List[String], subject:String = "") = new EmailSender().sendMail(sender, text, applicationContext(),addressees,subject)
   
 
 }
@@ -36,14 +30,13 @@ private class EmailSender {
 
     try {
 
-      sendMail(sender, text, applicationContext(), RecipientType.TO, team.users.map(user => new InternetAddress(user.email)).toList)
+      sendMail(sender, text, applicationContext(), team.users.map(_.email))
       return
 
-      LOG.fine("No matching addressees for any recipients");
-
     } catch {
-      case e: Exception => LOG.log(Level.SEVERE, "Failure sending mail", e);
+      case e:Exception => LOG.log(Level.SEVERE, "Failure sending mail", e);
     }
+    LOG.fine("No matching addressees for any recipients")
   }
   
   def sendAliasMail(sender: String, recipientName: String, text: String): Unit = {
@@ -52,46 +45,50 @@ private class EmailSender {
 
       val g = applicationContext()
 
-     
         g.emailAliases.filter(_.alias == recipientName).foreach {
           alias =>
             {
-              sendMail(sender, text, g, RecipientType.TO,
-                List(new InternetAddress(alias.user.email)));
+              sendMail(sender, text, g,
+                List(alias.user.email));
               return
             }
 
         }
 
-      LOG.fine("No matching addressees for any recipients");
+      LOG.fine("No matching addressees for any recipients")
 
     } catch {
       case e: Exception => LOG.log(Level.SEVERE, "Failure sending mail", e);
     }
   }
 
-  def sendMail(sender: String, text: String, g: ApplicationContext = applicationContext(), recipientType: RecipientType,
-    addresses: List[Address], subject: String = ""): Unit = {
+  def sendMail(sender: String, text: String, g: ApplicationContext = applicationContext(), addresses: List[String], subject: String = "") = {
 
-    val props = new Properties();
-    val session = Session.getDefaultInstance(props, null);
+    val from = new Email(g.senderEmail)
+    val sub = if (subject.isEmpty()) s"Sent via ${g.leagueName} : From $sender " else s"${g.leagueName} : $subject"
+    val replyTo = new Email(sender)
+    val content = new Content("text/plain", text)
+    val recipients = new Personalization
+    addresses.foreach(to => recipients.addTo(new Email(to)))
+    val mail = new Mail()
+    mail.setFrom(from)
+    mail.setSubject(sub)
+    mail.addContent(content)
+    mail.setReplyTo(replyTo)
+    mail.addPersonalization(recipients)
 
+    val sg = new SendGrid(System.getenv("SENDGRID_API_KEY"))
+    val request = new Request
     try {
-      val outMessage = new MimeMessage(session);
-      outMessage.addRecipients(recipientType, addresses.toArray);
-      outMessage
-        .setSender(new InternetAddress(g.senderEmail));
-      outMessage.setReplyTo(Array(new InternetAddress(sender)))
-
-      outMessage.setText(text);
-      outMessage.setSubject(if (subject.isEmpty()) s"Sent via ${g.leagueName} : From $sender " else s"${g.leagueName} : $subject");
-
-      LOG.fine(s"${outMessage.getFrom()(0)} to ${outMessage.getAllRecipients()(0).toString}");
-
-      Transport.send(outMessage);
+      request.setMethod(Method.POST)
+      request.setEndpoint("mail/send")
+      request.setBody(mail.build)
+      val response = sg.api(request)
+      System.out.println(response.getStatusCode)
+      System.out.println(response.getBody)
+      System.out.println(response.getHeaders)
     } catch {
       case e: Exception => LOG.log(Level.SEVERE, "Failure sending mail", e);
     }
-
   }
 }

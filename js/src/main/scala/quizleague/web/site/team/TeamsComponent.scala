@@ -57,8 +57,5 @@ object StartTeamTitleComponent extends RouteComponent{
         Starting a Team 
       </v-toolbar-title>
     </v-toolbar>"""
-       
-
-
-}
+ }
 

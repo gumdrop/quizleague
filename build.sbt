@@ -2,24 +2,22 @@ name := "Quiz League"
 
 import scala.sys.process._
 
-EclipseKeys.skipParents in ThisBuild := false
-EclipseKeys.withSource := true
-
-val circeVersion = "0.8.0"
-val appengineVersion = "1.9.59"
+val circeVersion = "0.13.0"
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val commonSettings = Seq(
   organization := "quizleague",
   version := "0.0.1",
   scalaVersion := "2.12.3",
-  scalacOptions ++= Seq("-deprecation","-unchecked","-feature"),
+  scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ypartial-unification"),
   resolvers += Resolver.sonatypeRepo("snapshots")
   
 )
 
 lazy val root = project.in(file(".")).
-  aggregate(web, server).settings(commonSettings: _*).
+  aggregate(quizleague.js, quizleague.jvm).settings(commonSettings: _*).
   settings(
     publish := {},
     publishLocal := {},
@@ -27,7 +25,7 @@ lazy val root = project.in(file(".")).
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
 
-lazy val quizleague = crossProject.in(file(".")).
+lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   settings(commonSettings: _*).
   settings( 
     name := "quizleague",
@@ -36,63 +34,108 @@ lazy val quizleague = crossProject.in(file(".")).
 	  "io.circe" %%% "circe-generic",
 	  "io.circe" %%% "circe-parser"
 	).map(_ % circeVersion),
-	
-	libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % "test").
+		libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test"
+  ).
   jvmSettings(
-     name := "quizleague-jvm",
-     
-         
-	libraryDependencies += "com.google.appengine" % "appengine-testing" % appengineVersion % "test",
-	libraryDependencies += "com.google.appengine" % "appengine-api-stubs" % appengineVersion % "test",
-	libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.76.0",
-	libraryDependencies += "com.google.appengine.tools" % "appengine-gcs-client" % "0.8",
-	libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
-    libraryDependencies += "org.glassfish.jersey.containers" % "jersey-container-servlet-core" % "2.25.1",
-    libraryDependencies += "org.eclipse.jetty" % "jetty-server" % "9.4.24.v20191120",
-	//libraryDependencies += "io.netty" % "netty-tcnative-boringssl-static" % "2.0.7.Final",
-    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.0.9"
 
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+
+    //assemblyJarName in assembly := "quizleague.jar",
+    assemblyOutputPath in assembly := new File(file("."), "deploy/quizleague.jar"),
+
+	  libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
+    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.7.9",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-core" % "1.2.6",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-netty-server" % "1.2.6",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.7",
+    libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1",
+    libraryDependencies += "com.lihaoyi" %% "castor" % "0.1.7",
+    //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.2.7",
+    libraryDependencies += "com.sendgrid" % "sendgrid-java" % "4.9.3",
+    libraryDependencies += "org.apache.james" % "apache-mime4j" % "0.8.9"
   ).
   jsSettings(
-    name := "quizleague-js",
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.7",
-    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2",
-    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0-RC2_2019a",
-    libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.0"
+    scalaJSUseMainModuleInitializer := false,
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
+    libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.2"
 
   )
 
-lazy val server = quizleague.jvm.settings(
-  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-).enablePlugins(AppenginePlugin)
-
-lazy val web = quizleague.js.settings(
-	scalaJSUseMainModuleInitializer := false,
-	scalacOptions += "-P:scalajs:sjsDefinedByDefault",
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
-).enablePlugins(ScalaJSPlugin)
+quizleague.jvm / assembly / assemblyMergeStrategy := {
+  case x if x.endsWith("/io.netty.versions.properties") => MergeStrategy.first
+  case x if x.contains("/services") => MergeStrategy.first
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("module-info.class") => MergeStrategy.discard
+  case x if x.endsWith("/module-info.class") => MergeStrategy.discard
+  case x => {
+    val oldStrategy = (quizleague.jvm / assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
+  }
+}
 
 lazy val release = taskKey[Unit]("release to prod")
+lazy val releaseTest = taskKey[Unit]("release to test")
+lazy val buildLocal = taskKey[Unit]("build for local run")
+lazy val runLocal = taskKey[Unit]("run local server")
 lazy val copyFullOpt = taskKey[Unit]("copy release JS")
+lazy val copyFastOpt = taskKey[Unit]("copy test JS")
+lazy val buildAppFile = taskKey[Unit]("build app.yaml")
+
+val baseJSFilename = "quizleague.js"
 
 copyFullOpt := {
   val jsrelease = (fullOptJS in (quizleague.js, Compile)).value
-  jsrelease.data.renameTo(new File(file("."), "jvm/src/main/webapp/quizleague-js-opt.js"))
+  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
   
 }
 
-lazy val execScript = taskKey[Unit]("Execute the shell script")
+copyFastOpt := {
+  val jsrelease = (fastOptJS in (quizleague.js, Compile)).value
 
-execScript := {
-  "gcloud app deploy jvm/target/webapp/WEB-INF/appengine-web.xml --quiet "!
+  val mapFile = new File(file(""), s"${jsrelease.data.getParentFile.getPath}/${jsrelease.data.getName}.map" )
+  mapFile.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/$baseJSFilename.map"))
+  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
+
 }
 
+lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
+
+lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
+
+releaseToProd := {
+  "gcloud app deploy deploy/quizleague.jar --quiet --project=chiltern-ql-firestore"!
+}
+
+releaseToTest := {
+  "gcloud app deploy deploy/app.yaml --quiet --project=ql-firestore-gb2"!
+}
+
+buildLocal := Def.sequential(
+  copyFastOpt in Compile
+).value
+
+buildAppFile := {
+  val content = IO.read(new File(file("."), ("app.yaml")))
+  val out = new File(file("."), "deploy/app.yaml")
+  IO.write(out, content.replace("{SENDGRID_API_KEY}", System.getenv("SENDGRID_API_KEY")))
+}
+
+releaseTest := Def.sequential(
+  copyFullOpt in Compile,
+  buildAppFile in Compile,
+  assembly in (quizleague.jvm, Compile),
+  releaseToTest
+).value
 
 release := Def.sequential(
   copyFullOpt in Compile,
-  webappPrepare in (quizleague.jvm,Compile),
-  execScript
-  
+  buildAppFile in Compile,
+  assembly in (quizleague.jvm, Compile),
+  releaseToProd
 ).value
 
 
