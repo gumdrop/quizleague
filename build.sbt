@@ -133,6 +133,7 @@ releaseTest := Def.sequential(
 
 release := Def.sequential(
   copyFullOpt in Compile,
+  buildAppFile in Compile,
   assembly in (quizleague.jvm, Compile),
   releaseToProd
 ).value
