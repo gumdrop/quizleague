@@ -3,14 +3,15 @@ name := "Quiz League"
 import scala.sys.process._
 
 val circeVersion = "0.13.0"
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+val macroParadiseVersion = "2.1.1"
+addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val commonSettings = Seq(
   organization := "quizleague",
   version := "0.0.1",
-  scalaVersion := "2.12.3",
+  scalaVersion := "2.12.16",
   scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ypartial-unification"),
   resolvers += Resolver.sonatypeRepo("snapshots")
   
@@ -22,7 +23,7 @@ lazy val root = project.in(file(".")).
     publish := {},
     publishLocal := {},
     resolvers += Resolver.sonatypeRepo("releases"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
   )
 
 lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
@@ -38,25 +39,23 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   ).
   jvmSettings(
 
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+    addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
-    //assemblyJarName in assembly := "quizleague.jar",
     assemblyOutputPath in assembly := new File(file("."), "deploy/quizleague.jar"),
 
-	  libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
-    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.7.9",
+    libraryDependencies += "com.google.cloud" % "google-cloud-firestore" % "3.8.1",
     libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-core" % "1.2.6",
-    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-netty-server" % "1.2.6",
-    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.7",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-netty-server" % "1.2.8",
+    libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.8",
     libraryDependencies += "com.google.firebase" % "firebase-admin" % "9.1.1",
-    libraryDependencies += "com.lihaoyi" %% "castor" % "0.1.7",
+    libraryDependencies += "com.lihaoyi" %% "castor" % "0.2.1",
     //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.2.7",
     libraryDependencies += "com.sendgrid" % "sendgrid-java" % "4.9.3",
     libraryDependencies += "org.apache.james" % "apache-mime4j" % "0.8.9"
   ).
   jsSettings(
     scalaJSUseMainModuleInitializer := false,
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+    addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
@@ -107,7 +106,7 @@ lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
 lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
 
 releaseToProd := {
-  "gcloud app deploy deploy/quizleague.jar --quiet --project=chiltern-ql-firestore"!
+  "gcloud app deploy deploy/app.yaml --quiet --project=chiltern-ql-firestore"!
 }
 
 releaseToTest := {
