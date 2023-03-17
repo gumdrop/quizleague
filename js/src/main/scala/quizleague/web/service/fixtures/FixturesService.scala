@@ -45,6 +45,7 @@ trait FixturesGetService extends GetService[Fixtures] with FixturesNames{
     dom.description,
     dom.date,
     dom.start,
+    dom.questionsUrl.getOrElse(null),
     fixtureService.list(dom.key),
     competitionService.get(Key(dom.key.get.parentKey.get)))
   
@@ -55,7 +56,7 @@ trait FixturesGetService extends GetService[Fixtures] with FixturesNames{
 trait FixturesPutService extends PutService[Fixtures] with FixturesGetService{
   
   override val fixtureService:FixturePutService
-  override protected def mapIn(model:Model) = Dom(model.id, model.description, model.date, model.start)
+  override protected def mapIn(model:Model) = Dom(model.id, model.description, model.date, model.start, Option(model.questionsUrl))
   override protected def make() = Dom(newId, "",LocalDate.now,LocalTime.of(20,30))
   
   def instance(competition:Competition, fixtures:js.Array[Fixtures]) = {
@@ -79,7 +80,7 @@ trait FixturesPutService extends PutService[Fixtures] with FixturesGetService{
     println("copy fixtures")
     
     val fx = mapIn(in)
-    val dom = Dom(newId,fx.description, fx.date,fx.start)
+    val dom = Dom(newId,fx.description, fx.date,fx.start, fx.questionsUrl)
     save(dom)
     mapOutSparse(dom)    
   }

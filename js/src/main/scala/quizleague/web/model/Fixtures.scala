@@ -12,6 +12,7 @@ class Fixtures(
     val description:String,
     val date:String,
     val start:String,
+    val questionsUrl:String,
     val fixture: Observable[js.Array[Fixture]],
     val parent: Observable[Competition]) extends Model
     
@@ -20,8 +21,9 @@ object Fixtures{
     description:String,
     date:String,
     start:String,
+    questionsUrl:String = null,
     fixture: Observable[js.Array[Fixture]] = Observable.of(js.Array()),
-    parent: Observable[Competition]) = new Fixtures(id,description,date,start, fixture, parent)
+    parent: Observable[Competition]) = new Fixtures(id,description,date,start,questionsUrl,fixture,parent)
 }
     
 

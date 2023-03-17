@@ -27,7 +27,7 @@ object MaintainAppComponent extends Component {
       clipped-left
       scroll-off-screen
       >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"  v-show="$vuetify.breakpoint.mdAndDown"></v-app-bar-nav-icon>
       <v-toolbar-title class="white--text" >
         
         <span>Quizleague Data Maintenance</span>

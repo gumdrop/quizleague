@@ -8,6 +8,7 @@ case class Fixtures(
     description:String,
     date:LocalDate,
     start:LocalTime,
+    questionsUrl:Option[String] = None,
     retired:Boolean = false) extends Entity
     
 case class Fixture(

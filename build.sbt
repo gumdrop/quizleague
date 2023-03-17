@@ -98,6 +98,7 @@ copyFastOpt := {
   val mapFile = new File(file(""), s"${jsrelease.data.getParentFile.getPath}/${jsrelease.data.getName}.map" )
   mapFile.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/${mapFile.getName}"))
   jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
+  (copyResources in (quizleague.jvm, Compile)).value
 
 }
 

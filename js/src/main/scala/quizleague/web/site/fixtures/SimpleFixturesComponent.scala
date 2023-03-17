@@ -1,22 +1,14 @@
 package quizleague.web.site.fixtures
 
-import scala.scalajs.js
-import quizleague.web.model.Fixture
-import quizleague.web.util.rx._
-import quizleague.web.core._
-import rxscalajs.Observable
-import quizleague.web.core.IdComponent
-import com.felstar.scalajs.vue.VueComponent
 import com.felstar.scalajs.vue._
-import quizleague.web.core.{DialogComponentConfig, KeyComponent, _}
-import KeyComponent._
-import quizleague.web.model.{Fixture, Team}
+import quizleague.web.core.KeyComponent._
+import quizleague.web.core._
+import quizleague.web.model.{Fixture, Fixtures}
 import quizleague.web.site.results.TableUtils
 import rxscalajs.Observable
-import quizleague.web.core.DialogComponentConfig
-import org.scalajs.dom
-import quizleague.web.site.chat.ChatService
-import quizleague.web.site.user.SiteUserService
+
+import java.time.LocalDate.now
+import scala.scalajs.js
 
 
 @js.native
@@ -153,4 +145,18 @@ object ReportsComponent extends Component{
   
   prop("keyval")
   subscription("reports", "id")(c => ReportService.list(key(c)))
+}
+
+
+@js.native
+trait QuestionsLinkComponent extends VueRxComponent {
+  def fixtures: Fixtures = js.native
+}
+object QuestionsLinkComponent extends Component{
+  type facade = QuestionsLinkComponent
+  val name = "ql-questions-link"
+  val template = """<a :href="fixtures.questionsUrl" v-if="visible(fixtures)" target="_blank"><slot></slot></a>"""
+
+  prop("fixtures")
+  method("visible")((fixtures:Fixtures) => fixtures.questionsUrl != null && fixtures.date < now().minusWeeks(3).toString)
 }

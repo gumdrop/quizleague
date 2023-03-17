@@ -38,7 +38,7 @@ import quizleague.web.site.chat.ChatService
 
 object FixturesModule extends Module {
 
-  override val components = @@(SimpleFixturesComponent, AllFixturesComponent)
+  override val components = @@(SimpleFixturesComponent, AllFixturesComponent, QuestionsLinkComponent)
 }
 
 object FixturesService extends FixturesGetService {
@@ -95,7 +95,11 @@ object FixtureService extends FixtureGetService with PostService{
   override val fixturesService = FixturesService
   override val reportService  = ReportService
 
-  def fixturesFrom(fixtures:Observable[js.Array[Fixtures]], teamId:String, take:Int = Integer.MAX_VALUE, sortOrder:Ordering[String] = Asc[String]) = {
+  def fixturesFrom( fixtures:Observable[js.Array[Fixtures]],
+                    teamId:String,
+                    take:Int = Integer.MAX_VALUE,
+                    sortOrder:Ordering[String] = Asc[String]) = {
+
     val tf = fixturesToFixtureList(fixtures.map(_.sortBy(_.date)(sortOrder)))
       .map(_.filter(f => f.home.id == teamId || f.away.id == teamId))
 
