@@ -54,6 +54,7 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "org.apache.james" % "apache-mime4j" % "0.8.9"
   ).
   jsSettings(
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
     scalaJSUseMainModuleInitializer := false,
     addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 

@@ -15,7 +15,7 @@ import scala.scalajs.js.annotation.JSExport
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 
-@JSExportTopLevel("Site")
+
 object SiteApp{
 
   val dateFormatter = new DateTimeFormatterBuilder()
@@ -24,7 +24,7 @@ object SiteApp{
     .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     .toFormatter
 
-  @JSExport
+  @JSExportTopLevel("main")
   def main():Unit = {
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
