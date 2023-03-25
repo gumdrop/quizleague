@@ -46,21 +46,31 @@ object FixturesService extends FixturesGetService {
   override val competitionService = CompetitionService
 
   def nextFixtures(seasonId: String): Observable[js.Array[Fixtures]] = {
-    val today = LocalDate.now.toString
-    val now = LocalDateTime.now.toString
+    def now = LocalDateTime.now.toString
     val fixtures = seasonFixtures(seasonId)
 
-    fixtures.map(_.filter(f => now <= s"${f.date}T${f.start}").toSeq.sortBy(_.date).headOption.fold(js.Array[Fixtures]())(f => js.Array(f)))
+    fixtures
+      .map(_.filter(f => now <= s"${f.date}T${f.start}")
+        .groupBy(_.date)
+        .toList
+        .sortBy { case (k, v) => k }(Asc)
+        .take(1)
+        .flatMap { case (k, v) => v }
+        .toJSArray)
   }
   def latestResults(seasonId:String): Observable[js.Array[Fixtures]] = {
-
-    val now = LocalDateTime.now.toString
-
+    def now = LocalDateTime.now.toString
     val fixtures = seasonFixtures(seasonId)
 
-    fixtures.map(_.filter(f => now >= s"${f.date}T${f.start}").toSeq.sortBy(_.date)(Desc).headOption.fold(js.Array[Fixtures]())(f => js.Array(f)))
-
-   }
+    fixtures
+      .map(_.filter(f => now >= s"${f.date}T${f.start}")
+        .groupBy(_.date)
+        .toList
+        .sortBy{case (k,v) => k}(Desc)
+        .take(1)
+        .flatMap{case (k,v) => v}
+        .toJSArray)
+  }
 
   def activeFixtures(seasonId: String, take:Int = Integer.MAX_VALUE) = {
     val today = LocalDate.now.toString()
