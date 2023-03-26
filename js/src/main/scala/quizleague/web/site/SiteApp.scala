@@ -8,14 +8,14 @@ import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 
 import quill.VueQuillEditor
 import quizleague.web.util.rx._
+import quizleague.web.core._
 import rxscalajs.Observable
 import showdown.VueShowdown
 
-import scala.scalajs.js.annotation.JSExport
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 
-@JSExportTopLevel("Site")
+
 object SiteApp{
 
   val dateFormatter = new DateTimeFormatterBuilder()
@@ -24,7 +24,7 @@ object SiteApp{
     .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     .toFormatter
 
-  @JSExport
+  @JSExportTopLevel("main", "main")
   def main():Unit = {
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
@@ -35,7 +35,7 @@ object SiteApp{
     Vue.filter("wrap", (obj:js.Any) => Observable.just(obj))
   new Vue(
         literal(el="#app",
-        router = Router(SiteModule(), scrollBehavior = () => js.Dynamic.literal(x=0,y=0)
+        router = Router(SiteModule(), scrollBehavior = () => $(x=0,y=0)
         ),
           vuetify = new Vuetify()
       )

@@ -7,7 +7,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <link href='main.css' rel="stylesheet">
+    <link href='/main.css' rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel="stylesheet">
     <link rel="stylesheet" href="//cdn.materialdesignicons.com/4.2.95/css/materialdesignicons.min.css">
     <link href="https://unpkg.com/vuetify@2.2.34/dist/vuetify.min.css" rel="stylesheet">
@@ -34,13 +34,11 @@
     <script src="https://unpkg.com/firebase@7.15.4/firebase-firestore.js"></script>
 </head>
 <body>
-<div id="maintain-app">
-    <ql-maintain-app></ql-maintain-app>
-</div>
+    <div id="maintain-app">
+        <ql-maintain-app></ql-maintain-app>
+    </div>
 
-
-<script type="text/javascript" src="/quizleague.js"></script>
-<script>Maintain.main()</script>
+     <script type="module" src="/maintain.js"></script>
 </body>
 </html>
 

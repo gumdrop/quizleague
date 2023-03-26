@@ -1,6 +1,8 @@
 name := "Quiz League"
 
 import scala.sys.process._
+import org.scalajs.linker.interface.ModuleInitializer
+
 
 val circeVersion = "0.13.0"
 val macroParadiseVersion = "2.1.1"
@@ -54,6 +56,13 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "org.apache.james" % "apache-mime4j" % "0.8.9"
   ).
   jsSettings(
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
+    scalaJSModuleInitializers in Compile += {
+      ModuleInitializer.mainMethod("quizleague.web.site.SiteApp", "main").withModuleID("main")
+    },
+    scalaJSModuleInitializers in Compile += {
+      ModuleInitializer.mainMethod("quizleague.web.maintain.MaintainApp", "main").withModuleID("maintain")
+    },
     scalaJSUseMainModuleInitializer := false,
     addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
@@ -84,22 +93,15 @@ lazy val copyFullOpt = taskKey[Unit]("copy release JS")
 lazy val copyFastOpt = taskKey[Unit]("copy test JS")
 lazy val buildAppFile = taskKey[Unit]("build app.yaml")
 
-val baseJSFilename = "quizleague.js"
-
 copyFullOpt := {
-  val jsrelease = (fullOptJS in (quizleague.js, Compile)).value
-  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
-  
+  val jsrelease = (fullLinkJSOutput in (quizleague.js, Compile)).value
+  jsrelease.listFiles((dir,name)=> name.endsWith(".js")).map(f => f.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/${f.getName}")))
 }
 
 copyFastOpt := {
-  val jsrelease = (fastOptJS in (quizleague.js, Compile)).value
-
-  val mapFile = new File(file(""), s"${jsrelease.data.getParentFile.getPath}/${jsrelease.data.getName}.map" )
-  mapFile.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/${mapFile.getName}"))
-  jsrelease.data.renameTo(new File(file("."), s"jvm/src/main/resources/webapp/$baseJSFilename"))
+  val jsrelease = (fastLinkJSOutput in (quizleague.js, Compile)).value
+  jsrelease.listFiles().map(f => f.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/${f.getName}")))
   (copyResources in (quizleague.jvm, Compile)).value
-
 }
 
 lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
