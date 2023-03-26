@@ -16,15 +16,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object MaintainApp{
 
-  @JSExportTopLevel("maintain","dummy-module")
+  @JSExportTopLevel("maintain", "maintain")
   def main():Unit = {
-
-    val resultPromise: js.Promise[Vue] = js.dynamicImport {
-      App()
-    }
-    for (result <- resultPromise.toFuture) {
-      //noop
-    }
+  App()
 } }
 
 object App {
