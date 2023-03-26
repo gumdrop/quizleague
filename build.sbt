@@ -60,7 +60,7 @@ lazy val quizleague = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-    libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.2"
+    libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.3"
 
   )
 
