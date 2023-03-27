@@ -94,6 +94,8 @@ lazy val copyFastOpt = taskKey[Unit]("copy test JS")
 lazy val buildAppFile = taskKey[Unit]("build app.yaml")
 
 copyFullOpt := {
+  val webapp = new File(file("."),s"jvm/src/main/resources/webapp")
+  webapp.listFiles((dir,name) => name.endsWith(".js.map") || name.endsWith(".js")).map(f => f.delete())
   val jsrelease = (fullLinkJSOutput in (quizleague.js, Compile)).value
   jsrelease.listFiles((dir,name)=> name.endsWith(".js")).map(f => f.renameTo(new File(file("."),s"jvm/src/main/resources/webapp/${f.getName}")))
 }

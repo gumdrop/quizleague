@@ -38,8 +38,8 @@ import quizleague.web.util.Logging._
 object TeamModule extends Module{
   
   override val components = @@(TeamComponent,TeamTitle, TeamFixturesComponent, TeamNameComponent, TeamResultsComponent,ResponsiveTeamNameComponent)
-  
-  override val routes = @@(      
+
+  override val routes = @@(
       
       RouteConfig(path = "/team/start", 
           components = Map("default" -> StartTeamPage, "title" -> StartTeamTitleComponent,"sidenav" -> TeamMenuComponent)),
@@ -53,7 +53,7 @@ object TeamModule extends Module{
       RouteConfig(path = "/team/:id/results", 
           components = Map("default" -> TeamResultsPage, "title" -> TeamResultsTitle,"sidenav" -> TeamMenuComponent)),
       RouteConfig(path = "/team/:id/stats", 
-          components = Map("default" -> TeamStatsPage, "title" -> TeamStatsTitle,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamStatsPage}}, "title" -> {() => js.dynamicImport{TeamStatsTitle}},"sidenav" -> TeamMenuComponent)),
       RouteConfig(path = "/team", 
           components = Map("default" -> TeamsComponent, "title" -> TeamsTitleComponent,"sidenav" -> TeamMenuComponent)),
   )
