@@ -37,25 +37,25 @@ import quizleague.web.util.Logging._
 
 object TeamModule extends Module{
   
-  override val components = @@(TeamComponent,TeamTitle, TeamFixturesComponent, TeamNameComponent, TeamResultsComponent,ResponsiveTeamNameComponent)
+  override val components = @@(TeamNameComponent, ResponsiveTeamNameComponent)
 
   override val routes = @@(
       
       RouteConfig(path = "/team/start", 
-          components = Map("default" -> StartTeamPage, "title" -> StartTeamTitleComponent,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{StartTeamPage}}, "title" -> {() => js.dynamicImport{StartTeamTitleComponent}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/edit",
-          components = Map("default" -> TeamEditPage, "sidenav" -> TeamMenuComponent),
+          components = Map("default" -> {() => js.dynamicImport{TeamEditPage}}, "sidenav" -> {() => js.dynamicImport{TeamMenuComponent}}),
           beforeEnter = LoginService.routeGuard _),
       RouteConfig(path = "/team/:id",
-          components = Map("default" -> TeamPage, "title" -> TeamTitleComponent,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamPage}}, "title" -> {() => js.dynamicImport{TeamTitleComponent}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/:id/fixtures", 
-          components = Map("default" -> TeamFixturesPage, "title" -> TeamFixturesTitle,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamFixturesPage}}, "title" -> {() => js.dynamicImport{TeamFixturesTitle}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/:id/results", 
-          components = Map("default" -> TeamResultsPage, "title" -> TeamResultsTitle,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamResultsPage}}, "title" -> {() => js.dynamicImport{TeamResultsTitle}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/:id/stats", 
-          components = Map("default" -> {() => js.dynamicImport{TeamStatsPage}}, "title" -> {() => js.dynamicImport{TeamStatsTitle}},"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamStatsPage}}, "title" -> {() => js.dynamicImport{TeamStatsTitle}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team", 
-          components = Map("default" -> TeamsComponent, "title" -> TeamsTitleComponent,"sidenav" -> TeamMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{TeamsComponent}}, "title" -> {() => js.dynamicImport{TeamsTitleComponent}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
   )
 
       

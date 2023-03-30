@@ -27,7 +27,7 @@ object RouteConfig{
       components = if(components == null) null else components.map{case(k,v) =>
         (v:Any) match {
           case a:Component => (k,a())
-          case a:(Function0[Promise[Component]]) => (k,{() => a().map(_()).toJSPromise}:js.Function)
+          case a:Function0[Promise[Component]] => (k,{() => a().map(_()).toJSPromise}:js.Function)
         }
       }.toJSDictionary,
       redirect = redirect,

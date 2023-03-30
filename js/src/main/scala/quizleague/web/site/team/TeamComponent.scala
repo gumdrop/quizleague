@@ -19,6 +19,7 @@ import quizleague.web.site.login.LoginService
 
 object TeamPage extends RouteComponent{
   override val template = """<ql-team :id="$route.params.id"></ql-team>"""
+  components(TeamComponent)
 }
 
 @js.native
@@ -50,6 +51,7 @@ object TeamComponent extends Component with GridSizeComponentConfig{
 
 object TeamTitleComponent extends RouteComponent {
   override val template = """<ql-team-title :id="$route.params.id"></ql-team-title>"""
+  components(TeamTitle)
 }
 
 @js.native
