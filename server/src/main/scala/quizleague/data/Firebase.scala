@@ -24,7 +24,7 @@ object Storage extends StorageUtils {
   private def makedataStore = {
     val firestore = new Firestore()
     if(App.isLocal) {
-      firestore.settings(literal(host = "localhost:8082", ssl = false).asInstanceOf[Settings])
+      firestore.settings(literal(host = App.emulatorAddr, ssl = false).asInstanceOf[Settings])
     }
     firestore
   }
@@ -111,7 +111,7 @@ object Storage extends StorageUtils {
   }
 
   private def save(key:Key, json: Json) = {
-      println(s"key: ${key.key} \njson:${json.toString()}")
+      if(App.isLocal) println(s"Saving : \nkey: ${key.key} \njson:${json.toString()}")
 
       val ent = convertJsonToJs(json)
       val ref = datastore.doc(key.key)

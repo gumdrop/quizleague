@@ -13,6 +13,7 @@ import io.scalajs.nodejs.path.Path
 object App {
 
   val isLocal = Process.env("FIRESTORE_EMULATOR_HOST").isDefined
+  val emulatorAddr = Process.env("FIRESTORE_EMULATOR_HOST").getOrElse("")
 
   def main(args: Array[String]): Unit = {
     // create the Express application instance
