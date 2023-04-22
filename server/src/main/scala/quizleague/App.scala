@@ -4,6 +4,7 @@ import io.scalajs.npm.express._
 import io.scalajs.nodejs.process.Process
 import quizleague.endpoint.EntityEndpoints
 import quizleague.endpoint.SiteEndpoints
+import quizleague.endpoint.CalendarEndpoints
 
 import scala.scalajs.js
 import io.scalajs.nodejs.path.Path
@@ -26,6 +27,7 @@ object App {
     // setup the server with routes
     EntityEndpoints.configure(app)
     SiteEndpoints.configure(app)
+    CalendarEndpoints.configure(app)
     val server = app
        .use("/", (req:Request,res:Response) => {
         if(req.originalUrl.contains("/maintain/"))
