@@ -33,13 +33,7 @@ object CalendarHandler {
       val query = collection[CalendarCache](None).where("id","=",id).where("updated",">",dateTime)
       val results = await(runQuery[CalendarCache](query))
 
-      if(!results.headOption.isDefined)
-        {
-          await(saveNewIcal())
-        }
-      else {
-        results.headOption.get.ical
-      }
+      await(results.headOption.fold(saveNewIcal())(cache => Future{cache.ical}))
     }
     
     private def formatEvent(event:BaseEvent, text:String):Future[String] = async{
