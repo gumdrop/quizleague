@@ -24,12 +24,14 @@ package quizleague{
       convertJsonToJs(encoder(payload))
     }
 
-    def send[T](result:Future[T], res:Response)(implicit encoder: Encoder[T]) = {
+    def send[T](result: Future[T], res: Response)(implicit encoder: Encoder[T]): Unit = {
       result.foreach(t => res.json(asJs(t)))
     }
 
-    def send[T](result:T, res: Response)(implicit encoder: Encoder[T]) = {
+    def send[T](result: T, res: Response)(implicit encoder: Encoder[T]): Unit = {
       res.json(asJs(result))
     }
+
+    def param(name: String, req: Request): Option[String] = req.params.get(name)
   }
 }
