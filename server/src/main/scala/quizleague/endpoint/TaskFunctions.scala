@@ -74,13 +74,7 @@ object TaskFunctions {
 
   private def updateTables(tables: List[LeagueTable], fixture: Fixture) = {
 
-    //logger.finest(() => s"entering updateTables : \nfixture:$fixture")
-
-    //logger.finest(() => s"tables : \n$tables")
-
     val newTables = LeagueTableRecalculator.recalculate(tables, List(fixture))
-
-    //logger.finest(() => s"new tables : \n$newTables")
 
     saveAll(newTables)
   }
@@ -89,10 +83,7 @@ object TaskFunctions {
 
     val fixtures = fixturesAndKeys.map({ case (fixture, key) => fixture.withKey(key) })
 
-    //logger.warning(s"loaded fixtures : $fixtures")
     val season = await(load[Season](seasonId))
-
-    //logger.warning(s"loaded season : $season")
 
     fixtures.foreach(StatsWorker.perform(_, season))
   }
@@ -102,8 +93,6 @@ object TaskFunctions {
       val fixture = await(load[Fixture](result.fixtureKey))
       val isSubsidiary = await(subsidiary(fixture))
       val report = reportIn.filter(r => !r.trim.isEmpty && !isSubsidiary)
-
-      //logger.finest(() => s"entering saveFixture : \nuser : $user\nreport : $report\nresult:$result")
 
       def newText(reportText: String) = async {
         val id = uuid.toString
@@ -121,9 +110,6 @@ object TaskFunctions {
         Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid.toString))
       }
 
-
-      //logger.finest(() => s"fixture : \n:$fixture")
-
       val res = fixture.copy(result = fixture.result.fold(newResult())(Some(_))).withKey(fixture.key)
 
       val it = report.iterator
@@ -131,8 +117,6 @@ object TaskFunctions {
         val reportText = it.next()
         save(await(newReport(reportText)))
       }
-
-      //logger.finest(() => s"made result : \nresult:$res")
 
       save(res)
     }.flatten
@@ -142,11 +126,7 @@ object TaskFunctions {
 
     val teams = await(list[Team])
 
-    //logger.finest(() => s"teams : \n$teams")
-
     val team = teams.filter(t => t.users.exists(_.id == user.id)).head
-
-    //logger.finest(() => s"team : \n$team")
 
     team
   }

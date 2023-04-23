@@ -25,7 +25,14 @@ package quizleague{
     }
 
     def send[T](result: Future[T], res: Response)(implicit encoder: Encoder[T]): Unit = {
-      result.foreach(t => res.json(asJs(t)))
+      def failure(t:Throwable) = {
+        res.status(500)
+        res.statusMessage = "Internal server error"
+        res.send(t.getMessage)
+       }
+      def success(value:T) = res.json(asJs(value))
+
+      result.onComplete(t => t.fold(failure _, success _))
     }
 
     def send[T](result: T, res: Response)(implicit encoder: Encoder[T]): Unit = {

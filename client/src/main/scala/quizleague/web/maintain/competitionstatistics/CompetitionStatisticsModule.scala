@@ -12,8 +12,7 @@ object CompetitionStatisticsModule extends Module{
   override val routes = @@(
       RouteConfig(path = "/maintain/competitionstatistics", components = Map("default" -> CompetitionStatisticsListComponent)),
       RouteConfig(path="/maintain/competitionstatistics/:id", components = Map("default" -> CompetitionStatisticsComponent))
-       )
-      
+  )
 }
 
 
@@ -22,7 +21,6 @@ object CompetitionStatisticsService extends CompetitionStatisticsGetService with
   override val seasonService = SeasonService
   override val competitionService = CompetitionService
 
-  def resultEntryInstance() = new ResultEntry(null,null,null,null,null)
-
+  def resultEntryInstance() = new ResultEntry("",null,null,null,null)
 }
 

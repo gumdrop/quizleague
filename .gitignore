@@ -46,3 +46,4 @@ firestore.rules
 /.bloop/
 /server/app.yaml
 /server/connections/
+/project/.bloop/
