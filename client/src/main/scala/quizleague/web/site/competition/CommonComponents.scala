@@ -140,7 +140,7 @@ object AllResults extends ResultsComponent with GridSizeComponentConfig{
     <v-layout column>
     <v-flex v-for="results in latestResults" :key="results.id">
       <v-card>
-        <v-card-title primary-title><h3 class="headline mb-0">{{results.date | date("d MMMM yyyy")}} : {{results.description}}</h3></v-card-title>
+        <v-card-title primary-title><ql-responsive-header>{{results.date | date("d MMMM yyyy")}} : {{results.description}}</ql-responsive-header></v-card-title>
         <v-card-text>
             <ql-fixtures-simple :fixtures="results.fixture" ></ql-fixtures-simple>
           </div>
@@ -166,7 +166,7 @@ object RemainingFixtures extends Component with GridSizeComponentConfig{
       <v-layout column>
         <v-flex v-for="fixtures in nextFixtures" :key="fixtures.id">
           <v-card>
-            <v-card-title primary-title><h3 class="headline mb-0">{{fixtures.date | date("d MMMM yyyy")}} : {{fixtures.description}}</h3></v-card-title>
+            <v-card-title primary-title><ql-responsive-header>{{fixtures.date | date("d MMMM yyyy")}} : {{fixtures.description}}</ql-responsive-header></v-card-title>
             <v-card-text>
                 <ql-fixtures-simple :fixtures="fixtures.fixture" ></ql-fixtures-simple>
             </v-card-text>

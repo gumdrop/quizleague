@@ -4,8 +4,8 @@ import scalajs.js
 import js.Dynamic.literal
 import js.JSConverters._
 import com.felstar.scalajs.vue._
-import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import quill.VueQuillEditor
 import quizleague.web.util.rx._
 import quizleague.web.core._
