@@ -70,16 +70,15 @@ lazy val server = (project in file("server"))
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.3"
     )
 
-lazy val copyDevServer = taskKey[Unit]("copy test JS")
-lazy val copyServer = taskKey[Unit]("copy test JS")
+lazy val devServer = taskKey[Unit]("copy test JS")
+lazy val prodServer = taskKey[Unit]("copy test JS")
 lazy val release = taskKey[Unit]("release to prod")
 lazy val releaseTest = taskKey[Unit]("release to test")
-lazy val buildLocal = taskKey[Unit]("build for local run")
-lazy val copyClient = taskKey[Unit]("copy release JS")
+lazy val prodClient = taskKey[Unit]("copy release JS")
 lazy val copyTestClient = taskKey[Unit]("copy test JS")
 lazy val copyTestConnection = taskKey[Unit]("copy test connection file")
 lazy val copyConnection = taskKey[Unit]("copy connection file")
-lazy val copyDevClient = taskKey[Unit]("copy dev JS")
+lazy val devClient = taskKey[Unit]("copy dev JS")
 lazy val buildAppFile = taskKey[Unit]("build app.yaml")
 lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
 lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
@@ -92,12 +91,12 @@ buildAppFile := {
     IO.write(out, content.replace("{SENDGRID_API_KEY}", System.getenv("SENDGRID_API_KEY")))
 }
 
-copyDevServer := {
+devServer := {
   val jsrelease = (server / Compile / fastLinkJSOutput).value
   IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/${f.getName}"))))
 }
 
-copyDevClient := {
+devClient := {
   val built = new File(file("."),s"server/built")
   built.listFiles((dir,name) => name.endsWith(".js.map") || name.endsWith(".js")).foreach(f => f.delete())
   copyConnection.value
@@ -105,7 +104,7 @@ copyDevClient := {
   IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/built/${f.getName}"))))
 }
 
-copyServer := {
+prodServer := {
   val jsrelease = (server / Compile / fullLinkJSOutput).value
   IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/${f.getName}"))))
 }
@@ -125,7 +124,7 @@ copyConnection := {
   copyConnectionFiles("chiltern-ql-firestore")
 }
 
-copyClient := {
+prodClient := {
   val built = new File(file("."),s"server/built")
   built.listFiles((dir,name) => name.contains(".js")).foreach(f => f.delete())
   val jsrelease =  (client / Compile / fullLinkJSOutput).value
@@ -142,16 +141,16 @@ releaseToProd := {
 
 releaseTest := Def.sequential(
   copyTestConnection,
-  Compile / copyServer,
-  Compile / copyClient,
+  Compile / prodServer,
+  Compile / prodClient,
   Compile / buildAppFile,
   releaseToTest
 ).value
 
 release := Def.sequential(
   copyConnection,
-  Compile / copyServer,
-  Compile / copyClient,
+  Compile / prodServer,
+  Compile / prodClient,
   Compile / buildAppFile,
   releaseToProd
 ).value
