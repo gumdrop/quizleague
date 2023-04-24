@@ -1,2 +1,4 @@
 /bin/
 /package-lock.json
+/connections/Connection_chiltern-ql-firestore.scala
+/connections/Connection_ql-firestore-gb2.scala
