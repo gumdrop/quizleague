@@ -14,7 +14,7 @@ lazy val commonSettings = Seq(
     scalaVersion := "2.12.16",
     scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ypartial-unification"),
     scalacOptions += "-Xasync",
-    resolvers += Resolver.sonatypeRepo("snapshots"),
+    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
         "io.circe" %%% "circe-core",
         "io.circe" %%% "circe-generic",
@@ -55,10 +55,10 @@ lazy val server = (project in file("server"))
     .settings(commonSettings: _*)
     .settings(
       scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
-      scalaJSModuleInitializers in Compile += {
+      Compile / scalaJSModuleInitializers += {
         ModuleInitializer.mainMethod("quizleague.web.site.SiteApp", "main").withModuleID("main")
       },
-      scalaJSModuleInitializers in Compile += {
+      Compile / scalaJSModuleInitializers += {
         ModuleInitializer.mainMethod("quizleague.web.maintain.MaintainApp", "main").withModuleID("maintain")
       },
       scalaJSUseMainModuleInitializer := false,
@@ -93,34 +93,26 @@ buildAppFile := {
 }
 
 copyDevServer := {
-  val jsrelease = (fastLinkJSOutput in (server, Compile)).value
-  jsrelease.listFiles().map(f => f.renameTo(new File(file("."),s"server/${f.getName}")))
+  val jsrelease = (server / Compile / fastLinkJSOutput).value
+  IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/${f.getName}"))))
 }
 
 copyDevClient := {
   val built = new File(file("."),s"server/built")
-  built.listFiles((dir,name) => name.endsWith(".js.map") || name.endsWith(".js")).map(f => f.delete())
+  built.listFiles((dir,name) => name.endsWith(".js.map") || name.endsWith(".js")).foreach(f => f.delete())
   copyConnection.value
-  val jsrelease = (fastLinkJSOutput in (client, Compile)).value
-  jsrelease.listFiles().map(f => f.renameTo(new File(file("."),s"server/built/${f.getName}")))
-  revertConnection
+  val jsrelease = (client / Compile / fastLinkJSOutput).value
+  IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/built/${f.getName}"))))
 }
 
 copyServer := {
-  val jsrelease = (fullLinkJSOutput in (server, Compile)).value
-  jsrelease.listFiles().map(f => f.renameTo(new File(file("."),s"server/${f.getName}")))
+  val jsrelease = (server / Compile / fullLinkJSOutput).value
+  IO.copy(jsrelease.listFiles().map(f => (f, new File(file("."),s"server/${f.getName}"))))
 }
 
 def copyConnectionFiles(gcpProject:String) = {
-  val connection = new File(file("."), s"server/connections/Connection_$gcpProject.scala")
-  val out = new File(file("."), "shared/src/main/scala/quizleague/firestore/Connection.scala")
-  out.delete()
-  IO.copyFile(connection, out)
-}
-
-def revertConnection = {
-  val connection = new File(file("."), s"server/connections/Connection.scala")
-  val out = new File(file("."), "shared/src/main/scala/quizleague/firestore/Connection.scala")
+  val connection = new File(file("."), s"client/connections/Connection_$gcpProject.scala")
+  val out = new File(file("."), "client/src/main/scala/quizleague/firestore/Connection.scala")
   out.delete()
   IO.copyFile(connection, out)
 }
@@ -135,10 +127,9 @@ copyConnection := {
 
 copyClient := {
   val built = new File(file("."),s"server/built")
-  built.listFiles((dir,name) => name.endsWith(".js.map") || name.endsWith(".js")).map(f => f.delete())
-  val jsrelease = (fullLinkJSOutput in (client, Compile)).value
-  jsrelease.listFiles((dir,name)=> name.endsWith(".js")).map(f => f.renameTo(new File(file("."),s"server/built/${f.getName}")))
-  revertConnection
+  built.listFiles((dir,name) => name.contains(".js")).foreach(f => f.delete())
+  val jsrelease =  (client / Compile / fullLinkJSOutput).value
+  IO.copy(jsrelease.listFiles((dir,name)=> name.endsWith(".js")).map(f => (f, new File(file("."),s"server/built/${f.getName}"))))
 }
 
 releaseToTest := {
@@ -151,16 +142,16 @@ releaseToProd := {
 
 releaseTest := Def.sequential(
   copyTestConnection,
-  copyServer in Compile,
-  copyClient in Compile,
-  buildAppFile in Compile,
+  Compile / copyServer,
+  Compile / copyClient,
+  Compile / buildAppFile,
   releaseToTest
 ).value
 
 release := Def.sequential(
   copyConnection,
-  copyServer in Compile,
-  copyClient in Compile,
-  buildAppFile in Compile,
+  Compile / copyServer,
+  Compile / copyClient,
+  Compile / buildAppFile,
   releaseToProd
 ).value

@@ -3,11 +3,10 @@ package quizleague.web.store
 import _root_.firebase.firestore.Settings
 import firebase._
 import org.scalajs.dom.window
-import quizleague.firestore.{Connection => conn}
 import quizleague.web.core._
 
-import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal
+import quizleague.firestore.{Connection => conn}
 
 
 object Firestore {
