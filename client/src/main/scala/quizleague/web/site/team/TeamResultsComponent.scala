@@ -22,8 +22,7 @@ object TeamResultsPage extends RouteComponent with GridSizeComponentConfig {
                       </v-layout>
                     </v-container>"""
   subscription("season")(c => TeamViewService.season)
-  
-  
+  components(TeamResultsComponent)
 }
 
 object TeamResultsComponent extends Component {

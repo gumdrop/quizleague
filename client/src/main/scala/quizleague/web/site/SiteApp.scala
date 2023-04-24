@@ -4,6 +4,7 @@ import scalajs.js
 import js.Dynamic.literal
 import js.JSConverters._
 import com.felstar.scalajs.vue._
+import fragment.Frag
 
 import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import quill.VueQuillEditor
@@ -28,6 +29,7 @@ object SiteApp{
   def main():Unit = {
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
+    Vue.component("fragment",Frag.Fragment)
     Vue.filter("date", (date:String, format:String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_DATE.parse(date)))
     Vue.filter("time", (time:String, format:String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_TIME.parse(time)))
     Vue.filter("datetime", (datetime:String, format:String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME.parse(datetime)))

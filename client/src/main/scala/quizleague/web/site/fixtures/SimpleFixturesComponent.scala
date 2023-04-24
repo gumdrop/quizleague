@@ -60,59 +60,69 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
   type facade = FixtureLineComponent with VuetifyComponent with DialogComponent
   val name = "ql-fixture-line"
   val template = """
-        <tr>
-          <td v-if="inlineDetails" class="inline-details" >
-            <v-skeleton-loader v-if="!parent" type="text" width="15em"></v-skeleton-loader>
-            <span v-if="parent">
-              <span v-if="!short">{{parent.date| date("d MMM yyyy")}}</span><span v-else>{{parent.date| date("d-MM-yy")}}</span> : {{async(parent.parent).name}} {{parent.description}}
-            </span>
-          </td>
-          <td v-if="!fixture.result" class="home" style="min-width:5em;"><ql-r-team-name :id="fixture.home.id" :short="short"></ql-r-team-name></td><td v-else class="home" :class="nameClass(fixture.result.homeScore, fixture.result.awayScore)" style="min-width:5em;"><ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name></td>
-          <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.homeScore}}</td>
-          <td> - </td>
-          <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.awayScore}}</td>
-          <td v-if="!fixture.result" class="away"><ql-r-team-name :id="fixture.away.id" :short="short"></ql-r-team-name></td><td v-else class="away" :class="nameClass(fixture.result.awayScore, fixture.result.homeScore)"><ql-r-team-name :short="short" :id="fixture.away.id"></ql-r-team-name></td>
-          <td v-if="!fixture.result"></td>
-          <td v-else>
-          <div v-if="reports && reports.length > 0">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn icon @click.stop="showReports=true"  v-on="on" >
-                  <v-icon style="transform:scale(0.75)">mdi-file-document-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>Match Reports</span>
-             </v-tooltip>
-            </div>
-            <v-dialog v-model="showReports" max-width="60%" v-bind="dialogSize" v-if="reports">
-              <v-card>
-                <v-card-title>Reports ::&nbsp;
-                  <ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name>
-                  &nbsp;{{fixture.result.homeScore}} - {{fixture.result.awayScore}}&nbsp;
-                  <ql-r-team-name :short="short" :id="fixture.away.id"></ql-r-team-name>
-                  <v-spacer></v-spacer>
-                   <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                     <v-btn icon v-on:click="showReports=false"  v-on="on" >
-                       <v-icon>mdi-close</v-icon>
-                     </v-btn>
-                     </template>
-                     <span>Close</span>
-                   </v-tooltip>
-                 </v-card-title>
-                <ql-reports :keyval="fixture.key" ></ql-reports>
-                <v-card-text v-if="parent">
-                  <ql-chat :parentKey="fixture.key" :name="async(parent.parent).name + ' ' +  parent.description + ' ' + async(fixture.parent).date + ' : ' + async(fixture.home).shortName + ' vs ' + async(fixture.away).shortName"></ql-chat>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <ql-login-button label="Login for chat" ></ql-login-button>
+        <fragment>
+          <tr v-if="inlineDetails && $vuetify.breakpoint.smAndDown">
+           <td class="inline-details" colspan="6">
+              <v-skeleton-loader v-if="!parent" type="text" width="15em"></v-skeleton-loader>
+              <span v-if="parent">
+                <span v-if="!short">{{parent.date| date("d MMM yyyy")}}</span><span v-else>{{parent.date| date("d-MM-yy")}}</span> : {{async(parent.parent).name}} {{parent.description}}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td v-if="inlineDetails && !$vuetify.breakpoint.smAndDown" class="inline-details" >
+              <v-skeleton-loader v-if="!parent" type="text" width="15em"></v-skeleton-loader>
+              <span v-if="parent">
+                <span v-if="!short">{{parent.date| date("d MMM yyyy")}}</span><span v-else>{{parent.date| date("d-MM-yy")}}</span> : {{async(parent.parent).name}} {{parent.description}}
+              </span>
+            </td>
+            <td v-if="!fixture.result" class="home" style="min-width:5em;"><ql-r-team-name :id="fixture.home.id" :short="short"></ql-r-team-name></td><td v-else class="home" :class="nameClass(fixture.result.homeScore, fixture.result.awayScore)" style="min-width:5em;"><ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name></td>
+            <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.homeScore}}</td>
+            <td> - </td>
+            <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.awayScore}}</td>
+            <td v-if="!fixture.result" class="away"><ql-r-team-name :id="fixture.away.id" :short="short"></ql-r-team-name></td><td v-else class="away" :class="nameClass(fixture.result.awayScore, fixture.result.homeScore)"><ql-r-team-name :short="short" :id="fixture.away.id"></ql-r-team-name></td>
+            <td v-if="!fixture.result"></td>
+            <td v-else>
+            <div v-if="reports && reports.length > 0">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon @click.stop="showReports=true"  v-on="on" >
+                    <v-icon style="transform:scale(0.75)">mdi-file-document-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>Match Reports</span>
+               </v-tooltip>
+              </div>
+              <v-dialog v-model="showReports" max-width="60%" v-bind="dialogSize" v-if="reports">
+                <v-card>
+                  <v-card-title>Reports ::&nbsp;
+                    <ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name>
+                    &nbsp;{{fixture.result.homeScore}} - {{fixture.result.awayScore}}&nbsp;
+                    <ql-r-team-name :short="short" :id="fixture.away.id"></ql-r-team-name>
+                    <v-spacer></v-spacer>
+                     <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                       <v-btn icon v-on:click="showReports=false"  v-on="on" >
+                         <v-icon>mdi-close</v-icon>
+                       </v-btn>
+                       </template>
+                       <span>Close</span>
+                     </v-tooltip>
+                   </v-card-title>
+                  <ql-reports :keyval="fixture.key" ></ql-reports>
+                  <v-card-text v-if="parent">
+                    <ql-chat :parentKey="fixture.key" :name="async(parent.parent).name + ' ' +  parent.description + ' ' + async(fixture.parent).date + ' : ' + async(fixture.home).shortName + ' vs ' + async(fixture.away).shortName"></ql-chat>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <ql-login-button label="Login for chat" ></ql-login-button>
 
-                 </v-card-actions>
-              </v-card>
-           </v-dialog>
-          </td>
-        </tr>"""
+                   </v-card-actions>
+                </v-card>
+             </v-dialog>
+            </td>
+          </tr>
+        </fragment>"""
   components(ReportsComponent)
   data("showReports", false)
   data("short")(c => c.$vuetify.breakpoint.smAndDown)
