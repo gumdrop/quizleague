@@ -29,7 +29,7 @@ object App {
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
     Vue.filter("date", (date: String, format: String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_DATE.parse(date)))
-    Vue.filter("combine", (obs: js.Array[RefObservable[Any]]) => Observable.combineLatest(obs.map(_.obs)).map(_.toJSArray))
+    Vue.filter("combine", (obs: js.Array[RefObservable[Any]]) => Observable.combineLatest(obs.toSeq.map(_.obs)).map(_.toJSArray))
     Vue.filter("wrap", (obj: js.Any) => Observable.just(obj))
 
     new Vue(

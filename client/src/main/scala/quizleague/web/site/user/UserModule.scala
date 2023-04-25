@@ -36,9 +36,9 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
     query(db.collection(uriRoot).where("uid","==", uid)).map(_.headOption)
   }
 
-  def saveUser(user:SiteUser){
+  def saveUser(user:SiteUser):Unit = {
     import quizleague.util.json.codecs.DomainCodecs._
-    command[U,Unit](List("site","save-site-user"),Option(user)).subscribe(x => Unit)
+    command[U,Unit](List("site","save-site-user"),Option(user)).subscribe(x => ())
   }
 
   def setUid(user:SiteUser, uid:String): Unit ={

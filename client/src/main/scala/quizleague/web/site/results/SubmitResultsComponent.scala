@@ -76,13 +76,13 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
     FixtureService.fixturesForResultSubmission(user.team.id).subscribe(handleFixtures(c) _)
   }
   
-  def handleFixtures(c:facade)(fixtures:js.Array[Fixture]) = {
+  def handleFixtures(c:facade)(fixtures:js.Array[Fixture]):Unit = {
     c.hasResults = fixtures.exists(_.result != null)
     c.fixtures = if(c.hasResults) fixtures else fixtures.map(Fixture.addBlankResult _)
     c.showProgress = false
   }
   
-  def preSubmit(c:facade) {
+  def preSubmit(c:facade):Unit = {
     if(c.hasResults){
       submit(c)
     }
@@ -92,11 +92,11 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
 
   }
   
-  def cancel(c:facade) {
+  def cancel(c:facade):Unit = {
     c.confirm = false
   }
   
-  def submit(c:facade){
+  def submit(c:facade):Unit = {
     c.confirm = false
     FixtureService.submitResult(c.fixtures, c.reportText, c.user.siteUser.user.id)
     c.reportText = ""
@@ -107,7 +107,7 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
  def mounted(c:facade) =LoginService.userProfile.filter(_ != null).subscribe(user => getFixtures(c,user))
   
   
-  subscription("appData")(c => ApplicationContextService.get)
+  subscription("appData")(c => ApplicationContextService.get())
   subscription("user")(c => LoginService.userProfile)
 
   method("submit")({submit _}:js.ThisFunction)

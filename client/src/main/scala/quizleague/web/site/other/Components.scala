@@ -98,7 +98,7 @@ object AliasContactDialog extends Component with DialogComponentConfig{
             </v-card>
          </v-dialog>"""
 
-  def submit(c:facade){
+  def submit(c:facade):Unit = {
     TeamService.sendEmailToAlias(c.email, c.text, c.alias)
     c.show = false
     c.text=""

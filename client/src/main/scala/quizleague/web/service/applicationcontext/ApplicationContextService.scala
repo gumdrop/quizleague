@@ -37,7 +37,7 @@ trait ApplicationContextPutService extends PutService[ApplicationContext] with A
   override val seasonService: SeasonPutService
 
   override protected def mapIn(context: ApplicationContext) = Dom(context.leagueName, globalTextService.ref(context.textSet), seasonService.ref(context.currentSeason), context.senderEmail, context.emailAliases.map(ea => DomEmailAlias(ea.alias, userService.ref(ea.user))).toList, context.cloudStoreBucket)
-  override protected def make() = Dom(newId(), "", null, null, "", List(), "")
+  override protected def make() = Dom(newId, "", null, null, "", List(), "")
 
   override def enc(item: Dom) = item.asJson
 }

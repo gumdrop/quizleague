@@ -27,7 +27,7 @@ trait TextPutService extends PutService[Text] with TextGetService with DirtyList
 
   override protected def mapIn(text: Text) = Dom(text.id, text.text, text.mimeType)
 
-  override protected def make(): Dom = {val id = newId();Dom(id, "", "text/html").withKey(Key(None, uriRoot, id))}
+  override protected def make(): Dom = {val id = newId;Dom(id, "", "text/html").withKey(Key(None, uriRoot, id))}
 
   override def enc(item: Dom) = item.asJson
 

@@ -44,10 +44,10 @@ trait ChatPutService extends PutService[Chat] with ChatGetService {
     Option(chat.name),
     chat.retired)
 
-  override protected def make() = Dom(id = newId())
+  override protected def make() = Dom(id = newId)
 
   def instance(parentKey:Key, name:String) = {
-    val id = newId()
+    val id = newId
     mapOutWithKey(make().copy(name = Some(name)).withKey(DomKey(DomKey(parentKey.key),uriRoot,id)))
   }
 

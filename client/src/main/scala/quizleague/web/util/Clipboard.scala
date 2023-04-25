@@ -5,7 +5,7 @@ import scalajs.js
 
 object Clipboard {
 
-  def copy(text: String) {
+  def copy(text: String):Unit = {
     val elem = dom.document.createElement("textarea")
     val fakeElem = elem.asInstanceOf[js.Dynamic];
     // Prevent zooming on iOS

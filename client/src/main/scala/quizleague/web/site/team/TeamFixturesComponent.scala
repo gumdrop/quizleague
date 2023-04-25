@@ -22,7 +22,7 @@ object TeamFixturesPage extends RouteComponent with GridSizeComponentConfig{
         </v-layout>
       </v-container>
 """
-  subscription("appData")(c => ApplicationContextService.get)
+  subscription("appData")(c => ApplicationContextService.get())
   
   components(TeamFixturesComponent)
 }

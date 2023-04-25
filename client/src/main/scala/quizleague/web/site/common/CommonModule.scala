@@ -8,5 +8,5 @@ object CommonModule extends Module{
 
 object TitleService {
   def title = dom.document.title
-  def title_=(text:String){dom.document.title = text}
+  def title_=(text:String):Unit = {dom.document.title = text}
 }

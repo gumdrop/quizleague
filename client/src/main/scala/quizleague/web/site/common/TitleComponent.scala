@@ -17,15 +17,15 @@ object TitleComponent extends Component{
   val template = """<span style="display:none;" v-if="leagueName"><slot></slot><slot name="dummy">{{leagueName}}{{setTitle()}}</slot></span>"""
   
  
-  def setTitle(c:facade){
-    def doit(name:UndefOr[String], text:UndefOr[js.Any]){
+  def setTitle(c:facade):Unit = {
+    def doit(name:UndefOr[String], text:UndefOr[js.Any]):Unit = {
        for(n <- name;t <- text) TitleService.title = s"$n - $t"
     }
     
     doit(c.leagueName, c.$slots.default.asInstanceOf[js.Array[js.Dynamic]](0).text)
     
   }
-  subscription("leagueName")(c => ApplicationContextService.get.map(_.leagueName))
+  subscription("leagueName")(c => ApplicationContextService.get().map(_.leagueName))
   method("setTitle")({setTitle _}:js.ThisFunction)
       
 }

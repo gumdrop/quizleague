@@ -33,7 +33,7 @@ object CalendarViewService extends SeasonWatchService{
     viewType.next(vt)
   }
 
-  def getViewType():String = viewTypeFromStorage
+  def getViewType():String = viewTypeFromStorage()
 
   def events(seasonId:String):Observable[js.Array[DateWrapper]] = {
     

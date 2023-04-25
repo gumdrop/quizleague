@@ -26,7 +26,7 @@ trait UserPutService extends PutService[User] with UserGetService {
   override protected def mapIn(user: User) = Dom(user.id, user.name, user.email, user.retired)
 
   override protected def make(): Dom = {
-    withKey(Dom(newId(), "", ""), null)
+    withKey(Dom(newId, "", ""), null)
   }
 
   override def enc(item: Dom) = item.asJson

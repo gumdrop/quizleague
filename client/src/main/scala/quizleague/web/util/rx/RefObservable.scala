@@ -17,7 +17,7 @@ class RefObservable[+T](val id: String, val obsf: () => Observable[T], val key:K
   def inner = obs.inner
 
   @JSName("subscribeScala")
-  def subscribe(f: T => Unit) = obs.subscribe(f, (x) => Unit, () => Unit)
+  def subscribe(f: T => Unit) = obs.subscribe(f, (x) => (), () => ())
 
   def subscribe(onNext: T => Unit, onError: js.Any => Unit, onComplete: () => Unit) = inner.subscribe(onNext, onError, onComplete)
 

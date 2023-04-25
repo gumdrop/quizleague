@@ -44,7 +44,7 @@ object TeamComponent extends Component with GridSizeComponentConfig{
           </v-container>"""
   props("id")
   subscription("team","id")(v => TeamService.get(v.id))
-  subscription("seasonId")(c => ApplicationContextService.get.map(_.currentSeason.id))
+  subscription("seasonId")(c => ApplicationContextService.get().map(_.currentSeason.id))
 
   components(TeamStandings,TeamResults,TeamFixtures)
 }
@@ -209,7 +209,7 @@ object ContactDialog extends Component with DialogComponentConfig{
             </v-card>
          </v-dialog>"""
   
-  def submit(c:facade){
+  def submit(c:facade):Unit = {
     TeamService.sendEmailToTeam(c.email, c.text, c.team)
     c.show = false
     c.text=""

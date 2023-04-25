@@ -49,7 +49,7 @@ object StatsComponent extends RouteComponent{
   
     def regenerate(c:facade){
       
-      StatsService.rebuild(c.season.id).subscribe(x => Unit)
+      StatsService.rebuild(c.season.id).subscribe(x => ())
   
     }
   

@@ -13,7 +13,7 @@ object AllFixturesPage extends RouteComponent{
   val template = """
                       <ql-all-fixtures v-if="appData" :seasonId="appData.currentSeason.id"></ql-all-fixtures>
                     """
-    subscription("appData")(c => ApplicationContextService.get)
+    subscription("appData")(c => ApplicationContextService.get())
 }
 
 

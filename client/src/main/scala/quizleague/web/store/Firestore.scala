@@ -29,7 +29,7 @@ object Firestore {
    
    val db = firestore
    
-   def setAuthContext(){
+   def setAuthContext():Unit = {
 
     Firebase.auth().onAuthStateChanged( (user: User) =>
 

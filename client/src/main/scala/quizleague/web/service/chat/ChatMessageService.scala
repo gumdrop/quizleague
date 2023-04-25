@@ -45,7 +45,7 @@ trait ChatMessagePutService extends PutService[ChatMessage] with ChatMessageGetS
     userService.ref(message.user), message.message, LocalDateTime.parse(message.date)
     )
 
-  override protected def make() = Dom(newId(), null,"", LocalDateTime.now())
+  override protected def make() = Dom(newId, null,"", LocalDateTime.now())
 
   override def enc(item: Dom) = item.asJson
 

@@ -6,13 +6,13 @@ name := "Quiz League"
 val circeVersion = "0.13.0"
 val macroParadiseVersion = "2.1.1"
 
-addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
+//addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
 
 lazy val commonSettings = Seq(
     organization := "quizleague",
     version := "0.0.1",
-    scalaVersion := "2.12.16",
-    scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ypartial-unification"),
+    scalaVersion := "2.13.10",
+    scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ymacro-annotations"),
     scalacOptions += "-Xasync",
     resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
@@ -41,7 +41,7 @@ lazy val server = (project in file("server"))
     publishLocal := {},
     scalaJSUseMainModuleInitializer := true,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    libraryDependencies += "io.scalajs" %%% "express" % "0.4.2",
+    libraryDependencies += "io.scalajs" %%% "express" % "0.4.3",
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
@@ -62,7 +62,7 @@ lazy val server = (project in file("server"))
         ModuleInitializer.mainMethod("quizleague.web.maintain.MaintainApp", "main").withModuleID("maintain")
       },
       scalaJSUseMainModuleInitializer := false,
-      addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
+      //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
       libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",

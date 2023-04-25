@@ -110,7 +110,7 @@ object SiteComponent extends Component {
   components(ResultNotificationsComponent,TitleComponent, LoggedOnMenu)
 
   def drawerGet(c:facade) = (c.sidemenu && c.$vuetify.breakpoint.lgAndUp) || (c.showMenu && c.$vuetify.breakpoint.mdAndDown)
-  def drawerSet(c:facade, showMenu:Boolean){c.showMenu = if(c.$vuetify.breakpoint.mdAndDown) showMenu else c.showMenu}
+  def drawerSet(c:facade, showMenu:Boolean):Unit = {c.showMenu = if(c.$vuetify.breakpoint.mdAndDown) showMenu else c.showMenu}
 
 
   data("showMenu",false)

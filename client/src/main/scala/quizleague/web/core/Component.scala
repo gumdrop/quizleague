@@ -160,7 +160,7 @@ trait Component {
         
       }}
       
-      val subs = subscriptions.filterKeys(k => !subParams.toMap.values.exists(_ == k)).map{
+      val subs = subscriptions.view.filterKeys(k => !subParams.toMap.values.exists(_ == k)).map{
         case (k,v) => ((k, (c:facade) => v(c).inner))
       }
       

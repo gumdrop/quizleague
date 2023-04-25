@@ -34,7 +34,7 @@ trait SiteUserPutService extends PutService[SiteUser] with SiteUserGetService {
 
   override protected def mapIn(user: SiteUser) = Dom(user.id, user.handle, user.avatar, userService.refOption(user.user), user.uid, user.retired)
 
-  override protected def make(): Dom = Dom(newId(), "", "",None,None,false)
+  override protected def make(): Dom = Dom(newId, "", "",None,None,false)
 
   override def enc(item: Dom) = item.asJson
 

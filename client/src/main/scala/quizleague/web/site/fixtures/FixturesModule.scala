@@ -91,7 +91,7 @@ object FixturesService extends FixturesGetService {
   def competitionFixtures(competitions:Observable[js.Array[_ <: Competition]]):Observable[js.Array[Fixtures]] = {
       val interim = competitions.map(_.map(c => FixturesService.list(c.key)))
 
-    interim.flatMap(o => combineLatest(o).map(_.flatten.toJSArray))
+    interim.flatMap(o => combineLatest(o.toSeq).map(_.toJSArray.flatten))
   }
 
 
@@ -166,7 +166,7 @@ object FixtureService extends FixtureGetService with PostService{
     
     val cmd = ResultsSubmitCommand(fixtures.map(f => ResultValues(Key(f.key.key), f.result.homeScore, f.result.awayScore)).toList, Option(reportText), userID)
     
-    command[List[String],ResultsSubmitCommand](List("site","result","submit"),Some(cmd)).subscribe(x => Unit)
+    command[List[String],ResultsSubmitCommand](List("site","result","submit"),Some(cmd)).subscribe(x => ())
   }
   
 }

@@ -140,7 +140,7 @@ trait CompetitionPutService extends CompetitionGetService with PutService[Compet
     import quizleague.web.util.DateTimeConverters._      
 
     def makeLeague = DLC(
-      newId(),
+      newId,
       "League",
       LocalTime.of(20, 30),
       Duration.ofSeconds(5400),
@@ -148,7 +148,7 @@ trait CompetitionPutService extends CompetitionGetService with PutService[Compet
     )
 
     def makeCup = DCC(
-      newId(),
+      newId,
       "Cup",
       LocalTime.of(20, 30),
       Duration.ofSeconds(5400),
@@ -156,12 +156,12 @@ trait CompetitionPutService extends CompetitionGetService with PutService[Compet
       "cup-comp")
 
     def makeSubsidiary = DSC(
-      newId(),
+      newId,
       "Subsidiary",
       textService.getRef(textService.instance()))
     
     def makeSingleton = DSiC(
-      newId(),
+      newId,
       "Singleton",
       Option(DomEvent(None,LocalDate.now, LocalTime.of(20,30), Duration.ofMinutes(90))),
       "",

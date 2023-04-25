@@ -76,21 +76,21 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
     list().map(_.filter(_.users.exists(_.id == userID)).headOption)
   }
   
-  def sendEmailToTeam(sender:String, text:String, team:Team){
+  def sendEmailToTeam(sender:String, text:String, team:Team):Unit = {
     import quizleague.util.json.codecs.CommandCodecs._
     
     val cmd = TeamEmailCommand(sender,text,team.id)
-    command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(x => Unit)
+    command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(x => ())
   }
 
-  def sendEmailToAlias(sender: String, text: String, alias: String) {
+  def sendEmailToAlias(sender: String, text: String, alias: String):Unit = {
     import quizleague.util.json.codecs.CommandCodecs._
 
     val cmd = AliasEmailCommand(sender, text, alias)
-    command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(x => Unit)
+    command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(x => ())
   }
   
-  def leagueStanding(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get.flatMap(
+  def leagueStanding(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get().flatMap(
     s => {
       CompetitionService.competition[LeagueCompetition](s.currentSeason.id, CompetitionType.league.toString)
         .flatMap(c => c.leaguetable)
@@ -100,7 +100,7 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
      
     }
   )
-  def cupStandings(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get.flatMap(
+  def cupStandings(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get().flatMap(
     s => {
       FixtureService.fixturesFrom(FixturesService.competitionFixtures(CompetitionService.competitionsOfType[CupCompetition](s.currentSeason.id)), teamId)
         .map(_.filter(_.result == null).map(fx => fx.parent.map(f => f.parent.map(c => new Standing(c.name,f.description)))))
