@@ -2,7 +2,6 @@ package quizleague.domain
 
 import java.time.{Duration, LocalDate, LocalDateTime, LocalTime}
 
-
 case class Fixtures(
     id:String, 
     description:String,
@@ -31,7 +30,7 @@ case class Result(
 case class Report(
     team:Ref[Team],
     text:Ref[Text],
-    ) extends Entity{
+    ) extends Entity {
    val id = ""
    val retired = false
 }

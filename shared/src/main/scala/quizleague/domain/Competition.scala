@@ -62,46 +62,46 @@ object Competition
 
 
 
- trait BaseSingletonCompetition{
-    
+trait BaseSingletonCompetition{
+
   val event:Option[Event]
   val textName:String
 
 }
 
- trait ScheduledCompetition{
+trait ScheduledCompetition{
 
   val startTime:LocalTime
   val duration:Duration
 }
 
 
- trait FixturesCompetition{
+trait FixturesCompetition{
 
 }
 
- trait TeamCompetition extends FixturesCompetition{
-     val textName:String
- }
+trait TeamCompetition extends FixturesCompetition{
+   val textName:String
+}
 
- trait CompetitionTables{
+trait CompetitionTables{
 
 }
 
- trait BaseLeagueCompetition extends TeamCompetition with ScheduledCompetition with CompetitionTables{
-   val win = 2
-   val draw = 1
-   val loss = 0
- }
+trait BaseLeagueCompetition extends TeamCompetition with ScheduledCompetition with CompetitionTables{
+ val win = 2
+ val draw = 1
+ val loss = 0
+}
 
- trait MainLeagueCompetition extends BaseLeagueCompetition{
- }
+trait MainLeagueCompetition extends BaseLeagueCompetition{
+}
 
- trait KnockoutCompetition extends TeamCompetition with ScheduledCompetition
+trait KnockoutCompetition extends TeamCompetition with ScheduledCompetition
 
- trait SubsidiaryCompetition{
-     val textName:String
- }
+trait SubsidiaryCompetition{
+   val textName:String
+}
 
 
 

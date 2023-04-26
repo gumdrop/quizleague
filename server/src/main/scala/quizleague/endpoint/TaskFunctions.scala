@@ -56,7 +56,7 @@ object TaskFunctions {
         }
         if (!isSubsidiary) {
           await(save(Notification(
-            uuid.toString(),
+            uuid().toString(),
             NotificationTypeNames.result,
             LocalDateTime.now(),
             ResultPayload(fixture.key.get.key))))
@@ -95,7 +95,7 @@ object TaskFunctions {
       val report = reportIn.filter(r => !r.trim.isEmpty && !isSubsidiary)
 
       def newText(reportText: String) = async {
-        val id = uuid.toString
+        val id = uuid().toString
         val text = Text(id, reportText, "text/markdown").withKey(Key(None, "text", id))
         await(save(text))
         Ref[Text]("text", text.id)
@@ -107,7 +107,7 @@ object TaskFunctions {
 
       def newReport(reportText: String) = async{
         val team = await(teamFromUser(user))
-        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid.toString))
+        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid().toString))
       }
 
       val res = fixture.copy(result = fixture.result.fold(newResult())(Some(_))).withKey(fixture.key)
@@ -149,7 +149,7 @@ object TaskFunctions {
       season <- load[Season](seasonId)
       _ <- HistoricalStatsAggregator.perform(season)
     } yield {
-      val key = Key(None, "notification", uuid.toString)
+      val key = Key(None, "notification", uuid().toString)
 
       save(Notification(
         key.id,

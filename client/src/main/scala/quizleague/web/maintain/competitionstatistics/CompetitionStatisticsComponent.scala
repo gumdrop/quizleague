@@ -22,7 +22,7 @@ import js.JSConverters._
 
 object CompetitionStatisticsComponent extends ItemComponentConfig[CompetitionStatistics] with RouteComponent {
 
-  val service = CompetitionStatisticsService
+  val service: CompetitionStatisticsService.type = CompetitionStatisticsService
   def parentKey(c:facade) = null
 
   val template = s"""

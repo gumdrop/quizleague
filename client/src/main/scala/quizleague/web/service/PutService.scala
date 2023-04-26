@@ -56,7 +56,7 @@ trait PutService[T <: Model] {
   def instance(parentKey:ModelKey) = add(mapOutWithKey(make(Key(parentKey.key))))
   def getId(item:T) = if (item != null ) item.id else null
   def getKey(item:T):ModelKey = Option(item).map(_.key).getOrElse(key(item.id))
-  protected final def newId = UUID.randomUUID.toString()
+  protected final def newId = UUID.randomUUID().toString()
   private[service] def deCache(item:U) = items -= item.id
   protected final def mapInWithKey(model:T) = {
     val dom = mapIn(model)

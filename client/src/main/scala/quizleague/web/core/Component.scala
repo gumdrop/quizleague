@@ -90,45 +90,45 @@ trait Component {
 
   }):js.ThisFunction))
   
-  protected final def subscription(name:String,linkedProps:String*)(fn:facade => Observable[Any]) {
+  protected final def subscription(name:String,linkedProps:String*)(fn:facade => Observable[Any]):Unit = {
     addedSubs  = addedSubs + ((name, fn))
     addedSubParams = addedSubParams ++ linkedProps.map((_,name))
   }
   
   
-  protected final def props(names:String*){
+  protected final def props(names:String*):Unit ={
     addedProps = addedProps ++ names
   }
   
-  protected final def prop(name:String){
+  protected final def prop(name:String):Unit ={
     addedProps = addedProps :+ name
   }
   
-  protected final def method(name:String)(fn:js.Function){
+  protected final def method(name:String)(fn:js.Function):Unit = {
     addedMethods = addedMethods + ((name, fn))
   }
   
-  protected final def data(name:String, value:Any){
+  protected final def data(name:String, value:Any):Unit = {
     addedData = addedData + ((name, value))
   }
   
-  protected final def data(name:String)(fn:facade => Any){
+  protected final def data(name:String)(fn:facade => Any):Unit = {
     addedDataFn = addedDataFn + ((name, fn))
   }
   
-  protected final def components(comps:Component*){
+  protected final def components(comps:Component*):Unit = {
     addedComponents = addedComponents ++ comps
   }
   
-  protected final def computed(name:String)(fn:js.Function){
+  protected final def computed(name:String)(fn:js.Function):Unit = {
     addedComputed = addedComputed + ((name, fn))
   }
   
-  protected final def computedGetSet(name:String)(get:js.Function)(set:js.Function){
+  protected final def computedGetSet(name:String)(get:js.Function)(set:js.Function):Unit = {
     addedComputed = addedComputed + ((name, js.Dynamic.literal(get = get, set = set)))
   }
   
-  protected final def watch(name:String)(fn:(facade,js.Any) => Unit){
+  protected final def watch(name:String)(fn:(facade,js.Any) => Unit):Unit = {
     addedWatch = addedWatch + ((name, fn))
   }
   

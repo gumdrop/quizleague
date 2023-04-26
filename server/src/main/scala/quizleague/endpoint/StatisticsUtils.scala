@@ -35,7 +35,7 @@ object StatsWorker {
 
   def seasonStats(season:Season) = list[Statistics].map(_.filter(s => s.season.id == season.id))
   
-  def perform(fixture: Fixture, season: Season){
+  def perform(fixture: Fixture, season: Season):Unit = {
     //LOG.warning(s"starting stats regen for : $fixture and $season")
 
 
@@ -101,7 +101,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
       tables <- list[LeagueTable](comp.key)
     } yield {
       val table = tables.filter(_.rows.exists(_.team.id == team.id)).map(ref _).head
-      cache.getOrElseUpdate(team.id, Statistics(uuid.toString, team, Ref[Season]("season", season.id), table))
+      cache.getOrElseUpdate(team.id, Statistics(uuid().toString, team, Ref[Season]("season", season.id), table))
     }
   }
 

@@ -3,7 +3,7 @@ import org.scalajs.linker.interface.ModuleInitializer
 
 name := "Quiz League"
 
-val circeVersion = "0.13.0"
+val circeVersion = "0.14.1"
 val macroParadiseVersion = "2.1.1"
 
 //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
@@ -11,15 +11,15 @@ val macroParadiseVersion = "2.1.1"
 lazy val commonSettings = Seq(
     organization := "quizleague",
     version := "0.0.1",
-    scalaVersion := "2.13.10",
-    scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Ymacro-annotations"),
+    scalaVersion := "3.2.2",
+    scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Xmax-inlines:32"/*,"-Ymacro-annotations","-Xsource:3"*/),
     scalacOptions += "-Xasync",
     resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
         "io.circe" %%% "circe-core",
         "io.circe" %%% "circe-generic",
         "io.circe" %%% "circe-parser"
-    ).map(_ % circeVersion)
+    ).map(x =>(x % circeVersion).cross(CrossVersion.for3Use2_13))
 
 )
 
@@ -41,12 +41,13 @@ lazy val server = (project in file("server"))
     publishLocal := {},
     scalaJSUseMainModuleInitializer := true,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    libraryDependencies += "io.scalajs" %%% "express" % "0.4.3",
+    libraryDependencies += ("io.scalajs" %%% "express" % "0.4.3").cross(CrossVersion.for3Use2_13),
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-async" % "1.0.1",
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
+    //libraryDependencies += "org.scala-lang.modules" %%% "scala-async" % "1.0.1",
+    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.16"
+    //libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
   )
 
   lazy val client = (project in file("client"))
@@ -64,10 +65,10 @@ lazy val server = (project in file("server"))
       scalaJSUseMainModuleInitializer := false,
       //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
-      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
+      libraryDependencies += ("org.scala-js" %%% "scalajs-dom" % "2.2.0").cross(CrossVersion.for3Use2_13),
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-      libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.3"
+      libraryDependencies += ("com.github.lukajcb" %%% "rxscala-js" % "0.15.3").cross(CrossVersion.for3Use2_13)
     )
 
 lazy val devServer = taskKey[Unit]("copy test JS")

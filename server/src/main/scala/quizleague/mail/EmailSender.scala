@@ -10,7 +10,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import quizleague.util.json.codecs.DomainCodecs._
 
 import scalajs.js.JSConverters._
-import scala.async.Async.{async, await}
+import cps.monads.{*, given}
+import cps._
 
 object EmailSender{
   

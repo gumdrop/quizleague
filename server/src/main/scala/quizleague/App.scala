@@ -32,9 +32,9 @@ object App {
     val server = app
        .use("/", (req:Request,res:Response) => {
         if(req.originalUrl.contains("/maintain/"))
-          res.sendFile(Path.join(js.Dynamic.global.__dirname+"/static/maintain/index.html"))
+          res.sendFile(Path.join(js.Dynamic.global.__dirname.toString+"/static/maintain/index.html"))
         else 
-          res.sendFile(Path.join(js.Dynamic.global.__dirname+"/static/index.html"))})
+          res.sendFile(Path.join(js.Dynamic.global.__dirname.toString+"/static/index.html"))})
       .listen(port)
 
     println(s"Server started on port $port")
