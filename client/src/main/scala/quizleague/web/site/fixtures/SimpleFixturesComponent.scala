@@ -61,7 +61,7 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
   val name = "ql-fixture-line"
   val template = """
         <fragment>
-          <tr v-if="inlineDetails && $vuetify.breakpoint.smAndDown">
+          <tr v-if="inlineDetails && short">
            <td class="inline-details" colspan="6">
               <v-skeleton-loader v-if="!parent" type="text" width="15em"></v-skeleton-loader>
               <span v-if="parent">
@@ -70,13 +70,13 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
             </td>
           </tr>
           <tr>
-            <td v-if="inlineDetails && !$vuetify.breakpoint.smAndDown" class="inline-details" >
+            <td v-if="inlineDetails && !short" class="inline-details" >
               <v-skeleton-loader v-if="!parent" type="text" width="15em"></v-skeleton-loader>
               <span v-if="parent">
                 <span v-if="!short">{{parent.date| date("d MMM yyyy")}}</span><span v-else>{{parent.date| date("d-MM-yy")}}</span> : {{async(parent.parent).name}} {{parent.description}}
               </span>
             </td>
-            <td v-if="!fixture.result" class="home" style="min-width:5em;"><ql-r-team-name :id="fixture.home.id" :short="short"></ql-r-team-name></td><td v-else class="home" :class="nameClass(fixture.result.homeScore, fixture.result.awayScore)" style="min-width:5em;"><ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name></td>
+            <td v-if="!fixture.result" class="home" :class="(inlineDetails && short)?'inline':''" style="min-width:5em;"><ql-r-team-name :id="fixture.home.id" :short="short"></ql-r-team-name></td><td v-else class="home" :class="((inlineDetails && short)?'inline':'') + ' ' + nameClass(fixture.result.homeScore, fixture.result.awayScore)" style="min-width:5em;"><ql-r-team-name :short="short" :id="fixture.home.id"></ql-r-team-name></td>
             <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.homeScore}}</td>
             <td> - </td>
             <td v-if="!fixture.result"></td><td v-else class="score">{{fixture.result.awayScore}}</td>
