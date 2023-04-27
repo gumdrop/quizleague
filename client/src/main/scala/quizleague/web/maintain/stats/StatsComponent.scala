@@ -1,16 +1,14 @@
 package quizleague.web.maintain.stats
 
-import scalajs.js
-import quizleague.web.core._
-import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLInputElement
-import quizleague.web.util.Logging._
 import com.felstar.scalajs.vue.VueRxComponent
+import quizleague.web.core._
 import quizleague.web.maintain.season.SeasonService
 import quizleague.web.model._
+import quizleague.web.util._
 import quizleague.web.util.component.SelectUtils
 import quizleague.web.util.rx.RefObservable
 
+import scala.scalajs.js
 
 @js.native
 trait StatsComponent extends VueRxComponent{
@@ -49,7 +47,7 @@ object StatsComponent extends RouteComponent{
   
     def regenerate(c:facade){
       
-      StatsService.rebuild(c.season.id).subscribe(x => ())
+      StatsService.rebuild(c.season.id).subscribe(unit)
   
     }
   

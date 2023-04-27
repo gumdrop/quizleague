@@ -1,17 +1,12 @@
 package quizleague.web.site.user
 
-import quizleague.web.service.user._
-import quizleague.web.core._
-import quizleague.web.model.SiteUser
-import rxscalajs.{Observable, Subject}
-import rxscalajs.subjects.ReplaySubject
-import org.scalajs.dom
 import quizleague.domain.Key
 import quizleague.web.model
+import quizleague.web.model.SiteUser
 import quizleague.web.service.PostService
-
-import scalajs.js
-import js.JSConverters._
+import quizleague.web.service.user._
+import quizleague.web.util._
+import rxscalajs.Observable
 
 
 object UserService extends UserGetService with UserPutService{
@@ -38,7 +33,7 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
 
   def saveUser(user:SiteUser):Unit = {
     import quizleague.util.json.codecs.DomainCodecs._
-    command[U,Unit](List("site","save-site-user"),Option(user)).subscribe(x => ())
+    command[U,Unit](List("site","save-site-user"),Option(user)).subscribe(unit)
   }
 
   def setUid(user:SiteUser, uid:String): Unit ={
