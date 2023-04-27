@@ -125,12 +125,13 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
         </fragment>"""
   components(ReportsComponent)
   data("showReports", false)
-  data("short")(c => c.$vuetify.breakpoint.smAndDown)
+  computed("short")((c:facade) => c.$vuetify.breakpoint.smAndDown)
   prop("fixture")
   prop("inlineDetails")
   subscription("parent")(_.fixture.parent)
   subscription("reports")(c => if(c.fixture.result != null) c.fixture.result.report else Observable.just(js.Array()))
   method("nameClass")(nameClass _ )
+
  }
 
 

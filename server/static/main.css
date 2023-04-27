@@ -41,6 +41,7 @@
     .ql-fixtures-simple .home,.inline{
       text-align:left!important;
       padding-right:1em;
+      padding-left:1em;
     }
     .ql-fixtures-simple .away{
       padding-left:1em;
