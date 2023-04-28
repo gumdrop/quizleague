@@ -10,13 +10,12 @@ import quizleague.web.service._
 import quizleague.web.model._
 import quizleague.domain.stats.{CompetitionStatistics => Dom}
 import quizleague.domain.stats.{ResultEntry => DomResultEntry}
-import shapeless._
 import quizleague.web.names.StatisticsNames
 import io.circe._
 import io.circe.parser._
 import io.circe.syntax._
 import io.circe.scalajs.convertJsToJson
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain._
 import quizleague.web.service.competition._
 import quizleague.web.service.team._
 import quizleague.web.service.season._

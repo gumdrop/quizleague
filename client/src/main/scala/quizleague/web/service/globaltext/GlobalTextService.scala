@@ -11,7 +11,6 @@ import scalajs.js
 import js.JSConverters._
 import quizleague.web.names.GlobalTextNames
 import io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 
 
 trait GlobalTextGetService extends GetService[GlobalText] with GlobalTextNames{

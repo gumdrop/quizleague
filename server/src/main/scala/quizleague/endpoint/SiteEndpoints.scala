@@ -1,11 +1,10 @@
 package quizleague.endpoint
 
 import io.scalajs.npm.express._
-import quizleague.domain.SiteUser
+import quizleague.domain._
 import quizleague.domain.command.{AliasEmailCommand, ResultsSubmitCommand, TeamEmailCommand}
 import quizleague.endpoint.SiteFunctions._
-import quizleague.util.json.codecs.CommandCodecs._
-import quizleague.util.json.codecs.DomainCodecs._
+import io.circe.generic.auto._, io.circe.syntax._
 
 object SiteEndpoints {
 

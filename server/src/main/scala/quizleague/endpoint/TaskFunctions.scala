@@ -3,7 +3,7 @@ package quizleague.endpoint
 import quizleague.data.Storage
 
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
-import quizleague.data.Storage.{load, _}
+import quizleague.data.Storage._
 import quizleague.data._
 import quizleague.endpoint.HistoricalStatsAggregator
 import quizleague.util.UUID.{randomUUID => uuid}
@@ -11,19 +11,21 @@ import quizleague.domain._
 import quizleague.domain.command.{ResultValues, ResultsSubmitCommand}
 import quizleague.domain.notification._
 import quizleague.domain.util.LeagueTableRecalculator
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.task.TaskQueue._
 
-import scala.async.Async.{async, await}
+import cps.monads.{*, given}
+import cps._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future._
+import scala.concurrent.Future
+//import io.circe.*, io.circe.generic.auto._
 object TaskFunctions {
 
   def resultSubmission(result: ResultsSubmitCommand) = {
     resultSubmit(result).foreach(()=>_)
   }
 
-  def resultSubmit(result: ResultsSubmitCommand) = async{
+  def resultSubmit(result: ResultsSubmitCommand) = async[Future]{
     println(s"submit result arrived : $result")
 
     def haveResults = sequence(result.fixtures.map(f => {
@@ -65,9 +67,9 @@ object TaskFunctions {
     }
   }
 
-  private def fireStatsUpdate(fixture: Fixture, key: Key) = async{
+  private def fireStatsUpdate(fixture: Fixture, key: Key) = async[Future]{
 
-    val season = await(applicationContext()).currentSeason
+    val season = await{applicationContext()}.currentSeason
     taskQueue.send(() => statsUpdate(season.id, List((fixture, key))))
 
   }
@@ -79,25 +81,25 @@ object TaskFunctions {
     saveAll(newTables)
   }
 
-  def statsUpdate(seasonId: String, fixturesAndKeys: List[(Fixture, Key)]) = async{
+  def statsUpdate(seasonId: String, fixturesAndKeys: List[(Fixture, Key)]) = async[Future]{
 
     val fixtures = fixturesAndKeys.map({ case (fixture, key) => fixture.withKey(key) })
 
-    val season = await(load[Season](seasonId))
+    val season = await{load[Season](seasonId)}
 
     fixtures.foreach(StatsWorker.perform(_, season))
   }
 
   private def saveFixture(user: User, reportIn: Option[String])(result: ResultValues) = {
-    async {
-      val fixture = await(load[Fixture](result.fixtureKey))
-      val isSubsidiary = await(subsidiary(fixture))
+    async[Future] {
+      val fixture = await{load[Fixture](result.fixtureKey)}
+      val isSubsidiary = await{subsidiary(fixture)}
       val report = reportIn.filter(r => !r.trim.isEmpty && !isSubsidiary)
 
-      def newText(reportText: String) = async {
+      def newText(reportText: String) = async[Future] {
         val id = uuid().toString
         val text = Text(id, reportText, "text/markdown").withKey(Key(None, "text", id))
-        await(save(text))
+        await{save(text)}
         Ref[Text]("text", text.id)
       }
 
@@ -105,8 +107,8 @@ object TaskFunctions {
         Some(Result(result.homeScore, result.awayScore, submitter = Some(Ref[User]("user", user.id)), None))
       }
 
-      def newReport(reportText: String) = async{
-        val team = await(teamFromUser(user))
+      def newReport(reportText: String) = async[Future]{
+        val team = await{teamFromUser(user)}
         Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid().toString))
       }
 
@@ -115,32 +117,32 @@ object TaskFunctions {
       val it = report.iterator
       while(it.hasNext){
         val reportText = it.next()
-        save(await(newReport(reportText)))
+        save(await{newReport(reportText)})
       }
 
       save(res)
     }.flatten
   }
 
-  private def teamFromUser(user: User) = async{
+  private def teamFromUser(user: User) = async[Future]{
 
-    val teams = await(list[Team])
+    val teams = await{list[Team]}
 
     val team = teams.filter(t => t.users.exists(_.id == user.id)).head
 
     team
   }
 
-  private def subsidiary(fixture: Fixture) = async{
+  private def subsidiary(fixture: Fixture) = async[Future]{
     val key = fixture.key.map(_.parentKey).flatMap(_.flatMap(Key(_).parentKey)).map(Key(_)).getOrElse(throw new IllegalArgumentException)
-    val competition = await(load[Competition](key))
+    val competition = await{load[Competition](key)}
     competition match {
       case _: SubsidiaryCompetition => true
       case _ => false
     }
   }
-  private def tables(fixture: Fixture) = async{
-      await(list[LeagueTable](fixture.key.map(_.parentKey).flatMap(_.flatMap(Key(_).parentKey)).map(Key(_))))
+  private def tables(fixture: Fixture) = async[Future]{
+      await{list[LeagueTable](fixture.key.map(_.parentKey).flatMap(_.flatMap(Key(_).parentKey)).map(Key(_)))}
   }
 
   def statsRegenerate(seasonId: String) = {

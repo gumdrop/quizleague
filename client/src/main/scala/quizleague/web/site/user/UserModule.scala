@@ -27,7 +27,6 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
   val userService = UserService
 
   def siteUserForEmail(email:String):Observable[Option[SiteUser]] = {
-    import quizleague.util.json.codecs.DomainCodecs._
     command[Option[U],String](List("site","site-user-for-email",email),None).map(_.map(u => {
       mapOutSparse(u.withKey(Key(None, typeName, u.id)))}))
   }
@@ -37,7 +36,6 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
   }
 
   def saveUser(user:SiteUser):Unit = {
-    import quizleague.util.json.codecs.DomainCodecs._
     command[U,Unit](List("site","save-site-user"),Option(user)).subscribe(x => ())
   }
 

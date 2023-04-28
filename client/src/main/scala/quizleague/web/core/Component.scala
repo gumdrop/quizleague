@@ -138,9 +138,9 @@ trait Component {
   def apply():js.Dynamic = {
 
     def update(subject: Subject[Any])(fn: facade => Observable[Any])(c: facade) = {
-       c.$subscribeTo(
-          fn(c).inner, 
-          subject.inner)
+      c.$subscribeTo(
+        fn(c).inner,
+        subject.inner)
       subject.inner
     }
 

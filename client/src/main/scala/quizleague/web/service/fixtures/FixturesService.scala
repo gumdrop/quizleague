@@ -27,7 +27,6 @@ import quizleague.web.util.rx._
 import io.circe._
 import io.circe.parser._
 import io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.web.service.competition.CompetitionGetService
 
 import js.JSConverters._
@@ -37,19 +36,19 @@ import js.JSConverters._
 trait FixturesGetService extends GetService[Fixtures] with FixturesNames{
     override type U = Dom
     
-  val fixtureService:FixtureGetService
-  val competitionService:CompetitionGetService
+    val fixtureService:FixtureGetService
+    val competitionService:CompetitionGetService
 
-  override protected def mapOutSparse(dom:Dom) = Model(
-    dom.id,
-    dom.description,
-    dom.date,
-    dom.start,
-    dom.questionsUrl.getOrElse(null),
-    fixtureService.list(dom.key),
-    competitionService.get(Key(dom.key.get.parentKey.get)))
+    override protected def mapOutSparse(dom:Dom) = Model(
+      dom.id,
+      dom.description,
+      dom.date,
+      dom.start,
+      dom.questionsUrl.getOrElse(null),
+      fixtureService.list(dom.key),
+      competitionService.get(Key(dom.key.get.parentKey.get)))
   
-  override protected def dec(json:js.Any) = decodeJson[U](json)
+    override protected def dec(json:js.Any) = decodeJson[U](json)
  
 }
 

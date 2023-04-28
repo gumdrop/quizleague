@@ -7,7 +7,7 @@ import quizleague.domain.{ User => Dom }
 
 import quizleague.web.names.UserNames
 import io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain._
 import scalajs.js
 
 

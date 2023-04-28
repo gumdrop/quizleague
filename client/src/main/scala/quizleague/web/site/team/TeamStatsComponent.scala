@@ -545,7 +545,7 @@ object HeadToHeadResultsComponent extends Component with GraphSizeComponentConfi
 
 object TeamStatsTitle extends RouteComponent{
   val template = """<stats-title :id="$route.params.id"></stats-title>"""
- components(TeamStatsTitleComponent)
+  components(TeamStatsTitleComponent)
 }
 
 object TeamStatsTitleComponent extends Component{

@@ -7,8 +7,6 @@ import java.time.LocalTime
 
 import io.circe.syntax.EncoderOps
 import quizleague.domain.{Key,Competition => Dom, Event => DomEvent}
-import quizleague.util.json.codecs.DomainCodecs.competitionDecoder
-import quizleague.util.json.codecs.DomainCodecs.competitionEncoder
 import quizleague.web.model.{Key => ModelKey}
 import quizleague.web.model.Competition
 import quizleague.web.model.CompetitionType

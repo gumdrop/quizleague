@@ -2,11 +2,11 @@ package quizleague.endpoint
 
 import quizleague.domain.{Fixture, Fixtures, Key, LeagueTable}
 import quizleague.task.TaskQueue.taskQueue
-import quizleague.data.Storage.{list, load, _}
+import quizleague.data.Storage._
 import quizleague.domain.util.LeagueTableRecalculator
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain.*
 
 import scala.concurrent.Future
 import scala.concurrent.Future.sequence

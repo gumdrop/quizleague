@@ -109,7 +109,7 @@ object CalendarComponent extends ItemComponentConfig[Season] with RouteComponent
     
     override def save(c:facade) = {service.cache(c.item);c.$router.back()}
     
-    subscription("venues"){c:facade => venues()}
+    subscription("venues"){(c:facade) => venues()}
 
     method("addEvent")({addEvent _}:js.ThisFunction)
     method("deleteEvent")({deleteEvent _}:js.ThisFunction)

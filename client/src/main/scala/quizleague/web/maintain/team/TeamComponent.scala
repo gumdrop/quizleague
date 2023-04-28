@@ -54,6 +54,6 @@ object TeamComponent extends ItemComponentConfig[Team] with RouteComponent {
     </v-form>
   </v-container>"""
 
- subscription("venues"){c:facade => venues()}
- subscription("users"){c:facade => users()}
+  subscription("venues"){(c:facade) => venues()}
+  subscription("users"){(c:facade) => users()}
 }

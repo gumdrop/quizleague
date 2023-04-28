@@ -1,5 +1,8 @@
 package quizleague.domain
 
+import io.circe
+import io.circe.Codec
+
 case class Venue(
     id:String,
     name:String,
@@ -9,4 +12,4 @@ case class Venue(
     website:Option[String],
     imageURL:Option[String],
     retired:Boolean = false
-) extends Entity
+) extends Entity derives Codec.AsObject

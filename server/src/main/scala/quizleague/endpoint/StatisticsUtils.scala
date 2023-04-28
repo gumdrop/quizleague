@@ -6,13 +6,14 @@ import quizleague.domain.stats._
 import quizleague.domain.util.LeagueTableRecalculator
 import quizleague.util.StringUtils._
 import quizleague.util.UUID.{randomUUID => uuid}
-import quizleague.util.json.codecs.DomainCodecs._
 
 import java.time.LocalDate
-import scala.async.Async.{async, await}
+import cps.monads.{*, given}
+import cps._
 import scala.collection.mutable.Map
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import io.circe.*, io.circe.generic.auto._
 
 
 object StatsWorker {
@@ -121,7 +122,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
 
 object HistoricalStatsAggregator {
 
-  def perform(season: Season) = async {
+  def perform(season: Season) = async[Future] {
 
       val ss = await(list[Statistics])
       val seasonStats = ss.filter(_.season.id == season.id)

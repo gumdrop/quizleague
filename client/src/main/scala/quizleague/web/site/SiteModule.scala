@@ -14,7 +14,6 @@ import io.circe.parser._
 import io.circe.syntax._
 import io.circe.scalajs.convertJsToJson
 import quizleague.domain.ApplicationContext
-import quizleague.util.json.codecs.DomainCodecs._
 import rxscalajs.subjects.BehaviorSubject
 import quizleague.domain.ApplicationContext
 import rxscalajs.Subject

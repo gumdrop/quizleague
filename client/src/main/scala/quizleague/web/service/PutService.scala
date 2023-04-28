@@ -4,18 +4,20 @@ import firebase.Promise
 
 import scalajs.js
 import quizleague.web.util.UUID
-import quizleague.domain.{Key, Ref}
+import quizleague.domain.{Entity, Key, Ref}
 import quizleague.web.names.ComponentNames
 import quizleague.web.util.rx.RefObservable
 import io.circe.Json
-import io.circe.scalajs._
-import quizleague.web.util.Logging._
-import quizleague.web.model.{Model, Key => ModelKey}
+import io.circe.scalajs.*
+import quizleague.web.util.Logging.*
+import quizleague.web.model.{Model, Key as ModelKey}
 import rxscalajs.Observable
 import rxscalajs.subjects.ReplaySubject
 
 trait PutService[T <: Model] {
   this: GetService[T] with ComponentNames=>
+
+  type U <: Entity
  
   def cache(item: T) = add(item)
   

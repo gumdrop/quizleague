@@ -104,7 +104,7 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
     c.hasResults = false
   }
   
- def mounted(c:facade) =LoginService.userProfile.filter(_ != null).subscribe(user => getFixtures(c,user))
+  def mounted(c:facade) =LoginService.userProfile.filter(_ != null).subscribe(user => getFixtures(c,user))
   
   
   subscription("appData")(c => ApplicationContextService.get())

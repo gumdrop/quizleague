@@ -114,14 +114,11 @@ object LoginService{
     authAction(c,email,forward, Firebase.auth().createUserWithEmailAndPassword(email,password))
 
 
-  def authAction(c: VueComponent, email:String, forward:String, promise: => firebase.Promise[UserCredential]) = {
+  def authAction(c: VueComponent, email: String, forward: String, promise: => firebase.Promise[UserCredential]): Observable[Boolean] = {
     val user = SiteUserService.siteUserForEmail(email)
 
     user.flatMap(su =>
-      su.fold(Observable.just(false))
-      (u => toObservable(promise)
-        .map(handleLoginSuccess(c, forward))
-      )
+      su.fold(Observable.just(false))((x:SiteUser) => toObservable(promise).map(handleLoginSuccess(c, forward)))
     )
   }
 
@@ -147,8 +144,8 @@ object LoginService{
 
       // The client SDK will parse the code from the link for you.
       Firebase.auth().signInWithEmailLink(email, url)
-        .`then`(handleLoginSuccess(c,forward))
-        .`catch`(handleLoginFailure(c))
+          .`then`(handleLoginSuccess(c,forward))
+          .`catch`(handleLoginFailure(c))
     }
     else {
       println("Invalid sign in address")

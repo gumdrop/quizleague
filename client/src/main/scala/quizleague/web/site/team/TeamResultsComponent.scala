@@ -37,7 +37,7 @@ object TeamResultsComponent extends Component {
 
 object TeamResultsTitle extends RouteComponent{
   val template = """<results-title :id="$route.params.id"></results-title>"""
- components(TeamResultsTitleComponent)
+  components(TeamResultsTitleComponent)
 }
 
 object TeamResultsTitleComponent extends Component with SeasonFormatComponent{

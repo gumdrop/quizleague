@@ -12,7 +12,7 @@ import rxscalajs.Subject
 trait SeasonSelectComponent extends VueRxComponent{
   val season:Subject[Season]
   val seasonId:String
-  val inline:Boolean = false
+  val inline:Boolean = js.native
 }
 
 object SeasonSelectComponent extends Component with SeasonFormatComponent{

@@ -13,7 +13,7 @@ object TeamsComponent extends RouteComponent with GridSizeComponentConfig {
           <v-flex><ql-text-box><ql-named-text name="teams-header"></ql-named-text></ql-text-box></v-flex>
         </v-layout>
        </v-container>"""
-  override val mounted = ({(c:facade) => {
+    override val mounted = ({(c:facade) => {
     //super.mounted.call(c)
     LoginService.userProfile.filter(_ != null).subscribe(u => c.$router.push(s"/team/${u.team.id}"))
 

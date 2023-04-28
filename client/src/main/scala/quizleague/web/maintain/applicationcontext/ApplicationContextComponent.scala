@@ -90,14 +90,14 @@ object ApplicationContextComponent extends ItemComponentConfig[ApplicationContex
     </v-form>
   </v-container>"""
 
- def removeAlias(c:facade, alias:EmailAlias) = c.item.emailAliases -= alias 
- def addAlias(c:facade) = {
+  def removeAlias(c:facade, alias:EmailAlias) = c.item.emailAliases -= alias
+  def addAlias(c:facade) = {
        c.item.emailAliases += EmailAlias(c.alias, c.user)
        c.alias = null
        c.user = null
      }
      
-   subscription("item"){c => ApplicationContextService.get}
+   subscription("item"){c => ApplicationContextService.get()}
    subscription("users"){c => users()}
    subscription("textSets"){c => textSets()}
    subscription("seasons"){c => seasons()}

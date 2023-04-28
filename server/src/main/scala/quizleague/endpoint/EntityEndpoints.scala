@@ -1,9 +1,9 @@
 package quizleague.endpoint
 
-import io.scalajs.npm.express._
-import quizleague.domain.Key
-import quizleague.endpoint.EntityFunctions._
-import quizleague.util.json.codecs.DomainCodecs._
+import io.scalajs.npm.express.*
+import quizleague.domain.*
+import quizleague.endpoint.EntityFunctions.*
+
 
 object EntityEndpoints {
 

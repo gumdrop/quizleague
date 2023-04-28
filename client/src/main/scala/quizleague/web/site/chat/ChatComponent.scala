@@ -128,8 +128,8 @@ object ChatMessages extends Component{
   subscription("user")(c => LoginService.userProfile)
 
   method("isLeft")({(c:facade,m:ChatMessage) => c.user.fold(true)(_.siteUser.id != m.user.id)}:js.ThisFunction)
-  method("date"){d:String => LocalDateTime.parse(d).toLocalDate.toString}
-  method("time"){d:String => LocalDateTime.parse(d).toLocalTime.toString}
+  method("date"){(d:String) => LocalDateTime.parse(d).toLocalDate.toString}
+  method("time"){(d:String) => LocalDateTime.parse(d).toLocalTime.toString}
   method("align")({(c:facade,m:ChatMessage) => c.user.filter(_!=null).fold(js.Object())(u => if(u.siteUser.id != m.user.id)$(left=true)else $(right=true))}:js.ThisFunction)
 
 }

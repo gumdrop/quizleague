@@ -17,5 +17,5 @@ object GlobalTextListComponent extends ItemListComponentConfig[GlobalText] with 
     </v-layout>
   </v-container>
 """
-val service = GlobalTextService
+  val service = GlobalTextService
 }

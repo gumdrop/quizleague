@@ -21,5 +21,5 @@ object VenueListComponent extends ItemListComponentConfig[Venue] with RouteCompo
     </v-layout>
   </v-container>
 """
-val service = VenueService
+  val service = VenueService
 }

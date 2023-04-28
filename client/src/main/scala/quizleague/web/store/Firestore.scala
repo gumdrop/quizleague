@@ -10,28 +10,28 @@ import quizleague.firestore.{Connection => conn}
 
 
 object Firestore {
-    val config = $(
-      apiKey= conn.apiKey,
-      authDomain= conn.authDomain,
-      databaseURL=  conn.databaseURL,
-      projectId = conn.projectId,
-      storageBucket= conn.storageBucket,
-      messagingSenderId= conn.messagingSenderId)
+  val config = $(
+    apiKey = conn.apiKey,
+    authDomain = conn.authDomain,
+    databaseURL = conn.databaseURL,
+    projectId = conn.projectId,
+    storageBucket = conn.storageBucket,
+    messagingSenderId = conn.messagingSenderId)
 
-  
-   Firebase.initializeApp(config)
-      
-   private val firestore = Firebase.firestore()
+
+  Firebase.initializeApp(config)
+
+  private val firestore = Firebase.firestore()
   if (window.location.hostname == "localhost") {
-    firestore.settings(literal(host = "localhost:8082",ssl = false).asInstanceOf[Settings])
+    firestore.settings(literal(host = "localhost:8082", ssl = false).asInstanceOf[Settings])
   }
-   firestore.enablePersistence($(synchronizeTabs=true)).`then`(x => {})
-   
-   val db = firestore
-   
-   def setAuthContext():Unit = {
+  firestore.enablePersistence($(synchronizeTabs = true)).`then`(x => {})
 
-    Firebase.auth().onAuthStateChanged( (user: User) =>
+  val db = firestore
+
+  def setAuthContext(): Unit = {
+
+    Firebase.auth().onAuthStateChanged((user: User) =>
 
       if (user == null) {
         val provider = new auth.GoogleAuthProvider()

@@ -1,16 +1,15 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 import java.util.Date
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.Duration
-import io.circe.generic._
-
-import quizleague.util.json.codecs.ScalaTimeCodecs._
-import quizleague.util.json.codecs.DomainCodecs._
 
 
-sealed trait Competition extends Entity
+
+sealed trait Competition extends Entity derives Codec.AsObject
 {
   val name:String
   val text:Ref[Text]
@@ -28,7 +27,7 @@ case class LeagueCompetition(
   textName:String = "league-comp",
   icon:Option[String] = None
   
-) extends Competition with MainLeagueCompetition
+) extends Competition with MainLeagueCompetition derives Codec.AsObject
 
 
 case class CupCompetition(
@@ -39,7 +38,7 @@ case class CupCompetition(
   text:Ref[Text],
   textName:String,
   icon:Option[String] = None
-) extends Competition with KnockoutCompetition
+) extends Competition with KnockoutCompetition derives Codec.AsObject
 
 case class SubsidiaryLeagueCompetition(
   id:String,
@@ -47,7 +46,7 @@ case class SubsidiaryLeagueCompetition(
   text:Ref[Text],
   textName:String = "beer-comp",
   icon:Option[String] = None
-) extends Competition with SubsidiaryCompetition  with CompetitionTables with FixturesCompetition
+) extends Competition with SubsidiaryCompetition  with CompetitionTables with FixturesCompetition derives Codec.AsObject
 
 case class SingletonCompetition(
   id:String,
@@ -56,7 +55,7 @@ case class SingletonCompetition(
   textName:String,
   text:Ref[Text],
   icon:Option[String] = None
-) extends Competition with BaseSingletonCompetition
+) extends Competition with BaseSingletonCompetition derives Codec.AsObject
 
 object Competition
 

@@ -1,6 +1,8 @@
 package quizleague.domain
 
-case class Key(parentKey:Option[String], entityName:String, id:String) {
+import io.circe.Codec
+
+case class Key(parentKey:Option[String], entityName:String, id:String) derives Codec.AsObject {
   def key = s"${parentKey.fold("")(x => s"${x}/")}$entityName/$id"
 }
 

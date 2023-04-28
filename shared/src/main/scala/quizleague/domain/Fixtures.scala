@@ -1,5 +1,7 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 import java.time.{Duration, LocalDate, LocalDateTime, LocalTime}
 
 case class Fixtures(
@@ -8,7 +10,7 @@ case class Fixtures(
     date:LocalDate,
     start:LocalTime,
     questionsUrl:Option[String] = None,
-    retired:Boolean = false) extends Entity
+    retired:Boolean = false) extends Entity derives Codec.AsObject
     
 case class Fixture(
   id:String,
@@ -17,20 +19,21 @@ case class Fixture(
   away:Ref[Team],
   result : Option[Result],
   retired:Boolean = false
-) extends  Entity
+) extends  Entity derives Codec.AsObject
+
 
 case class Result(
     homeScore:Int,
     awayScore:Int,
     submitter:Option[Ref[User]],
     note:Option[String]
-   )
+   ) derives Codec.AsObject
 
 
 case class Report(
     team:Ref[Team],
     text:Ref[Text],
-    ) extends Entity {
+    ) extends Entity derives Codec.AsObject {
    val id = ""
    val retired = false
 }

@@ -8,10 +8,8 @@ import quizleague.web.model.SeasonStats
 import quizleague.web.model.WeekStats
 import quizleague.web.model.HeadToHead
 import quizleague.domain.stats.{ Statistics => Dom }
-import shapeless._
 import quizleague.web.names.StatisticsNames
 import io.circe._,io.circe.parser._,io.circe.syntax._,io.circe.scalajs.convertJsToJson
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.web.service.team.TeamGetService
 import quizleague.web.service.season.SeasonGetService
 import quizleague.web.service.leaguetable.LeagueTableGetService

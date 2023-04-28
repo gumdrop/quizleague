@@ -4,13 +4,12 @@ import scalajs.js
 import quizleague.web.service._
 import quizleague.web.model.Text
 import quizleague.domain.{Key, Text => Dom}
-import shapeless._
 import quizleague.web.names.TextNames
 import io.circe._
 import io.circe.parser._
 import io.circe.syntax._
 import io.circe.scalajs.convertJsToJson
-import quizleague.util.json.codecs.DomainCodecs._
+import monocle.syntax.all._
 
 
 trait TextGetService extends GetService[Text] with TextNames {
@@ -21,9 +20,7 @@ trait TextGetService extends GetService[Text] with TextNames {
 
 trait TextPutService extends PutService[Text] with TextGetService with DirtyListService[Text]{
 
-  val mimeLens = lens[Dom].mimeType
-
-  def instance(mimeType: String = "text/html") = add(mimeLens.set(make())(mimeType))
+  def instance(mimeType: String = "text/html") = make().focus(_.mimeType).replace(mimeType)
 
   override protected def mapIn(text: Text) = Dom(text.id, text.text, text.mimeType)
 

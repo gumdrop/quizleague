@@ -1,5 +1,7 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 import java.time.Year
 
 case class Season(
@@ -9,4 +11,4 @@ case class Season(
     text:Ref[Text],
     calendar:List[CalendarEvent],
     retired:Boolean = false
-) extends Entity
+) extends Entity derives Codec.AsObject

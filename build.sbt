@@ -3,7 +3,7 @@ import org.scalajs.linker.interface.ModuleInitializer
 
 name := "Quiz League"
 
-val circeVersion = "0.14.1"
+val circeVersion = "0.14.5"
 val macroParadiseVersion = "2.1.1"
 
 //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
@@ -13,13 +13,12 @@ lazy val commonSettings = Seq(
     version := "0.0.1",
     scalaVersion := "3.2.2",
     scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Xmax-inlines:32"/*,"-Ymacro-annotations","-Xsource:3"*/),
-    scalacOptions += "-Xasync",
     resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
         "io.circe" %%% "circe-core",
         "io.circe" %%% "circe-generic",
         "io.circe" %%% "circe-parser"
-    ).map(x =>(x % circeVersion).cross(CrossVersion.for3Use2_13))
+    ).map(x =>(x % circeVersion))
 
 )
 
@@ -41,7 +40,7 @@ lazy val server = (project in file("server"))
     publishLocal := {},
     scalaJSUseMainModuleInitializer := true,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    libraryDependencies += ("io.scalajs" %%% "express" % "0.4.3").cross(CrossVersion.for3Use2_13),
+    libraryDependencies += ("io.scalajs" %%% "express" % "0.4.3"),
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
@@ -65,11 +64,13 @@ lazy val server = (project in file("server"))
       scalaJSUseMainModuleInitializer := false,
       //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
-      libraryDependencies += ("org.scala-js" %%% "scalajs-dom" % "2.2.0").cross(CrossVersion.for3Use2_13),
+      libraryDependencies += ("org.scala-js" %%% "scalajs-dom" % "2.2.0"),
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-      libraryDependencies += ("com.github.lukajcb" %%% "rxscala-js" % "0.15.3").cross(CrossVersion.for3Use2_13)
-    )
+      libraryDependencies += ("com.github.lukajcb" %%% "rxscala-js" % "0.15.4"),
+      libraryDependencies += "dev.optics" %% "monocle-core" % "3.1.0",
+      libraryDependencies += "dev.optics" %% "monocle-macro" % "3.1.0"
+ )
 
 lazy val devServer = taskKey[Unit]("copy test JS")
 lazy val prodServer = taskKey[Unit]("copy test JS")

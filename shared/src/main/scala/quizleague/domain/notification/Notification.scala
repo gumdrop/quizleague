@@ -1,6 +1,8 @@
 package quizleague.domain.notification
 
-import quizleague.domain._
+import io.circe.Codec
+import quizleague.domain.*
+
 import java.time.LocalDateTime
 
 
@@ -19,9 +21,9 @@ case class Notification(
   payload:Payload,
   retired:Boolean = false
   
-) extends Entity
+) extends Entity derives Codec.AsObject
 
 sealed trait Payload
 
-case class ResultPayload(fixtureKey:String) extends Payload
-case class MaintainMessagePayload(message:String) extends Payload
+case class ResultPayload(fixtureKey:String) extends Payload derives Codec.AsObject
+case class MaintainMessagePayload(message:String) extends Payload derives Codec.AsObject

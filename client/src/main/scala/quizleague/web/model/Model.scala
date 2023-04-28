@@ -16,8 +16,8 @@ class Key(val parentKey:String, val entityName:String, val id:String) extends js
 
   def encode = key.replace('/','|')
 
-  override def toString: String = key
-  override def hashCode():Int = key.hashCode
+//  override def toString: String = key
+//  override def hashCode():Int = key.hashCode
 }
 
 object Key{

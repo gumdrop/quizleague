@@ -7,11 +7,13 @@ import quizleague.data.Storage._
 import quizleague.mail.EmailSender.alias
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain._
+import scala.concurrent.Future
 
 import scalajs.js.JSConverters._
 import cps.monads.{*, given}
 import cps._
+import io.circe.*, io.circe.generic.auto._
 
 object EmailSender{
   
@@ -22,10 +24,10 @@ object EmailSender{
 
 private class EmailSender {
 
-  def sendTeamMail(sender: String, team: Team, text: String) = async {
+  def sendTeamMail(sender: String, team: Team, text: String) = async[Future] {
 
     val appContext = await(applicationContext())
-    val users = await(loadAll(team.users))
+    val users = await{loadAll(team.users)}
 
     if (users.nonEmpty)
       sendMail(sender, text, appContext, users.map(_.email))
@@ -34,9 +36,9 @@ private class EmailSender {
 
   }
 
-  def sendAliasMail(sender: String, recipientName: String, text: String) = async {
+  def sendAliasMail(sender: String, recipientName: String, text: String) = async[Future] {
 
-    val g = await(applicationContext())
+    val g = await{applicationContext()}
     val aliases = g.emailAliases.filter(_.alias == recipientName)
 
     if(aliases.isEmpty)
@@ -46,7 +48,7 @@ private class EmailSender {
 
     while (it.hasNext) {
       val alias = it.next()
-      val user = await(load(alias.user))
+      val user = await{load(alias.user)}
       sendMail(sender, text, g, List(user.email))
     }
   }

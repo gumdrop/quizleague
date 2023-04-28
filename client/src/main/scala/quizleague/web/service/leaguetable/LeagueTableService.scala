@@ -25,7 +25,6 @@ import quizleague.web.service.team.TeamPutService
 import quizleague.web.service.DirtyListService
 import quizleague.web.names.LeagueTableNames
 import io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.web.util.rx.RefObservable
 import quizleague.util.collection._
 

@@ -35,6 +35,8 @@ import quizleague.web.site.login.LoginService
 import quizleague.web.util.{UUID, rx}
 import quizleague.web.util.Logging._
 
+
+
 object TeamModule extends Module{
   
   override val components = @@(TeamNameComponent, ResponsiveTeamNameComponent)
@@ -68,7 +70,6 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
   override val venueService = VenueService
   
   def teamForEmail(email:String):Observable[js.Array[Team]] = {
-    import quizleague.util.json.codecs.DomainCodecs._
     command[List[U],String](List("site","team-for-email",email),None).map(_.map(mapOutSparse _).toJSArray)
   }
 
@@ -77,14 +78,12 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
   }
   
   def sendEmailToTeam(sender:String, text:String, team:Team):Unit = {
-    import quizleague.util.json.codecs.CommandCodecs._
-    
+
     val cmd = TeamEmailCommand(sender,text,team.id)
     command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(x => ())
   }
 
   def sendEmailToAlias(sender: String, text: String, alias: String):Unit = {
-    import quizleague.util.json.codecs.CommandCodecs._
 
     val cmd = AliasEmailCommand(sender, text, alias)
     command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(x => ())
@@ -137,7 +136,7 @@ object StatisticsService extends StatisticsGetService{
     query(q)
   }
   
-  def teamsInTable(stats:Statistics):Observable[Int] = stats.table.map(_.rows.size)
+  def teamsInTable(stats:Statistics):Observable[Int] = stats.table.obs.map(_.rows.size)
   
   def teamsInTables(stats:js.Array[Statistics]):Observable[Int] = Observable.combineLatest(
       stats.map(_.table.obs).toSeq)
@@ -150,7 +149,7 @@ object StatisticsService extends StatisticsGetService{
   private def formatDate(stats:WeekStats):String = formatDate(stats.date)
       
       
- def positionData(stats:Statistics):ChartData = {
+  def positionData(stats:Statistics):ChartData = {
     ChartData(
         datasets = js.Array(DataSet("League Position", data = stats.weekStats.map(_.leaguePosition.asInstanceOf[js.Any]),lineTension=.2)), 
         xLabels = stats.weekStats.map(formatDate _),
@@ -265,8 +264,8 @@ object StatisticsService extends StatisticsGetService{
        def fixCount(weekStats:js.Array[WeekStats]) = weekStats.count(!_.ignorable)
        ChartData(
         datasets = js.Array(
-            DataSet("Average For", data = sortedStats.map(s => (s.seasonStats.runningPointsFor/fixCount(s.weekStats)).asInstanceOf[js.Any]),lineTension=.2,fill=true,borderColor=new Color(50,50,50),backgroundColor="rgba(150,150,150,.5)"),
-            DataSet("Average Against", data = sortedStats.map(s => (s.seasonStats.runningPointsAgainst/fixCount(s.weekStats)).asInstanceOf[js.Any]),lineTension=.2,fill=true,borderColor=Color.Red,backgroundColor="rgba(150,150,150,.7)")
+            DataSet("Average For", data = sortedStats.map(sts => (sts.seasonStats.runningPointsFor/fixCount(sts.weekStats)).asInstanceOf[js.Any]),lineTension=.2,fill=true,borderColor=new Color(50,50,50),backgroundColor="rgba(150,150,150,.5)"),
+            DataSet("Average Against", data = sortedStats.map(sts => (sts.seasonStats.runningPointsAgainst/fixCount(sts.weekStats)).asInstanceOf[js.Any]),lineTension=.2,fill=true,borderColor=Color.Red,backgroundColor="rgba(150,150,150,.7)")
     
         ), 
         xLabels = seasons.map(SeasonFormat.format _).toJSArray.sortBy(identity)
@@ -289,7 +288,7 @@ object StatisticsService extends StatisticsGetService{
           team.map(t => {
             val colour = randomColor
 
-            DataSet(t.shortName, data = sortedStats.map(s => (if(s.seasonStats.runningPointsFor != 0)(s.seasonStats.runningPointsFor / fixCount(s.weekStats)) else null).asInstanceOf[js.Any]), lineTension = .2, borderColor = colour, backgroundColor = colour)
+            DataSet(t.shortName, data = sortedStats.map(sts => (if(sts.seasonStats.runningPointsFor != 0)(sts.seasonStats.runningPointsFor / fixCount(sts.weekStats)) else null).asInstanceOf[js.Any]), lineTension = .2, borderColor = colour, backgroundColor = colour)
           })
         }).toSeq
 

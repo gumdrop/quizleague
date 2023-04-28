@@ -12,7 +12,6 @@ import quizleague.web.service.text._
 import quizleague.web.service.user._
 import quizleague.web.names.TeamNames
 import io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import scalajs.js
 
 trait TeamGetService extends GetService[Team] with TeamNames {

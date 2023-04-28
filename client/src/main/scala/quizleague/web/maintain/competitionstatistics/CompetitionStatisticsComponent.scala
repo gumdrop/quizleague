@@ -120,12 +120,12 @@ object CompetitionStatisticsResultComponent extends Component{
   val teamService = TeamService
   val competitionService = CompetitionService
   def teams() = SelectUtils.model[Team](teamService)(_.name)
-  def seasons() = SelectUtils.model[Season](seasonService)(_.toText)
+  def seasons() = SelectUtils.model[Season](seasonService)(_.toText())
   def handleSeasonChange(c:facade) = {
     if(c.item.season != null) {
       c.item.season.obs.subscribe({
         s => {
-          c.item.seasonText = s.toText
+          c.item.seasonText = s.toText()
           c.item.competition = null
           SelectUtils
             .model(s.competition.map(_.filter(_.name == c.competitionName)) , competitionService)(_.name).subscribe(cs => c.competitions = cs)
@@ -136,8 +136,8 @@ object CompetitionStatisticsResultComponent extends Component{
   prop("item")
   prop("competitionName")
   data("competitions",null)
-  subscription("seasons"){c:facade => seasons()}
-  subscription("teams"){c:facade => teams()}
+  subscription("seasons"){(c:facade) => seasons()}
+  subscription("teams"){(c:facade) => teams()}
   watch("item.season")((c:facade,x:Any) => handleSeasonChange(c))
   watch("item.team")((c:facade,x:Any) => if(c.item.team != null){c.item.teamText = null})
 

@@ -30,18 +30,21 @@ object App {
     SiteEndpoints.configure(app)
     CalendarEndpoints.configure(app)
     val server = app
-       .use("/", (req:Request,res:Response) => {
-        if(req.originalUrl.contains("/maintain/"))
-          res.sendFile(Path.join(js.Dynamic.global.__dirname.toString+"/static/maintain/index.html"))
-        else 
-          res.sendFile(Path.join(js.Dynamic.global.__dirname.toString+"/static/index.html"))})
+      .use("/", indexMapping)
       .listen(port)
 
     println(s"Server started on port $port")
     Process.env("FIRESTORE_EMULATOR_HOST").foreach(port => println(s"emulator port : $port"))
   }
 
-  val bodyParser = {(req:js.Dynamic, res:Request, next:js.Function0[Unit]) =>{
+  val indexMapping:js.Any = (req: Request, res: Response) => {
+    if (req.originalUrl.contains("/maintain/"))
+      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/static/maintain/index.html"))
+    else
+      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/static/index.html"))
+  }
+
+  val bodyParser:js.Any = {(req:js.Dynamic, res:Request, next:js.Function0[Unit]) =>{
       var data = ""
       req.setEncoding("utf8")
       req.on("data", (chunk:js.Any) => {
