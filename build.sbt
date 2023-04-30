@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
         "io.circe" %%% "circe-core",
         "io.circe" %%% "circe-generic",
         "io.circe" %%% "circe-parser"
-    ).map(x =>(x % circeVersion))
+    ).map(_ % circeVersion)
 
 )
 
@@ -40,7 +40,7 @@ lazy val server = (project in file("server"))
     publishLocal := {},
     scalaJSUseMainModuleInitializer := true,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    libraryDependencies += ("io.scalajs" %%% "express" % "0.4.3"),
+    libraryDependencies += "io.scalajs" %%% "express" % "0.4.3",
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
@@ -64,7 +64,7 @@ lazy val server = (project in file("server"))
       scalaJSUseMainModuleInitializer := false,
       //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
-      libraryDependencies += ("org.scala-js" %%% "scalajs-dom" % "2.2.0"),
+      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
       libraryDependencies += ("com.github.lukajcb" %%% "rxscala-js" % "0.15.5"),

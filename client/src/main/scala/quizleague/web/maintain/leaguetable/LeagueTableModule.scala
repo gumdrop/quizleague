@@ -35,5 +35,4 @@ object LeagueTableService extends LeagueTableGetService with LeagueTablePutServi
     command[Dom, DomKey](List("entity", "recalculate-table"), Option(DomKey(table.key.key))).subscribe(x => ())
   }
 
-
 }

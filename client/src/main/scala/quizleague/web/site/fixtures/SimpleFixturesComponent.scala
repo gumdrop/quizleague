@@ -131,6 +131,7 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
   subscription("parent")(_.fixture.parent)
   subscription("reports")(c => if(c.fixture.result != null) c.fixture.result.report else Observable.just(js.Array()))
   method("nameClass")(nameClass _ )
+
  }
 
 

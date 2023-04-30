@@ -1,39 +1,31 @@
 package quizleague.web.site.team
 
-import quizleague.web.core._
-import quizleague.web.core.RouteConfig
-
-import scalajs.js
-import js.JSConverters._
-import quizleague.web.service.team.TeamGetService
-import quizleague.web.service.statistics.StatisticsGetService
-import quizleague.web.site.text.TextService
-import quizleague.web.site.venue.VenueService
-import quizleague.web.site.user.UserService
-import quizleague.web.site.season.SeasonWatchService
-import quizleague.web.site.season.SeasonService
-import quizleague.web.site.leaguetable.LeagueTableService
-import quizleague.web.service._
-import quizleague.web.model._
-import quizleague.web.util.rx._
-import rxscalajs.Observable
-import quizleague.web.service.PostService
-import quizleague.domain.command._
 import chartjs.chart._
 import org.scalajs.dom.ext.Color
-import quizleague.web.site.season._
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
+import quizleague.domain.command._
+import quizleague.util.StringUtils._
+import quizleague.web.core.{RouteConfig, _}
+import quizleague.web.model._
+import quizleague.web.service._
+import quizleague.web.service.statistics.StatisticsGetService
+import quizleague.web.service.team.TeamGetService
 import quizleague.web.site.ApplicationContextService
 import quizleague.web.site.competition.CompetitionService
-import quizleague.web.model.CompetitionType
-import quizleague.util.StringUtils._
-import quizleague.web.site.fixtures.FixtureService
-import quizleague.web.site.fixtures.FixturesService
+import quizleague.web.site.fixtures.{FixtureService, FixturesService}
+import quizleague.web.site.leaguetable.LeagueTableService
 import quizleague.web.site.login.LoginService
-import quizleague.web.util.{UUID, rx}
-import quizleague.web.util.Logging._
+import quizleague.web.site.season._
+import quizleague.web.site.text.TextService
+import quizleague.web.site.user.UserService
+import quizleague.web.site.venue.VenueService
+import quizleague.web.util._
+import quizleague.web.util.rx._
+import rxscalajs.Observable
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters._
 
 
 
@@ -80,13 +72,13 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
   def sendEmailToTeam(sender:String, text:String, team:Team):Unit = {
 
     val cmd = TeamEmailCommand(sender,text,team.id)
-    command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(x => ())
+    command[List[String],TeamEmailCommand](List("site","email","team"),Some(cmd)).subscribe(unit)
   }
 
   def sendEmailToAlias(sender: String, text: String, alias: String):Unit = {
 
     val cmd = AliasEmailCommand(sender, text, alias)
-    command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(x => ())
+    command[List[String], AliasEmailCommand](List("site", "email", "alias"), Some(cmd)).subscribe(unit)
   }
   
   def leagueStanding(teamId:String):Observable[js.Array[Standing]] = ApplicationContextService.get().flatMap(
