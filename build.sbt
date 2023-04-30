@@ -32,7 +32,6 @@ lazy val server = (project in file("server"))
   .enablePlugins(ScalaJSPlugin)
   .settings(commonSettings: _*)
   .settings(
-    idePackagePrefix := Some("quizleague"),
     publish := {},
     publishLocal := {},
     scalaJSUseMainModuleInitializer := true,

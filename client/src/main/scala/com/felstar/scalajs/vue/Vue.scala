@@ -65,7 +65,7 @@ class Vue extends js.Object {
   // Lifecycle
   def $mount(elementOrSelector: js.Any): Vue = js.native
   def $destroy(destroy: Boolean = false): Unit = js.native
-  def $compile(element: raw.Element): js.Function = js.native
+  def $compile(element: Element): js.Function = js.native
   def $addChild(): Unit = js.native
   def $addChild(options: js.Any): Unit = js.native
   def $addChild(options: js.Any, constructor: js.Function): Unit = js.native
