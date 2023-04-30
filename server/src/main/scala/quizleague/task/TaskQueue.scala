@@ -11,6 +11,8 @@ class TaskQueue(implicit ac: castor.Context) extends SimpleActor[()=>Unit]{
 }
 
 object TaskQueue {
-  implicit private val context = castor.Context.Simple.global
+  import castor.Context.Simple.global
+
+  //implicit private val context: Context.Simple = castor.Context.Simple.global
   val taskQueue: TaskQueue = new TaskQueue()
 }

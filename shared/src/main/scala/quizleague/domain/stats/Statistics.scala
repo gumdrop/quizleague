@@ -1,16 +1,18 @@
 package quizleague.domain.stats
 
-import quizleague.domain._
+import io.circe.Codec
+import quizleague.domain.*
+
 import java.time.LocalDate
 
 case class Statistics(
-                       id: String,
-                       team: Ref[Team],
-                       season: Ref[Season],
-                       table: Ref[LeagueTable],
-                       seasonStats: SeasonStats = SeasonStats(),
-                       weekStats: Map[String, WeekStats] = Map(),
-                       retired: Boolean = false) extends Entity {
+ id: String,
+ team: Ref[Team],
+ season: Ref[Season],
+ table: Ref[LeagueTable],
+ seasonStats: SeasonStats = SeasonStats(),
+ weekStats: Map[String, WeekStats] = Map(),
+ retired: Boolean = false) extends Entity  derives Codec.AsObject{
 
   private def updateFromCurrent(stats: WeekStats, pointsFor: Int = 0, pointsAgainst: Int = 0) = {
 
@@ -83,7 +85,7 @@ case class HeadToHead(
                        team: Ref[Team],
                        win: Int = 0,
                        lose: Int = 0,
-                       draw: Int = 0){
+                       draw: Int = 0)  derives Codec.AsObject{
 
   def +(other:HeadToHead) = HeadToHead(team, win + other.win, lose + other.lose, draw + other.draw)
 
@@ -94,7 +96,7 @@ case class SeasonStats(
                         runningPointsFor: Int = 0,
                         runningPointsAgainst: Int = 0,
                         runningPointsDifference: Int = 0,
-                        headToHead: List[HeadToHead] = List())
+                        headToHead: List[HeadToHead] = List())  derives Codec.AsObject
 
 case class WeekStats(
                       date: LocalDate,
@@ -105,7 +107,7 @@ case class WeekStats(
                       cumuPointsFor: Int = 0,
                       cumuPointsAgainst: Int = 0,
                       cumuPointsDifference: Int = 0,
-                      ignorable: Boolean = false)
+                      ignorable: Boolean = false)  derives Codec.AsObject
 
 
 

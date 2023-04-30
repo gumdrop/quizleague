@@ -6,13 +6,14 @@ import quizleague.domain.stats._
 import quizleague.domain.util.LeagueTableRecalculator
 import quizleague.util.StringUtils._
 import quizleague.util.UUID.{randomUUID => uuid}
-import quizleague.util.json.codecs.DomainCodecs._
 
 import java.time.LocalDate
-import scala.async.Async.{async, await}
+import cps.monads.{*, given}
+import cps._
 import scala.collection.mutable.Map
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import io.circe.*, io.circe.generic.auto._
 
 
 object StatsWorker {
@@ -35,7 +36,7 @@ object StatsWorker {
 
   def seasonStats(season:Season) = list[Statistics].map(_.filter(s => s.season.id == season.id))
   
-  def perform(fixture: Fixture, season: Season){
+  def perform(fixture: Fixture, season: Season):Unit = {
     //LOG.warning(s"starting stats regen for : $fixture and $season")
 
 
@@ -101,7 +102,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
       tables <- list[LeagueTable](comp.key)
     } yield {
       val table = tables.filter(_.rows.exists(_.team.id == team.id)).map(ref _).head
-      cache.getOrElseUpdate(team.id, Statistics(uuid.toString, team, Ref[Season]("season", season.id), table))
+      cache.getOrElseUpdate(team.id, Statistics(uuid().toString, team, Ref[Season]("season", season.id), table))
     }
   }
 
@@ -121,7 +122,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
 
 object HistoricalStatsAggregator {
 
-  def perform(season: Season) = async {
+  def perform(season: Season) = async[Future] {
 
       val ss = await(list[Statistics])
       val seasonStats = ss.filter(_.season.id == season.id)

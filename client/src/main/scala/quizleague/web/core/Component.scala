@@ -48,13 +48,13 @@ trait Component {
   private def data: facade => Map[String, Any] = c => Map()
   private def methods: Map[String, js.Function] = Map()
   def components: js.Array[Component] = addedComponents.toJSArray
-  def mounted: js.Function = null
-  def activated:js.Function = null
-  def deactivated:js.Function = null
-  def created:js.Function = null
-  def beforeCreate:js.Function = null
-  def updated:js.Function = null
-  def beforeDestroy:js.Function = null
+  def mounted: js.Function = () => {}
+  def activated:js.Function = () => {}
+  def deactivated:js.Function = () => {}
+  def created:js.Function = () => {}
+  def beforeCreate:js.Function = () => {}
+  def updated:js.Function = () => {}
+  def beforeDestroy:js.Function = () => {}
 
   val empty = new js.Object
   
@@ -90,45 +90,45 @@ trait Component {
 
   }):js.ThisFunction))
   
-  protected final def subscription(name:String,linkedProps:String*)(fn:facade => Observable[Any]) {
+  protected final def subscription(name:String,linkedProps:String*)(fn:facade => Observable[Any]):Unit = {
     addedSubs  = addedSubs + ((name, fn))
     addedSubParams = addedSubParams ++ linkedProps.map((_,name))
   }
   
   
-  protected final def props(names:String*){
+  protected final def props(names:String*):Unit ={
     addedProps = addedProps ++ names
   }
   
-  protected final def prop(name:String){
+  protected final def prop(name:String):Unit ={
     addedProps = addedProps :+ name
   }
   
-  protected final def method(name:String)(fn:js.Function){
+  protected final def method(name:String)(fn:js.Function):Unit = {
     addedMethods = addedMethods + ((name, fn))
   }
   
-  protected final def data(name:String, value:Any){
+  protected final def data(name:String, value:Any):Unit = {
     addedData = addedData + ((name, value))
   }
   
-  protected final def data(name:String)(fn:facade => Any){
+  protected final def data(name:String)(fn:facade => Any):Unit = {
     addedDataFn = addedDataFn + ((name, fn))
   }
   
-  protected final def components(comps:Component*){
+  protected final def components(comps:Component*):Unit = {
     addedComponents = addedComponents ++ comps
   }
   
-  protected final def computed(name:String)(fn:js.Function){
+  protected final def computed(name:String)(fn:js.Function):Unit = {
     addedComputed = addedComputed + ((name, fn))
   }
   
-  protected final def computedGetSet(name:String)(get:js.Function)(set:js.Function){
+  protected final def computedGetSet(name:String)(get:js.Function)(set:js.Function):Unit = {
     addedComputed = addedComputed + ((name, js.Dynamic.literal(get = get, set = set)))
   }
   
-  protected final def watch(name:String)(fn:(facade,js.Any) => Unit){
+  protected final def watch(name:String)(fn:(facade,js.Any) => Unit):Unit = {
     addedWatch = addedWatch + ((name, fn))
   }
   
@@ -138,9 +138,9 @@ trait Component {
   def apply():js.Dynamic = {
 
     def update(subject: Subject[Any])(fn: facade => Observable[Any])(c: facade) = {
-       c.$subscribeTo(
-          fn(c).inner, 
-          subject.inner)
+      c.$subscribeTo(
+        fn(c).inner,
+        subject.inner)
       subject.inner
     }
 

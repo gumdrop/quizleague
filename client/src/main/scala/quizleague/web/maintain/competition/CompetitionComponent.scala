@@ -49,7 +49,7 @@ trait CompetitionComponentConfig extends ItemComponentConfig[Competition] with R
     LeagueTableService.save(table)
   }
 
-  subscription("season"){c:facade => SeasonService.get(c.$route.params("seasonId"))}
+  subscription("season"){(c:facade) => SeasonService.get(c.$route.params("seasonId"))}
   
   method("fixtures")({fixtures _}:js.ThisFunction)
   method("toTable")({toTable _}:js.ThisFunction)

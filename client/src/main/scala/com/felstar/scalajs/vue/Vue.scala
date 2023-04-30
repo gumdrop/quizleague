@@ -133,8 +133,8 @@ trait VueComponent extends Vue {
 @js.native
 trait VueRxComponent extends VueComponent {
   
-  def $subscribeTo[_](obs:ObservableFacade[_], fn:js.Function):Unit = js.native
-  def $subscribeTo[_](obs:ObservableFacade[_], sub:ObservableFacade[_]):Unit = js.native
+  def $subscribeTo[A](obs:ObservableFacade[_], fn:js.Function):Unit = js.native
+  def $subscribeTo[A](obs:ObservableFacade[_], sub:ObservableFacade[_]):Unit = js.native
   
   def $watchAsObservable(exp:String, options:js.Any):ObservableFacade[js.Any] = js.native
   def $watchAsObservable(exp:String):ObservableFacade[js.Any] = js.native

@@ -1,6 +1,8 @@
 package quizleague.domain
 
-case class Ref[T <: Entity](typeName:String,id:String, key:Option[Key] = None){
+import io.circe.Codec
+
+case class Ref[T <: Entity](typeName:String,id:String, key:Option[Key] = None) derives Codec.AsObject{
   def getKey():Key = key.getOrElse(Key(None,typeName,id))
 }
 

@@ -242,6 +242,6 @@ object TeamMenuComponent extends RouteComponent with SideMenu{
      </ql-side-menu>
      """
    subscription("teams")(c => TeamService.list().map(_.sortBy(_.shortName)))
-  subscription("user")(c => LoginService.userProfile)
+   subscription("user")(c => LoginService.userProfile)
 }
 

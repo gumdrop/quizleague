@@ -12,7 +12,6 @@ import quizleague.web.service.user.{ UserGetService, UserPutService }
 import quizleague.web.util.Logging
 import rxscalajs.Observable
 import io.circe._,io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import scala.scalajs.js.JSConverters._
 
 trait ApplicationContextGetService extends GetService[ApplicationContext] with ApplicationContextNames with Logging {

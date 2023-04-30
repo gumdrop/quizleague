@@ -6,7 +6,7 @@ import quizleague.web.names.VenueNames
 import quizleague.web.service.{ GetService, PutService }
 import rxscalajs.Observable
 import io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain._
 import scalajs.js
 
 

@@ -16,7 +16,6 @@ import quizleague.web.service.user._
 import quizleague.web.names._
 import io.circe.parser._
 import io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.web.util.Logging
 import rxscalajs.Observable
 

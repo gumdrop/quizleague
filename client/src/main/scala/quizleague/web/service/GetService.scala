@@ -49,8 +49,8 @@ trait GetService[T <: Model] {
   protected def filterList(u:U) = true
   
   protected final def listFromStorage(parentKey:ModKey = null): Observable[js.Array[U]] = {
-    
-    listObservables.getOrElseUpdate(s"$parentKey",{listFromQuery(db.collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
+    val mapKey = if(parentKey == null) then "" else parentKey.key
+    listObservables.getOrElseUpdate(mapKey,{listFromQuery(db.collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
   }
   
   protected final def listFromQuery(query:Query): Observable[js.Array[U]] = {
@@ -77,7 +77,7 @@ trait GetService[T <: Model] {
           .fold(e => {throw e}, u => u
             .withKey(Key(a.ref.path))
           )
-        else {throw new Exception(s"db load failed : $key not found")})
+        else {throw new Exception(s"db load failed : ${key.key} not found")})
     })
 
   }
@@ -90,7 +90,7 @@ trait GetService[T <: Model] {
 
   protected def decodeJson[X](obj: js.Any)(implicit dec: Decoder[X]) = convertJsToJson(obj).fold(t => null, dec.decodeJson(_))
 
-  protected[service] def getRefObs(id:String):RefObservable[T] = refObsCache.getOrElseUpdate(key(id).toString, RefObservable(key(id), () => get(id)))
+  protected[service] def getRefObs(id:String):RefObservable[T] = refObsCache.getOrElseUpdate(key(id).key, RefObservable(key(id), () => get(id)))
   protected[service] def getRefObs(domKey:Key):RefObservable[T] = refObsCache.getOrElseUpdate(domKey.toString, RefObservable(key(domKey), () => get(key(domKey))))
 
   final def refObs(id: String): RefObservable[T] = getRefObs(id)

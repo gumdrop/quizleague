@@ -21,5 +21,5 @@ object TeamListComponent extends ItemListComponentConfig[Team] with RouteCompone
     </v-layout>
   </v-container>
 """
-val service = TeamService
+  val service = TeamService
 }

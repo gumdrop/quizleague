@@ -4,18 +4,20 @@ import firebase.Promise
 
 import scalajs.js
 import quizleague.web.util.UUID
-import quizleague.domain.{Key, Ref}
+import quizleague.domain.{Entity, Key, Ref}
 import quizleague.web.names.ComponentNames
 import quizleague.web.util.rx.RefObservable
 import io.circe.Json
-import io.circe.scalajs._
-import quizleague.web.util.Logging._
-import quizleague.web.model.{Model, Key => ModelKey}
+import io.circe.scalajs.*
+import quizleague.web.util.Logging.*
+import quizleague.web.model.{Model, Key as ModelKey}
 import rxscalajs.Observable
 import rxscalajs.subjects.ReplaySubject
 
 trait PutService[T <: Model] {
   this: GetService[T] with ComponentNames=>
+
+  type U <: Entity
  
   def cache(item: T) = add(item)
   
@@ -32,8 +34,9 @@ trait PutService[T <: Model] {
 
   private[service] def saveDom(i:U):Observable[Unit] = {
     val path = i.key.getOrElse(throw new RuntimeException("no key")).key
-    val promise = db.doc(path).set(convertJsonToJs(enc(i.withKey(None))).asInstanceOf[js.Dictionary[js.Any]])
-    log(i,s"saved $path to firestore")
+    val json = enc(i.withKey(None))
+    val promise = db.doc(path).set(convertJsonToJs(json).asInstanceOf[js.Dictionary[js.Any]])
+    log(json.toString,s"saved $path to firestore", false)
     deCache(i)
     promiseToObs(promise)
   }
@@ -56,7 +59,7 @@ trait PutService[T <: Model] {
   def instance(parentKey:ModelKey) = add(mapOutWithKey(make(Key(parentKey.key))))
   def getId(item:T) = if (item != null ) item.id else null
   def getKey(item:T):ModelKey = Option(item).map(_.key).getOrElse(key(item.id))
-  protected final def newId = UUID.randomUUID.toString()
+  protected final def newId = UUID.randomUUID().toString()
   private[service] def deCache(item:U) = items -= item.id
   protected final def mapInWithKey(model:T) = {
     val dom = mapIn(model)

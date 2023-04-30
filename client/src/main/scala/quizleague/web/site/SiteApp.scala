@@ -35,7 +35,7 @@ object SiteApp{
     Vue.filter("datetime", (datetime:String, format:String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME.parse(datetime)))
     Vue.filter("combine", (obs:js.Array[RefObservable[Any]]) => Observable.combineLatest(obs.map(_.obs).toSeq).map(_.toJSArray))
     Vue.filter("wrap", (obj:js.Any) => Observable.just(obj))
-  new Vue(
+    new Vue(
         literal(el="#app",
         router = Router(SiteModule(), scrollBehavior = () => $(x=0,y=0)
         ),

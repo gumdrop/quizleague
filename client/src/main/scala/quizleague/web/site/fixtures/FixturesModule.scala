@@ -35,7 +35,6 @@ import java.time.LocalDateTime
 import quizleague.web.service.competition.CompetitionGetService
 import quizleague.web.site.ApplicationContextService
 import quizleague.web.site.chat.ChatService
-import quizleague.web.util._
 
 object FixturesModule extends Module {
 
@@ -92,7 +91,7 @@ object FixturesService extends FixturesGetService {
   def competitionFixtures(competitions:Observable[js.Array[_ <: Competition]]):Observable[js.Array[Fixtures]] = {
       val interim = competitions.map(_.map(c => FixturesService.list(c.key)))
 
-    interim.flatMap(o => combineLatest(o.toSeq).map(_.toJSArray.flatten))
+      interim.flatMap(o => combineLatest(o.toSeq).map(_.toJSArray.flatten))
   }
 
 
@@ -163,11 +162,10 @@ object FixtureService extends FixtureGetService with PostService{
   
 
   def submitResult(fixtures:js.Array[Fixture], reportText:String, userID:String) = {
-    import quizleague.util.json.codecs.CommandCodecs._
 
     val cmd = ResultsSubmitCommand(fixtures.map(f => ResultValues(Key(f.key.key), f.result.homeScore, f.result.awayScore)).toList, Option(reportText), userID)
     
-    command[List[String],ResultsSubmitCommand](List("site","result","submit"),Some(cmd)).subscribe(unit)
+    command[List[String],ResultsSubmitCommand](List("site","result","submit"),Some(cmd)).subscribe(x => ())
   }
   
 }

@@ -23,7 +23,8 @@ class RefObservable[+T](val id: String, val obsf: () => Observable[T], val key:K
 
   def toJSON() = js.Dynamic.literal("id" -> id, "key" -> key)
 
-  @inline override def equals(that: Any): scala.Boolean = {
+  @JSName("equals")
+  @inline def jsequals(that: Any): scala.Boolean = {
     that match {
       case r: RefObservable[T] => id == r.id
       case _ => false

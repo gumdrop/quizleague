@@ -19,46 +19,42 @@ import quizleague.web.service.team.TeamPutService
 import quizleague.web.service.DirtyListService
 import quizleague.web.names.FixtureNames
 import io.circe._,io.circe.parser._,io.circe.syntax._
-import quizleague.util.json.codecs.DomainCodecs._
 import io.circe.Json
 import quizleague.web.service.user.UserGetService
 import quizleague.web.service.results.ReportGetService
 import quizleague.web.util.rx.RefObservable
 import rxscalajs.Observable
 
+trait FixtureGetService extends GetService[Fixture] with FixtureNames {
+  override type U = Dom
 
+  val venueService: VenueGetService
+  val teamService: TeamGetService
+  val userService: UserGetService
+  val reportService: ReportGetService
+  val fixturesService: GetService[Fixtures]
 
-
-trait FixtureGetService extends GetService[Fixture] with FixtureNames{
-    override type U = Dom
-    
-  val venueService:VenueGetService
-  val teamService:TeamGetService
-  val userService:UserGetService
-  val reportService:ReportGetService
-  val fixturesService:GetService[Fixtures]
-
-  override protected def mapOutSparse(dom:Dom) = Model(
+  override protected def mapOutSparse(dom: Dom) = Model(
     dom.id,
     venueService.refObs(dom.venue),
     refObs(dom.home, teamService),
     refObs(dom.away, teamService),
     mapResult(dom),
     fixturesService.get(Key(dom.key.get.parentKey.get)))
-  
-  override protected def dec(json:js.Any) = decodeJson[U](json)
-  
-  private def mapResult(fixture:Dom):Result = {
-       
-      fixture.result.fold[Result](null)(r =>
-        Result(
-          r.homeScore,
-          r.awayScore,
-          userService.refObs(r.submitter),
-          r.note.orNull,
-         reportService.list(Key(fixture.key))
-        ))
-    }
+
+  override protected def dec(json: js.Any) = decodeJson[U](json)
+
+  private def mapResult(fixture: Dom): Result = {
+
+    fixture.result.fold[Result](null)(r =>
+      Result(
+        r.homeScore,
+        r.awayScore,
+        userService.refObs(r.submitter),
+        r.note.orNull,
+        reportService.list(Key(fixture.key))
+      ))
+  }
 
 }
 

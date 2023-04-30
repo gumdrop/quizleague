@@ -18,11 +18,12 @@ trait SiteComponent extends VueRxComponent with VuetifyComponent{
 }
 
 object SiteComponent extends Component {
-     type facade = SiteComponent
-  
-     val name = "ql-app"
+  type facade = SiteComponent
 
-     val template="""
+  val name = "ql-app"
+
+  val template =
+    """
   <v-app
     style="font-size:16px;"
   >
@@ -107,13 +108,16 @@ object SiteComponent extends Component {
       </v-bottom-navigation>
   </v-app>"""
 
-  components(ResultNotificationsComponent,TitleComponent, LoggedOnMenu)
+  components(ResultNotificationsComponent, TitleComponent, LoggedOnMenu)
 
-  def drawerGet(c:facade) = (c.sidemenu && c.$vuetify.breakpoint.lgAndUp) || (c.showMenu && c.$vuetify.breakpoint.mdAndDown)
-  def drawerSet(c:facade, showMenu:Boolean):Unit = {c.showMenu = if(c.$vuetify.breakpoint.mdAndDown) showMenu else c.showMenu}
+  def drawerGet(c: facade) = (c.sidemenu && c.$vuetify.breakpoint.lgAndUp) || (c.showMenu && c.$vuetify.breakpoint.mdAndDown)
+
+  def drawerSet(c: facade, showMenu: Boolean): Unit = {
+    c.showMenu = if (c.$vuetify.breakpoint.mdAndDown) showMenu else c.showMenu
+  }
 
 
-  data("showMenu",false)
+  data("showMenu", false)
   data("items",
     @@(menuItem("Home", "/home", "mdi-home"),
       menuItem("Teams", "/team", "mdi-account-multiple"),
@@ -129,9 +133,13 @@ object SiteComponent extends Component {
   subscription("appData")(c => ApplicationContextService.get())
   subscription("sidemenu")(c => SiteService.sidemenu)
   subscription("user")(c => LoginService.userProfile)
-  computedGetSet("drawer")({drawerGet _}:js.ThisFunction)({drawerSet _}:js.ThisFunction)
+  computedGetSet("drawer")({
+    drawerGet _
+  }: js.ThisFunction)({
+    drawerSet _
+  }: js.ThisFunction)
 
-  def menuItem(name:String, to:String, icon:String) = $(name=name, to=to, icon=icon)
+  def menuItem(name: String, to: String, icon: String) = $(name = name, to = to, icon = icon)
 }
 
 object LoggedOnMenu extends Component{

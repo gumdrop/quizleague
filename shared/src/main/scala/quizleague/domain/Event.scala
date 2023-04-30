@@ -1,8 +1,11 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 import java.time.LocalTime
 import java.time.LocalDate
 import java.time.Duration
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 trait BaseEvent {
   val venue: Option[Ref[Venue]]
@@ -15,13 +18,13 @@ case class Event(
   venue: Option[Ref[Venue]],
   date: LocalDate,
   time: LocalTime,
-  duration : Duration) extends BaseEvent
+  duration : Duration) extends BaseEvent derives Codec.AsObject
 
 case class CalendarEvent(
   venue: Option[Ref[Venue]],
   date: LocalDate,
   time: LocalTime,
   duration : Duration,
-  description: String) extends BaseEvent
+  description: String) extends BaseEvent derives Codec.AsObject
     
 

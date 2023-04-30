@@ -219,7 +219,7 @@ trait EventComponentConfig extends Component{
    type facade = PanelComponent
    data("panelVisible",false)
    props("event")
-   method("togglePanel")({c:facade => c.panelVisible = !c.panelVisible}:js.ThisFunction)
+   method("togglePanel")({(c:facade) => c.panelVisible = !c.panelVisible}:js.ThisFunction)
 }
 
 

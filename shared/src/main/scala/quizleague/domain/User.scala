@@ -1,11 +1,13 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 case class User(
     id:String,
     name:String,
     email:String,
     retired:Boolean = false
-) extends Entity
+) extends Entity derives Codec.AsObject
 
 case class SiteUser(
    id: String,
@@ -15,4 +17,4 @@ case class SiteUser(
    uid:Option[String],
    retired: Boolean = false
 
- ) extends Entity
+ ) extends Entity derives Codec.AsObject

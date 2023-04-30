@@ -118,9 +118,9 @@ object TeamEditComponent extends Component with GridSizeComponentConfig{
   subscription("team","id")(v => Service.get(v.id))
   subscription("text", "id")(c => Service.get(c.id).flatMap(team => TextService.get(team.text.id)))
 
-  method("newUser")({c:facade => {c.user = UserService.instance();c.dialog = true}}:js.ThisFunction)
+  method("newUser")({(c:facade) => {c.user = UserService.instance();c.dialog = true}}:js.ThisFunction)
 
-  method("addUser")({c:facade => {
+  method("addUser")({(c:facade) => {
     UserService.userForEmail(c.user.email).subscribe { x =>
       val user = x.getOrElse(c.user)
 
@@ -137,7 +137,7 @@ object TeamEditComponent extends Component with GridSizeComponentConfig{
 
   }}:js.ThisFunction)
 
-  method("submit")({c:facade => {
+  method("submit")({(c:facade) => {
     Service.save(c.team).combineLatest(TextService.save(c.text)).subscribe(x => c.success = true, e => c.failure = true, ()=> c.success = true)
   }}:js.ThisFunction)
 

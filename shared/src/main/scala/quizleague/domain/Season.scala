@@ -1,6 +1,10 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 import java.time.Year
+
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 case class Season(
     id:String,
@@ -9,4 +13,4 @@ case class Season(
     text:Ref[Text],
     calendar:List[CalendarEvent],
     retired:Boolean = false
-) extends Entity
+) extends Entity derives Codec.AsObject

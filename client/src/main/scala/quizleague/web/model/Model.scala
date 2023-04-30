@@ -12,13 +12,11 @@ abstract class Model extends js.Object {
 
 
 class Key(val parentKey:String, val entityName:String, val id:String) extends js.Object {
-  def key = s"${Option(parentKey).fold("")(x =>s"$x/")}$entityName/$id"
+  def key = s"${Option(parentKey).fold("")(x => s"$x/")}$entityName/$id"
 
-  def encode = key.replace('/','|')
-
-  override def toString: String = key
-  override def hashCode():Int = key.hashCode
+  def encode = key.replace('/', '|')
 }
+
 
 object Key{
   def apply(domKey:DomKey):Key = new Key(domKey.parentKey.getOrElse(null), domKey.entityName, domKey.id)

@@ -1,6 +1,6 @@
-package quizleague.web.util
+package quizleague.web.util.rx
 
-package object rx {
+
   import scala.language.implicitConversions
   import scalajs.js
   import rxscalajs.Observable
@@ -8,14 +8,14 @@ package object rx {
   import scalajs.js.JSConverters._
   import quizleague.web.util.Logging._
 
-  implicit def refObsToObs[T](refObs: RefObservable[T]) = refObs.obs
+  implicit def refObsToObs[T](refObs: RefObservable[T]): Observable[T] = refObs.obs
   
 
   def combineLatest[A](list:Observable[A]*) = if(list.isEmpty) just(js.Array[A]()) else Observable.combineLatest(list.toSeq).map(_.toJSArray)
   
   def zip[A](list: js.Array[RefObservable[A]]):Observable[js.Array[A]] = if(list.isEmpty) just(js.Array[A]()) else Observable.combineLatest(list.map(_.obs).toSeq).map(_.toJSArray)
 //  implicit def zipRO[A](list: js.Array[RefObservable[A]]) = RefObservable("dummy",zip(list))
-}
+
 
 //  import scala.language.implicitConversions
 //  import scala.scalajs.js

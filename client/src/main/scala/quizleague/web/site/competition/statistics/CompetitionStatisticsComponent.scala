@@ -46,7 +46,7 @@ object CompetitionStatisticsComponent extends Component with GridSizeComponentCo
  
   subscription ("item","id")(c => CompetitionStatisticsService.get(c.id))
 
-  method("sortResults"){r:js.Array[ResultEntry] => r.sortBy(_.seasonText)}
+  method("sortResults"){(r:js.Array[ResultEntry]) => r.sortBy(_.seasonText)}
       
   components (ResultSeasonComponent,ResultTeamComponent)
 }
@@ -91,15 +91,15 @@ object CompetitionLinkComponent extends Component{
 
   type facade = CompetitionLinkComponent
 
-val name = "competition-link"
-val template="""
-    <span>
-      <v-skeleton-loader v-if="!comp" type="text" width="5em"></v-skeleton-loader>
-      <router-link :to="'/competition/'+ comp.key.encode + '/' + comp.typeName" v-else>
-       <slot></slot>
-      </router-link>
-    </span>
-  """
+  val name = "competition-link"
+  val template="""
+      <span>
+        <v-skeleton-loader v-if="!comp" type="text" width="5em"></v-skeleton-loader>
+        <router-link :to="'/competition/'+ comp.key.encode + '/' + comp.typeName" v-else>
+         <slot></slot>
+        </router-link>
+      </span>
+    """
 
   prop("competition")
   prop("id")

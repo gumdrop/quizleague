@@ -76,7 +76,7 @@ object Storage extends StorageUtils {
 
   def load[T <: Entity](ref:Ref[T])(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(ref.getKey(), decoder)
 
-  def load[T <: Entity](id: String, parent:Option[Key] = None)(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(Key(s"${makeKind(parent)}/$id"), decoder)
+  def load[T <: Entity](id: String, parent:Option[Key] = None)(implicit tag: ClassTag[T], decoder: Codec[T]): Future[T] = load(Key(s"${makeKind(parent)}/$id"), decoder)
 
   def loadAll[T <: Entity](refs:List[Ref[T]])(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = loadAllByKey(refs.map(_.getKey()))
 

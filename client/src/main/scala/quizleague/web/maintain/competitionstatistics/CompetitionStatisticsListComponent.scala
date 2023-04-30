@@ -22,5 +22,5 @@ object CompetitionStatisticsListComponent extends ItemListComponentConfig[Compet
     </v-layout>
   </v-container>
 """
-val service = CompetitionStatisticsService
+  val service = CompetitionStatisticsService
 }

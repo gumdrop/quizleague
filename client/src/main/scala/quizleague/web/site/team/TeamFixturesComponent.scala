@@ -40,7 +40,7 @@ object TeamFixturesComponent extends Component {
 
 object TeamFixturesTitle extends RouteComponent{
   val template = """<fixtures-title :id="$route.params.id"></fixtures-title>"""
- components(TeamFixturesTitleComponent)
+  components(TeamFixturesTitleComponent)
 }
 
 object TeamFixturesTitleComponent extends Component{

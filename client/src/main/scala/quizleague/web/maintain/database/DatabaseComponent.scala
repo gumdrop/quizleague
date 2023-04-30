@@ -38,7 +38,7 @@ object DatabaseComponent extends RouteComponent{
     </v-container>
     """
 
-  def nestedupload(c:facade){
+  def nestedupload(c:facade):Unit = {
     val file = dom.document.getElementById("upload-nested-text-field").asInstanceOf[HTMLInputElement].files(0)
 
     DatabaseService.nestedupload(file).subscribe(x => {c.uploadText="Success!";c.uploadComplete = true},e => {c.uploadText=e.toString;c.uploadComplete=true})

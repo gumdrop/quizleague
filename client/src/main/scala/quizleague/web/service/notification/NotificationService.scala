@@ -5,10 +5,8 @@ import js.JSConverters._
 import quizleague.web.service._
 import quizleague.web.model._
 import quizleague.domain.notification.{ Notification => Dom, ResultPayload => DomRP, MaintainMessagePayload => DomMMP, Payload => DomP }
-import shapeless._
 import quizleague.web.names.NotificationNames
 import io.circe._,io.circe.parser._,io.circe.syntax._,io.circe.scalajs.convertJsToJson
-import quizleague.util.json.codecs.DomainCodecs._
 import java.time.LocalDateTime
 
 

@@ -1,9 +1,11 @@
 package quizleague.domain
 
+import io.circe.Codec
+
 case class LeagueTable(id: String,
   description: String,
   rows: List[LeagueTableRow],
-  retired: Boolean = false) extends Entity
+  retired: Boolean = false) extends Entity derives Codec.AsObject
 
 case class LeagueTableRow(
   team: Ref[Team],
@@ -14,7 +16,7 @@ case class LeagueTableRow(
   drawn: Int,
   leaguePoints: Int,
   matchPointsFor: Int,
-  matchPointsAgainst: Int){
+  matchPointsAgainst: Int) derives Codec.AsObject{
   
   def + (row:LeagueTableRow):LeagueTableRow = {
     LeagueTableRow(

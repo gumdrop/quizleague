@@ -14,7 +14,7 @@ import js.JSConverters._
 
 object GlobalTextComponent extends ItemComponentConfig[GlobalText] with RouteComponent {
 
-  val service = GlobalTextService
+  val service: GlobalTextService.type = GlobalTextService
   def parentKey(c:facade) = null
 
   val template = s"""
@@ -53,10 +53,10 @@ object GlobalTextComponent extends ItemComponentConfig[GlobalText] with RouteCom
   </v-container>"""
 
   
- def sort(c:facade, entries:js.Array[TextEntry]) = entries.sortBy(_.name)     
+  def sort(c:facade, entries:js.Array[TextEntry]) = entries.sortBy(_.name)
 
- method("sort")({sort _}:js.ThisFunction)
- method("add")({ (c: facade) =>
+  method("sort")({sort _}:js.ThisFunction)
+  method("add")({ (c: facade) =>
       {
         val i = service.entryInstance()
         c.item.text.push(i)

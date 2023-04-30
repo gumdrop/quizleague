@@ -21,5 +21,5 @@ object UserListComponent extends ItemListComponentConfig[User] with RouteCompone
     </v-layout>
   </v-container>
 """
-val service = UserService
+  val service = UserService
 }

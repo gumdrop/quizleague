@@ -2,7 +2,7 @@ package quizleague.web.service.results
 
 import io.circe.syntax._
 import quizleague.domain.{Report => Dom}
-import quizleague.util.json.codecs.DomainCodecs._
+import quizleague.domain._
 import quizleague.web.model.{Report => Model}
 import quizleague.web.names.ReportNames
 import quizleague.web.service.{DirtyListService, _}

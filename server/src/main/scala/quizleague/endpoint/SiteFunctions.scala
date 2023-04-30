@@ -2,14 +2,15 @@ package quizleague.endpoint
 
 import quizleague.domain.command.{AliasEmailCommand, ResultsSubmitCommand, TeamEmailCommand}
 import quizleague.task.TaskQueue.taskQueue
-import quizleague.domain._
-import quizleague.data.Storage._
+import quizleague.domain.*
+import quizleague.data.Storage.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.async.Async.{async, await}
+import scala.concurrent.Future
+import cps.monads.{*, given}
+import cps._
 import TaskFunctions._
 import quizleague.mail.EmailSender
-import quizleague.util.json.codecs.DomainCodecs._
 import quizleague.util.UUID
 
 import scala.concurrent.Future
@@ -24,7 +25,7 @@ object SiteFunctions {
     List[String]()
   }
 
-  def teamForEmail(email: String): Future[List[Team]] = async {
+  def teamForEmail(email: String): Future[List[Team]] = async[Future] {
 
     val lce = email.toLowerCase()
     val teams = await(list[Team])
@@ -39,9 +40,9 @@ object SiteFunctions {
     retval
   }
 
-  def siteUserForEmail(email: String): Future[Option[SiteUser]] = async{
+  def siteUserForEmail(email: String): Future[Option[SiteUser]] = async[Future]{
 
-    def createAndSave(user: User) = async{
+    def createAndSave(user: User) = async[Future]{
       val uuid = UUID.randomUUID().toString
       val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None).withKey(Key(None, "siteuser", uuid))
       await(save(siteUser))
@@ -52,7 +53,7 @@ object SiteFunctions {
 
     val user = await(list[User]).find(_.email.toLowerCase == lce)
 
-    def hasTeam(user: User) = async{await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined}
+    def hasTeam(user: User) = async[Future]{await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined}
 
     val siteUsers = await(list[SiteUser])
     if(user.isDefined){
@@ -65,21 +66,21 @@ object SiteFunctions {
     else None
   }
 
-  def saveSiteUser(in: SiteUser): Future[SiteUser] = async{
+  def saveSiteUser(in: SiteUser): Future[SiteUser] = async[Future]{
 
     val existing = await(load[SiteUser](in.id)).copy(handle = in.handle, avatar = in.avatar)
     await(save(existing))
     existing
   }
 
-  def contactTeam(mail: TeamEmailCommand) = async{
+  def contactTeam(mail: TeamEmailCommand) = async[Future]{
 
       val team = await(load[Team](mail.teamId))
       await(EmailSender.team(mail.sender, team, mail.text))
       List[String]()
   }
 
-  def contactPerson(mail: AliasEmailCommand) = async{
+  def contactPerson(mail: AliasEmailCommand) = async[Future]{
     
     await(EmailSender.alias(mail.sender, mail.alias, mail.text))
     List[String]()

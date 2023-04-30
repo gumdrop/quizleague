@@ -45,7 +45,7 @@ object StatsComponent extends RouteComponent{
   
     def seasons() = SelectUtils.model[Season](SeasonService)(s => s"${s.startYear}/${s.endYear}")
   
-    def regenerate(c:facade){
+    def regenerate(c:facade):Unit = {
       
       StatsService.rebuild(c.season.id).subscribe(unit)
   
