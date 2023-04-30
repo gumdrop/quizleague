@@ -1,5 +1,6 @@
 import scala.sys.process._
 import org.scalajs.linker.interface.ModuleInitializer
+import org.scalajs.linker.interface.ModuleSplitStyle
 
 name := "Quiz League"
 
@@ -48,7 +49,8 @@ lazy val server = (project in file("server"))
     .enablePlugins(ScalaJSPlugin)
     .settings(commonSettings: _*)
     .settings(
-      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) },
+      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule).withModuleSplitStyle(
+        ModuleSplitStyle.SmallModulesFor(List("quizleague.web"))) },
       Compile / scalaJSModuleInitializers += {
         ModuleInitializer.mainMethod("quizleague.web.site.SiteApp", "main").withModuleID("main")
       },
@@ -57,7 +59,7 @@ lazy val server = (project in file("server"))
       },
       scalaJSUseMainModuleInitializer := false,
 
-      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
+      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.4.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.5",

@@ -68,7 +68,7 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
       :multi-line="true"
       v-model="sponsorMessage"
     >
-      <ql-named-text name="sponsor-message"></ql-named-text
+      <ql-named-text name="sponsor-message"></ql-named-text>
      </v-snackbar>
   </v-container>
 """
