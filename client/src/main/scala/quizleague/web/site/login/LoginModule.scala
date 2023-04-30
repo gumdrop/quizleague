@@ -153,6 +153,7 @@ object LoginService{
   }
 
   private def handleLoginSuccess(c:VueComponent,forward:String)(result:UserCredential) = {
+    println("handleLoginSuccess")
     val siteUser = SiteUserService.siteUserForEmail(String.valueOf(result.user.email))
     siteUser.subscribe(su =>
       su.headOption.foreach(s => {SiteUserService.setUid(s, result.user.uid)

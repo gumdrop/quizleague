@@ -6,7 +6,7 @@ import java.util.Date
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.Duration
-
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 
 sealed trait Competition extends Entity derives Codec.AsObject

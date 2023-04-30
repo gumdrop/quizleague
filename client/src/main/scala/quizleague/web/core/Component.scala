@@ -48,13 +48,13 @@ trait Component {
   private def data: facade => Map[String, Any] = c => Map()
   private def methods: Map[String, js.Function] = Map()
   def components: js.Array[Component] = addedComponents.toJSArray
-  def mounted: js.Function = null
-  def activated:js.Function = null
-  def deactivated:js.Function = null
-  def created:js.Function = null
-  def beforeCreate:js.Function = null
-  def updated:js.Function = null
-  def beforeDestroy:js.Function = null
+  def mounted: js.Function = () => {}
+  def activated:js.Function = () => {}
+  def deactivated:js.Function = () => {}
+  def created:js.Function = () => {}
+  def beforeCreate:js.Function = () => {}
+  def updated:js.Function = () => {}
+  def beforeDestroy:js.Function = () => {}
 
   val empty = new js.Object
   

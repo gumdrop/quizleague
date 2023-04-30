@@ -34,8 +34,9 @@ trait PutService[T <: Model] {
 
   private[service] def saveDom(i:U):Observable[Unit] = {
     val path = i.key.getOrElse(throw new RuntimeException("no key")).key
-    val promise = db.doc(path).set(convertJsonToJs(enc(i.withKey(None))).asInstanceOf[js.Dictionary[js.Any]])
-    log(i,s"saved $path to firestore")
+    val json = enc(i.withKey(None))
+    val promise = db.doc(path).set(convertJsonToJs(json).asInstanceOf[js.Dictionary[js.Any]])
+    log(json.toString,s"saved $path to firestore", false)
     deCache(i)
     promiseToObs(promise)
   }

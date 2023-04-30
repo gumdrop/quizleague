@@ -40,6 +40,7 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
   }
 
   def setUid(user:SiteUser, uid:String): Unit ={
+    println(s"uid = $uid")
     import model.Key
     val nu = new SiteUser(user.id, user.handle, user.avatar, user.user, Option(uid))
     nu.key = new Key(null, typeName, user.id)

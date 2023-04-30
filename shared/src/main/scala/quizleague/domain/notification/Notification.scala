@@ -4,6 +4,7 @@ import io.circe.Codec
 import quizleague.domain.*
 
 import java.time.LocalDateTime
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 
 object NotificationTypeNames{

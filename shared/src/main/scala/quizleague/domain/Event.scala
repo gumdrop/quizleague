@@ -5,6 +5,7 @@ import io.circe.Codec
 import java.time.LocalTime
 import java.time.LocalDate
 import java.time.Duration
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 trait BaseEvent {
   val venue: Option[Ref[Venue]]

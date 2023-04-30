@@ -49,8 +49,8 @@ trait GetService[T <: Model] {
   protected def filterList(u:U) = true
   
   protected final def listFromStorage(parentKey:ModKey = null): Observable[js.Array[U]] = {
-    
-    listObservables.getOrElseUpdate(s"$parentKey",{listFromQuery(db.collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
+    val mapKey = if(parentKey == null) then "" else parentKey.key
+    listObservables.getOrElseUpdate(mapKey,{listFromQuery(db.collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
   }
   
   protected final def listFromQuery(query:Query): Observable[js.Array[U]] = {
@@ -77,7 +77,7 @@ trait GetService[T <: Model] {
           .fold(e => {throw e}, u => u
             .withKey(Key(a.ref.path))
           )
-        else {throw new Exception(s"db load failed : $key not found")})
+        else {throw new Exception(s"db load failed : ${key.key} not found")})
     })
 
   }

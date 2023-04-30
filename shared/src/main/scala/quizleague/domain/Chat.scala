@@ -4,6 +4,7 @@ import io.circe.Codec
 
 import java.net.URL
 import java.time.LocalDateTime
+import quizleague.util.json.codecs.ScalaTimeCodecs._
 
 case class Chat(
                  id: String,
