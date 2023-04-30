@@ -16,7 +16,7 @@ import scala.collection.mutable
 class Vue extends js.Object {
   def this(obj: js.Any) = this()
   // instance properties
-  val $el: raw.Element = js.native
+  val $el: Element = js.native
   val $data: js.Dynamic = js.native
   val $options: js.Dynamic = js.native
   val $parent: Vue = js.native

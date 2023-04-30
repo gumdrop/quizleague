@@ -3,7 +3,7 @@ package quizleague.web.site.login
 import java.util.regex.Pattern
 import com.felstar.scalajs.vue.{VueRxComponent, VuetifyComponent}
 import org.scalajs.dom.ProgressEvent
-import org.scalajs.dom.raw.{File, FileReader, UIEvent}
+import org.scalajs.dom.{File, FileReader, UIEvent}
 import org.scalajs.dom.window.alert
 import quizleague.web.core._
 import quizleague.web.model.SiteUser

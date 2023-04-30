@@ -1,26 +1,23 @@
 package quizleague.web.maintain
 
-import quizleague.web.core._
-import quizleague.web.core.RouteConfig
-import quizleague.web.maintain.user.UserModule
-import quizleague.web.maintain.venue.VenueModule
-import quizleague.web.maintain.text.TextModule
-import quizleague.web.maintain.team.TeamModule
+import quizleague.web.core.{RouteConfig, *}
 import quizleague.web.maintain.applicationcontext.ApplicationContextModule
+import quizleague.web.maintain.competitionstatistics.CompetitionStatisticsModule
 import quizleague.web.maintain.globaltext.GlobalTextModule
 import quizleague.web.maintain.season.SeasonModule
-import quizleague.web.maintain.database.DatabaseModule
 import quizleague.web.maintain.stats.StatsModule
-import quizleague.web.service.notification.NotificationGetService
-import java.time.LocalDateTime
-
-import quizleague.web.maintain.competitionstatistics.CompetitionStatisticsModule
+import quizleague.web.maintain.team.TeamModule
+import quizleague.web.maintain.text.TextModule
+import quizleague.web.maintain.user.UserModule
+import quizleague.web.maintain.venue.VenueModule
 import quizleague.web.model.MaintainMessagePayload
+import quizleague.web.service.notification.NotificationGetService
 import quizleague.web.shared.SharedModule
 import rxscalajs.Observable
 
-import scalajs.js
-import js.JSConverters._
+import java.time.LocalDateTime
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters.*
 
 object MaintainModule extends Module {
 
@@ -32,7 +29,6 @@ object MaintainModule extends Module {
     ApplicationContextModule,
     GlobalTextModule,
     SeasonModule,
-    DatabaseModule,
     StatsModule,
     CompetitionStatisticsModule,
     SharedModule)

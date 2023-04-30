@@ -4,15 +4,12 @@ import org.scalajs.linker.interface.ModuleInitializer
 name := "Quiz League"
 
 val circeVersion = "0.14.5"
-val macroParadiseVersion = "2.1.1"
-
-//addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full)
 
 lazy val commonSettings = Seq(
     organization := "quizleague",
     version := "0.0.1",
     scalaVersion := "3.2.2",
-    scalacOptions ++= Seq("-deprecation","-unchecked","-feature","-Xmax-inlines:32"/*,"-Ymacro-annotations","-Xsource:3"*/),
+    scalacOptions ++= Seq("-deprecation","-unchecked"),
     resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
         "io.circe" %%% "circe-core",
@@ -44,9 +41,7 @@ lazy val server = (project in file("server"))
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-    //libraryDependencies += "org.scala-lang.modules" %%% "scala-async" % "1.0.1",
     libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.16"
-    //libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
   )
 
   lazy val client = (project in file("client"))
@@ -62,12 +57,11 @@ lazy val server = (project in file("server"))
         ModuleInitializer.mainMethod("quizleague.web.maintain.MaintainApp", "main").withModuleID("maintain")
       },
       scalaJSUseMainModuleInitializer := false,
-      //addCompilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.full),
 
       libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.2.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-      libraryDependencies += ("com.github.lukajcb" %%% "rxscala-js" % "0.15.5"),
+      libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.5",
       libraryDependencies += "dev.optics" %% "monocle-core" % "3.1.0",
       libraryDependencies += "dev.optics" %% "monocle-macro" % "3.1.0"
  )

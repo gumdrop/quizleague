@@ -23,7 +23,7 @@ trait NotificationGetService extends GetService[Notification] with NotificationN
     payload match {
       case p: DomRP => new ResultPayload(Key(p.fixtureKey))
       case p: DomMMP => new MaintainMessagePayload(p.message)
-      case _ => throw new Exception(s"unknown payload type : ${payload.getClass.getName}")
+      case null => throw new Exception("null payload")
     }
   }
   

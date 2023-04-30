@@ -7,7 +7,7 @@ package chartjs.chart
  * ****************************************************************************************************************** */
 
 import scala.collection.mutable
-import org.scalajs.dom.raw.Event
+import org.scalajs.dom.Event
 import org.scalajs.dom.ext.Color
 import scala.scalajs.js
 import js.annotation._
