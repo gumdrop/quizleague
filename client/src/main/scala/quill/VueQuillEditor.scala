@@ -1,10 +1,8 @@
 package quill
 
 import scalajs.js
-import scala.scalajs.js.annotation.JSGlobal
+import scala.scalajs.js.annotation.{JSGlobal, JSImport}
 
-@JSGlobal
+@JSImport("vue-quill-editor", JSImport.Default)
 @js.native
-object VueQuillEditor extends js.Object {
-  
-}
+object VueQuillEditor extends js.Object

@@ -2,55 +2,39 @@ package quizleague.web.site.home
 
 
 
-import quizleague.web.core._
+import quizleague.web.core.*
 import quizleague.web.site.ApplicationContextService
 import quizleague.web.site.fixtures.FixturesService
 import com.felstar.scalajs.vue.VueComponent
 import quizleague.web.model.Season
+
 import scalajs.js
-import js.timers._
+import js.timers.*
 import com.felstar.scalajs.vue.VueRxComponent
 import quizleague.web.site.season.SeasonService
 import quizleague.web.site.leaguetable.LeagueTableService
 import com.felstar.scalajs.vue.VuetifyComponent
-import quizleague.web.site._
+import quizleague.web.site.*
 import quizleague.web.core.GridSizeComponentConfig
+import quizleague.web.site.home.HomeComponent.{components, data}
 
 @js.native
 trait HomeComponent extends VueRxComponent with VuetifyComponent{
   var sponsorMessage:Boolean
-  var activeTab:Int
-  var tabsHandle:SetIntervalHandle
 }
 
 object HomeComponent extends RouteComponent with NoSideMenu with GridSizeComponentConfig{
 
   type facade = HomeComponent
-  
-  val tabs = js.Array("league","results","fixtures")
-  
+
+  override val name = "site-home"
 
   override val template="""
    <v-container v-bind="gridSize" v-if="appData">
      <ql-title>Home</ql-title>
      <v-layout v-bind="align">
       <v-flex xs12 smAndUp5>
-        <v-card>
-          <v-tabs ripple :value="activeTab" slider-color="yellow" centered @click.native="haltTabs()">
-              <v-tab key="1">Tables</v-tab>
-              <v-tab key="2">Results</v-tab>
-              <v-tab key="3">Fixtures</v-tab>
-              <v-tab-item key="1">
-               <ql-home-page-table style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-home-page-table>
-              </v-tab-item>
-              <v-tab-item key="2">
-                <ql-latest-results style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-latest-results>
-              </v-tab-item>
-              <v-tab-item key="3">
-                <ql-next-fixtures style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-next-fixtures></v-carousel-item>
-              </v-tab-item>
-          </v-tabs>
-        </v-card>
+        <home-page-tabs></home-page-tabs>
       </v-flex>
       <v-flex offset-xs0 offset-md1 xs12>
         <v-layout column>
@@ -58,7 +42,6 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
             <ql-named-text name="front-page"></ql-named-text>
             <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
           </ql-text-box>
-
         <!--ql-hot-chats></ql-hot-chats-->
         </v-layout>
       </v-flex>
@@ -66,33 +49,64 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
      <v-snackbar
       timeout="3000"
       :multi-line="true"
-      v-model="sponsorMessage"
-    >
+      v-model="sponsorMessage">
       <ql-named-text name="sponsor-message"></ql-named-text>
      </v-snackbar>
   </v-container>
 """
-  components(HomePageLeagueTable, NextFixturesComponent, LatestResultsComponent)
+  components(HomePageTabsComponent)
   data("sponsorMessage", false)
-  data("activeTab", 0)
-  data("tabsHandle", null)
 
   subscription("appData")(c => ApplicationContextService.get())
-  
-  def nextTab(c:facade) = c.activeTab = ((c.activeTab + 1) % tabs.length)
-  def haltTabs(c:facade) = clearInterval(c.tabsHandle)
 
   def align(c: facade) = js.Dictionary("column" -> c.$vuetify.breakpoint.smAndDown)
   computed("align")({ align _ }: js.ThisFunction)
-  method("haltTabs")({haltTabs _}:js.ThisFunction)
+}
 
-  override val mounted = ({(c:facade) => {
-    super.mounted.call(c);
-    setTimeout(5000)(c.sponsorMessage = false);
-    c.tabsHandle = setInterval(5000)(nextTab(c))
-  }}:js.ThisFunction)
-  
-  override val beforeDestroy = {haltTabs _}:js.ThisFunction
+@js.native
+trait HomePageTabsComponent extends VueRxComponent with VuetifyComponent{
+  var activeTab:Int
+  var tabsHandle:SetIntervalHandle
+}
+object HomePageTabsComponent extends Component {
+  type facade = HomePageTabsComponent
+
+  private val tabs = js.Array("league","results","fixtures")
+  val name = "home-page-tabs"
+  override val template = """
+     <v-card>
+        <v-tabs ripple :value="activeTab" slider-color="yellow" centered @click.native="haltTabs()">
+            <v-tab key="1">Tables</v-tab>
+            <v-tab key="2">Results</v-tab>
+            <v-tab key="3">Fixtures</v-tab>
+            <v-tab-item key="1">
+             <ql-home-page-table style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-home-page-table>
+            </v-tab-item>
+            <v-tab-item key="2">
+              <ql-latest-results style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-latest-results>
+            </v-tab-item>
+            <v-tab-item key="3">
+              <ql-next-fixtures style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-next-fixtures></v-carousel-item>
+            </v-tab-item>
+        </v-tabs>
+      </v-card>
+      """
+    components(HomePageLeagueTable, NextFixturesComponent, LatestResultsComponent)
+    data("activeTab", 0)
+    data("tabsHandle", null)
+    method("haltTabs")({haltTabs _}:js.ThisFunction)
+
+    subscription("appData")(_ => ApplicationContextService.get())
+
+    def nextTab(c: facade) = c.activeTab = (c.activeTab + 1) % tabs.length
+
+    def haltTabs(c: facade) = clearInterval(c.tabsHandle)
+
+    override val beforeDestroy = {haltTabs _}:js.ThisFunction
+
+    override val mounted = {(c:facade) => {
+      c.tabsHandle = setInterval(5000)(nextTab(c))
+    }}:js.ThisFunction
 }
 
 @js.native
@@ -170,7 +184,7 @@ object HomePageLeagueTable extends Component{
               <v-card-text >
               <v-container fluid>
                 <v-layout column v-bind:class="justify">
-                  <v-layout row v-for="table in tables"  :key="table">
+                  <v-layout row v-for="table in tables"  :key="table.id">
                    <ql-league-table  :keyval="table" class="mb-3"></ql-league-table>
                   </v-layout>
                 </v-layout>

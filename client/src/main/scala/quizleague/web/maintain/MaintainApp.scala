@@ -1,7 +1,7 @@
 package quizleague.web.maintain
 import com.felstar.scalajs.vue._
 import quill.VueQuillEditor
-import quizleague.web.store.Firestore
+import quizleague.web.store.Storage
 import quizleague.web.util.rx._
 import rxscalajs.Observable
 import showdown._
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object MaintainApp{
 
-  @JSExportTopLevel("maintain", "maintain")
+ // @JSExportTopLevel("maintain", "maintain")
   def main():Unit = {
   App()
 } }
@@ -24,7 +24,7 @@ object MaintainApp{
 object App {
   def apply() = {
     //set up firebase auth context
-    Firestore.setAuthContext()
+    Storage.setAuthContext()
 
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
@@ -35,7 +35,7 @@ object App {
     new Vue(
       literal(el = "#maintain-app",
         router = Router(MaintainAppModule()),
-        vuetify = new Vuetify()
+        vuetify = Vuetify
       )
     )
 

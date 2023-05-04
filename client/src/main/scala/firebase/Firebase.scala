@@ -8,10 +8,13 @@
  import messaging.Messaging
  import storage.Storage
  import firestore.Firestore
+ import firebase.app.App
+
+ object Firebase extends Firebase
  
- @JSGlobal("firebase")
+  @JSGlobal("firebase")
   @js.native
-  object Firebase extends js.Object {
+  class Firebase extends js.Object {
       
     var SDK_VERSION: String = js.native
 
@@ -28,7 +31,7 @@
     def messaging(app: App = ???): Messaging = js.native
 
     def storage(app: App = ???): Storage = js.native
-    
+
     def firestore(): Firestore = js.native
   }
 

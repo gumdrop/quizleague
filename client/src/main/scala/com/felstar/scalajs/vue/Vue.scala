@@ -11,7 +11,8 @@ import rxscalajs.Observable
 import rxscalajs.facade.ObservableFacade
 import scala.collection.mutable
 
-@JSGlobal
+@JSImport("vue", JSImport.Default)
+//@JSGlobal
 @js.native
 class Vue extends js.Object {
   def this(obj: js.Any) = this()
@@ -63,7 +64,7 @@ class Vue extends js.Object {
   def $remove(callback: js.Function): Unit = js.native
   def $nextTick(callback: js.Function): Unit = js.native
   // Lifecycle
-  def $mount(elementOrSelector: js.Any): Vue = js.native
+  def $mount(elementOrSelector: String): Vue = js.native
   def $destroy(destroy: Boolean = false): Unit = js.native
   def $compile(element: Element): js.Function = js.native
   def $addChild(): Unit = js.native
@@ -79,7 +80,8 @@ class Unwatch extends js.Object {
   def unwatch: Unit = js.native
 }
 
-@JSGlobal
+@JSImport("vue", JSImport.Default)
+//@JSGlobal
 @js.native
 object Vue extends js.Object {
   def config: js.Dynamic = js.native

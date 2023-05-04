@@ -18,6 +18,7 @@ import quizleague.web.util.Logging.log
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal
 import scala.scalajs.js.|
+import quizleague.web.store.Storage.{firebase as fbase}
 
 
 object LoginModule extends Module{
@@ -56,7 +57,7 @@ object LoginService{
 
   val userProfile:Observable[LoggedInUser] = _loggedInUser
 
-  Firebase.auth().onAuthStateChanged((user:firebase.User) => {
+  fbase.auth().onAuthStateChanged((user:firebase.User) => {
     if (user != null) {
       val obs =
         SiteUserService
@@ -76,7 +77,7 @@ object LoginService{
   })
 
   def logout() = {
-    Firebase.auth().signOut()
+    fbase.auth().signOut()
   }
 
   def login(email:String, forward:String) = {
@@ -92,7 +93,7 @@ object LoginService{
             val url = s"https://${location.hostname}/login/signin?forward=$forward"
             actionCodeSettings.url = url
             actionCodeSettings.handleCodeInApp = true
-            toObservable(Firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings))
+            toObservable(fbase.auth().sendSignInLinkToEmail(email, actionCodeSettings))
               .map(x => {
                 window.localStorage.setItem("emailForSignIn", email)
                 true})
@@ -108,10 +109,10 @@ object LoginService{
   }
 
   def loginWithPassword(c:VueComponent,email:String, password:String, forward:String) =
-    authAction(c,email,forward, Firebase.auth().signInWithEmailAndPassword(email,password))
+    authAction(c,email,forward, fbase.auth().signInWithEmailAndPassword(email,password))
 
   def createAcccount(c: VueComponent, email:String, password:String, forward:String) =
-    authAction(c,email,forward, Firebase.auth().createUserWithEmailAndPassword(email,password))
+    authAction(c,email,forward, fbase.auth().createUserWithEmailAndPassword(email,password))
 
 
   def authAction(c: VueComponent, email: String, forward: String, promise: => firebase.Promise[UserCredential]): Observable[Boolean] = {
@@ -126,7 +127,7 @@ object LoginService{
   def check(c:VueComponent, forward:String): Unit ={
 
     val url = window.location.href
-    if (Firebase.auth().isSignInWithEmailLink(url)) {
+    if (fbase.auth().isSignInWithEmailLink(url)) {
       // Additional state parameters can also be passed via URL.
       // This can be used to continue the user's intended action before triggering
       // the sign-in operation.
@@ -143,7 +144,7 @@ object LoginService{
       }
 
       // The client SDK will parse the code from the link for you.
-      Firebase.auth().signInWithEmailLink(email, url)
+      fbase.auth().signInWithEmailLink(email, url)
           .`then`(handleLoginSuccess(c,forward))
           .`catch`(handleLoginFailure(c))
     }

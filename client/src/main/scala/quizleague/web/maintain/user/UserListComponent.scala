@@ -14,7 +14,7 @@ object UserListComponent extends ItemListComponentConfig[User] with RouteCompone
   val template = s"""
   <v-container>
     <v-layout column>
-      <div v-for="item in items">
+      <div v-for="item in items" >
         <v-btn :to="'user/' + item.id" text left>{{item.name}}</v-btn>
       </div>
       $addFAB

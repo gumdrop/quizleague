@@ -34,10 +34,10 @@ object SiteComponent extends Component {
       :disable-resize-watcher="true"
 	  v-model="drawer">
 	  <v-list :expand="true" nav tile shaped dense tile>
-    <ql-side-menu title="Main Menu" icon="mdi-menu" v-if="$vuetify.breakpoint.mdAndDown">
-      <v-list-item v-for="item in items" :to="item.to" ><v-list-item-action><v-icon text left v-text="item.icon"></v-icon></v-list-item-action><v-list-item-content><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content></v-list-item>
-    </ql-side-menu>
-    <router-view name="sidenav"></router-view>
+      <ql-side-menu title="Main Menu" icon="mdi-menu" v-if="$vuetify.breakpoint.mdAndDown">
+        <v-list-item v-for="item in items" :to="item.to" ><v-list-item-action><v-icon text left v-text="item.icon"></v-icon></v-list-item-action><v-list-item-content><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content></v-list-item>
+      </ql-side-menu>
+      <router-view name="sidenav"></router-view>
     </v-list>
   </v-navigation-drawer>
     <v-app-bar
@@ -87,7 +87,7 @@ object SiteComponent extends Component {
       </template>
     </v-app-bar>
 
-    <v-content >
+    <v-main>
       <div class="frame-background" v-if="$vuetify.breakpoint.smAndUp">&nbsp;</div>
 		  <v-container fluid class="px-0 py-0" >
         <v-layout justify-left align-top column>
@@ -99,7 +99,7 @@ object SiteComponent extends Component {
          </v-layout>
       <notifications></notifications>
       </v-container>
-    </v-content>
+    </v-main>
 
       <v-bottom-navigation fixed app hide-on-scroll :value="true" v-if="$vuetify.breakpoint.smAndDown" >
         <v-btn text target="_blank" href="https://www.facebook.com/ChilternQuizLeague/" title="Facebook"><span>Facebook</span><v-icon>mdi-facebook-box</v-icon></v-btn>

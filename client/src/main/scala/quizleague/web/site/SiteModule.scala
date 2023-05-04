@@ -8,7 +8,7 @@ import js.JSConverters._
 import quizleague.web.site.home.HomeModule
 import quizleague.web.core._
 import quizleague.web.site.team.TeamModule
-import quizleague.web.store.Firestore
+import quizleague.web.store.Storage
 import io.circe._
 import io.circe.parser._
 import io.circe.syntax._
@@ -60,7 +60,6 @@ object SiteModule extends Module {
     CompetitionModule,
     SeasonModule,
     CalendarModule,
-    //MaintainModule,
     CompetitionStatisticsModule,
     ChatModule,
     LoginModule,
