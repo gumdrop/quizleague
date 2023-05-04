@@ -22,19 +22,24 @@ object Storage {
     storageBucket = conn.storageBucket,
     messagingSenderId = conn.messagingSenderId)
 
-  @JSImport("/firebase-bootstrap.js")
+  @JSImport("/firebase-bootstrap.js","firebase")
   @js.native
-  val firebase:Firebase = js.native
+  private def getFirebase():Firebase = js.native
 
-  val app = firebase.initializeApp(config)
+  lazy val firebase = getFirebase()
 
-  private val firestore = app.firestore()
-  if (window.location.hostname == "localhost") {
-    firestore.settings(literal(host = "localhost:8082", ssl = false).asInstanceOf[Settings])
+  lazy val app = firebase.initializeApp(config)
+
+
+  lazy val db = {
+
+    val firestore = app.firestore()
+    if (window.location.hostname == "localhost") {
+      firestore.settings(literal(host = "localhost:8082", ssl = false).asInstanceOf[Settings])
+    }
+    firestore.enablePersistence($(synchronizeTabs = true)).`then`(x => {})
+    firestore
   }
-  firestore.enablePersistence($(synchronizeTabs = true)).`then`(x => {})
-
-  val db = firestore
 
   def setAuthContext(): Unit = {
 

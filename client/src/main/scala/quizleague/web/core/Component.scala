@@ -22,7 +22,7 @@ import scala.collection.mutable
 
 trait RouteComponent extends Component{
 
-  val name = ""
+  val name = "route-component"
 
   method("decode")((key:String) => Key.decode(key))
 }

@@ -3,22 +3,27 @@ package quizleague.web.site
 import quizleague.web.core.Component
 
 import scalajs.js
-import js.DynamicImplicits._
+import js.DynamicImplicits.*
 import com.felstar.scalajs.vue.VuetifyComponent
 import com.felstar.scalajs.vue.VueRxComponent
 import quizleague.web.site.login.LoginService
-import quizleague.web.core._
-import quizleague.web.util.Logging._
+import quizleague.web.core.*
+import quizleague.web.util.Logging.*
+
+import scala.scalajs.js.annotation.JSImport
 
 @js.native
 trait SiteComponent extends VueRxComponent with VuetifyComponent{
   var sidemenu:Boolean
-  var drawer:Boolean
   var showMenu:Boolean
 }
 
 object SiteComponent extends Component {
   type facade = SiteComponent
+
+  @JSImport("/img/chiltern-hills.jpg", JSImport.Default)
+  @js.native
+  val topImage:js.Any = js.native
 
   val name = "ql-app"
 
@@ -35,7 +40,7 @@ object SiteComponent extends Component {
 	  v-model="drawer">
 	  <v-list :expand="true" nav tile shaped dense tile>
       <ql-side-menu title="Main Menu" icon="mdi-menu" v-if="$vuetify.breakpoint.mdAndDown">
-        <v-list-item v-for="item in items" :to="item.to" ><v-list-item-action><v-icon text left v-text="item.icon"></v-icon></v-list-item-action><v-list-item-content><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content></v-list-item>
+        <v-list-item v-for="item in items" :to="item.to" :key="item.name"><v-list-item-action><v-icon text left v-text="item.icon"></v-icon></v-list-item-action><v-list-item-content><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content></v-list-item>
       </ql-side-menu>
       <router-view name="sidenav"></router-view>
     </v-list>
@@ -47,7 +52,7 @@ object SiteComponent extends Component {
       app
       clipped-left
       hide-on-scroll
-      src="/img/chiltern-hills.jpg"
+      :src="topImage"
       >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-show="$vuetify.breakpoint.mdAndDown"></v-app-bar-nav-icon>
       <v-toolbar-title class="white--text" >
@@ -74,7 +79,7 @@ object SiteComponent extends Component {
           dense
           flat>
           <v-toolbar-items>
-            <v-btn text v-for="item in items" :to="item.to" ><v-icon left>{{item.icon}}</v-icon><span>{{item.name}}</span></v-btn>
+            <v-btn text v-for="item in items" :to="item.to" :key="item.name"><v-icon left>{{item.icon}}</v-icon><span>{{item.name}}</span></v-btn>
           </v-toolbar-items>
         </v-toolbar>
       </div>
@@ -118,6 +123,7 @@ object SiteComponent extends Component {
 
 
   data("showMenu", false)
+  data("topImage", topImage)
   data("items",
     @@(menuItem("Home", "/home", "mdi-home"),
       menuItem("Teams", "/team", "mdi-account-multiple"),

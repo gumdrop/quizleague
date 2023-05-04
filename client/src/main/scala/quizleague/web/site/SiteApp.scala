@@ -23,14 +23,6 @@ object SiteApp{
   @js.native
   def startVue(router:js.Any, rootElement:String):Unit = js.native
 
-
-
-  val dateFormatter = new DateTimeFormatterBuilder()
-    .append(DateTimeFormatter.ISO_LOCAL_DATE)
-    .append(DateTimeFormatter.ISO_LOCAL_TIME)
-    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    .toFormatter
-
   def main():Unit = {
     Vue.use(VueRouter)
     Vue.use(VueQuillEditor)

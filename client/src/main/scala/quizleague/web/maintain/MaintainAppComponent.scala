@@ -34,7 +34,7 @@ object MaintainAppComponent extends Component {
       </v-toolbar-title>
 
     </v-app-bar>
-    <v-content>
+    <v-main>
 		  <v-container fill-height fluid class="px-0 py-0">
         <v-layout justify-left align-top column>
          <router-view name="title"  style="z-index:2"></router-view>
@@ -43,7 +43,7 @@ object MaintainAppComponent extends Component {
         </v-layout>
         <notifications></notifications>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>"""
  
   data("drawer",null)
