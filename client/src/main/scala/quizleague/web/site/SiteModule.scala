@@ -44,7 +44,7 @@ import quizleague.web.site.competition.statistics.CompetitionStatisticsModule
 import quizleague.web.site.login.LoginModule
 import rxscalajs.Observable
 
-
+def lazyimp[T](component:T):() => js.Promise[T] = () => js.dynamicImport{component}
 
 object SiteModule extends Module {
   
@@ -66,9 +66,9 @@ object SiteModule extends Module {
     SharedModule)
   
   override val routes = @@(
-      RouteConfig(path="/links", components = Map("default" -> LinksComponent, "title" -> LinksTitleComponent)),
-      RouteConfig(path="/rules", components = Map("default" -> RulesComponent)),
-      RouteConfig(path="/contact", components = Map("default" -> ContactUsComponent)),
+      RouteConfig(path="/links", components = Map("default" -> {() => js.dynamicImport{LinksComponent}}, "title" -> {() => js.dynamicImport{LinksTitleComponent}})),
+      RouteConfig(path="/rules", components = Map("default" -> {() => js.dynamicImport{RulesComponent}})),
+      RouteConfig(path="/contact", components = Map("default" -> {() => js.dynamicImport{ContactUsComponent}})),
       RouteConfig(path = "",redirect = "/home")
       )
   

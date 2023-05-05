@@ -21,11 +21,13 @@ object VenueModule extends Module{
 
   override val components = @@(VenueComponent,VenueTitle)
 
+  private val menu = {() => js.dynamicImport{VenueMenuComponent}}
+  
   override val routes = @@(
       RouteConfig(path = "/venue", 
-          components = Map("default" -> VenuesComponent, "title" -> VenuesTitleComponent,"sidenav" -> VenueMenuComponent)),
+          components = Map("default" -> {() => js.dynamicImport{VenuesComponent}}, "title" -> {() => js.dynamicImport{VenuesTitleComponent}},"sidenav" -> menu)),
       RouteConfig(path = "/venue/:id", 
-          components = Map("default" -> VenuePage, "title" -> VenueTitleComponent,"sidenav" -> VenueMenuComponent)))
+          components = Map("default" -> {() => js.dynamicImport{VenuePage}}, "title" -> {() => js.dynamicImport{VenueTitleComponent}},"sidenav" -> menu)))
 
       
    

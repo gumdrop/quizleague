@@ -19,7 +19,7 @@ import quizleague.web.site.fixtures
 import quizleague.web.util.Logging._
 
 object CalendarModule extends Module{
-  override val routes = @@(RouteConfig(path="/calendar" , components=Map("default"->CalendarPage, "title"->CalendarTitleComponent)))
+  override val routes = @@(RouteConfig(path="/calendar" , components=Map("default"->{() => js.dynamicImport{CalendarPage}}, "title"->{() => js.dynamicImport{CalendarTitleComponent}})))
 }
 
 object CalendarViewService extends SeasonWatchService{

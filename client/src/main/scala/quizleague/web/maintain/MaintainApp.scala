@@ -29,6 +29,8 @@ object App {
 
   def apply() = {
 
+    Storage.setAuthContext()
+
     Vue.use(VueRouter)
     Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
@@ -38,7 +40,7 @@ object App {
 
     startVue(Router(MaintainAppModule()),"#maintain-app")
 
-    Storage.setAuthContext()
+
   }
 }
 

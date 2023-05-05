@@ -2,7 +2,7 @@ package quizleague.web.store
 
 import _root_.firebase.firestore.Settings
 import firebase.*
-import _root_.firebase.auth.Auth
+import _root_.firebase.auth.{Auth, GoogleAuthProvider}
 import org.scalajs.dom.window
 import quizleague.web.core.*
 
@@ -26,6 +26,10 @@ object Storage {
   @js.native
   private def getFirebase():Firebase = js.native
 
+  @JSImport("/firebase-bootstrap.js", "googleAuth")
+  @js.native
+  private def getGoogleAuth():GoogleAuthProvider = js.native
+
   lazy val firebase = getFirebase()
 
   lazy val app = firebase.initializeApp(config)
@@ -43,11 +47,11 @@ object Storage {
 
   def setAuthContext(): Unit = {
 
-    firebase.auth().onAuthStateChanged((user: User) =>
+    firebase.auth(app).onAuthStateChanged((user: User) =>
 
       if (user == null) {
-        val provider = new auth.GoogleAuthProvider()
-        firebase.auth().signInWithRedirect(provider)
+        val provider = getGoogleAuth()
+        firebase.auth(app).signInWithRedirect(provider)
       }
 
     )

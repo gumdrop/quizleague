@@ -8,7 +8,7 @@ object HomeModule extends Module{
   
   
   override val routes = @@(RouteConfig(path = "/home", components = Map(
-      "default" -> HomeComponent)))
+      "default" -> {() => js.dynamicImport{HomeComponent}})))
       
    
 }

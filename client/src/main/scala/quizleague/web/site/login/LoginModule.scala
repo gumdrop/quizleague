@@ -25,18 +25,20 @@ object LoginModule extends Module{
 
   override val components = @@(LoginPage,LoginTitleComponent, ProfileEditComponent, ProfileEditTitleComponent)
 
+  private val title = {() => js.dynamicImport{LoginTitleComponent}}
+
   override val routes = @@(
     RouteConfig(path = "/login",
-      components = Map("default" -> LoginPage, "title" -> LoginTitleComponent),
+      components = Map("default" -> {() => js.dynamicImport{LoginPage}}, "title" -> title),
       beforeEnter = LoginService.noAuthRouteGuard _),
     RouteConfig(path = "/login/signin",
-      components = Map("default" -> LoginCheckComponent, "title" -> LoginTitleComponent),
+      components = Map("default" -> {() => js.dynamicImport{LoginCheckComponent}}, "title" -> title),
       beforeEnter = LoginService.noAuthRouteGuard _),
     RouteConfig(path = "/login/profile",
-      components = Map("default" -> ProfileEditComponent, "title" -> ProfileEditTitleComponent),
+      components = Map("default" -> {() => js.dynamicImport{ProfileEditComponent}}, "title" -> {() => js.dynamicImport{ProfileEditTitleComponent}}),
       beforeEnter = LoginService.routeGuard _),
     RouteConfig(path = "/login/failed",
-      components = Map("default" -> LoginFailedComponent, "title" -> LoginTitleComponent))
+      components = Map("default" -> {() => js.dynamicImport{LoginFailedComponent}}, "title" -> title))
   )
 
       
