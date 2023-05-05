@@ -21,4 +21,9 @@ export default defineConfig({
        ],
     },
   },
+  server: {
+      proxy: {
+        '/rest': 'http://localhost:8080',
+    }
+  },
 });
