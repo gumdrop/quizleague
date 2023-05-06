@@ -1,10 +1,8 @@
 package fragment
 
-import scala.scalajs.js.annotation.JSGlobal
+import scala.scalajs.js.annotation.{JSGlobal, JSImport}
 import scalajs.js
 
-@JSGlobal
+@JSImport("vue-frag")
 @js.native
-object Frag extends js.Object {
-  val Fragment:js.Any = js.native
-}
+object Fragment extends js.Object

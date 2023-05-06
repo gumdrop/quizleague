@@ -10,7 +10,7 @@ object GlobalTextListComponent extends ItemListComponentConfig[GlobalText] with 
   val template = s"""
   <v-container>
     <v-layout column>
-      <div v-for="item in items">
+      <div v-for="item in items" v-bind:key="item.id">
         <v-btn :to="'globaltext/' + item.id" text left>{{item.name}}</v-btn>
       </div>
       $addFAB

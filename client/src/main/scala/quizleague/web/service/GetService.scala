@@ -11,7 +11,7 @@ import quizleague.domain.{ Entity, Ref, Key }
 import quizleague.web.model.Model
 import quizleague.web.model.{Key => ModKey}
 import quizleague.web.names.ComponentNames
-import quizleague.web.store.Firestore
+import quizleague.web.store.Storage
 import quizleague.web.util.rx.RefObservable
 import rxscalajs._
 import rxscalajs.subjects._
@@ -23,7 +23,7 @@ trait GetService[T <: Model] {
 
   lazy val uriRoot = typeName
 
-  protected val db = Firestore.db
+  protected val db = Storage.db
   private[service] val items: Map[String, T] = Map()
   private val observables = Map[String, Observable[U]]()
   private val refObsCache = Map[String, RefObservable[T]]()

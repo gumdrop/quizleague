@@ -13,7 +13,7 @@ trait Settings extends js.Object {
 }
 
 @js.native
-@JSGlobal("firebase.firestore.Firestore")
+@JSImport("firebase/firestore")
 class Firestore extends js.Object {
   def settings(settings: Settings): Unit = js.native
   def enablePersistence(): Promise[Unit] = js.native
@@ -28,6 +28,11 @@ class Firestore extends js.Object {
   val settings:Settings = js.native
   val hostname:String = js.native
 }
+
+//@js.native
+//object Firestore extends js.Object {
+//  def apply() : Firestore = js.native
+//}
 
 @js.native
 @JSGlobal("firebase.firestore.GeoPoint")
@@ -210,8 +215,9 @@ trait FirestoreError extends js.Object {
 }
 
 @js.native
-@JSGlobal("firebase.firestore")
+@JSImport("firebase/firestore")
 object Firestore extends js.Object {
+  def apply():Firestore = js.native
   type DocumentData = js.Dictionary[js.Any]
   type UpdateData = js.Dictionary[js.Any]
   type LogLevel = String

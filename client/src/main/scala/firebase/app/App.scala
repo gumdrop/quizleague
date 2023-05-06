@@ -1,8 +1,9 @@
 package firebase.app
 import scala.scalajs.js
-import js.annotation._
+import js.annotation.*
 import js.|
 import firebase.Promise
+import firebase.firestore.Firestore
 
 
    @js.native
@@ -17,4 +18,6 @@ import firebase.Promise
       var options: Object = js.native
 
       def storage(): firebase.storage.Storage = js.native
+
+     def firestore(): Firestore = js.native
     }
