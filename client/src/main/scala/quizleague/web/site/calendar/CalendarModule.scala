@@ -57,18 +57,15 @@ object CalendarViewService extends SeasonWatchService{
           .groupBy(_.date)
           .map{case(d,e) => new DateWrapper(d, e)}
           .toJSArray
+          .filter(_.date != null)
           .sortBy(_.date)
-    )  
+    )
     
 
   }
 
-  def allEvents():Observable[js.Dictionary[DateWrapper]] =
-    SeasonService.list()
-      .map(_.map(s => events(s.id)).toSeq)
-      .flatMap(combineLatest _)
-      .map(_.toJSArray.flatten)
-      .map(_.map(x => (x.date, x)).toMap.toJSDictionary)
+  def calendarEvents(seasonId:String):Observable[js.Dictionary[DateWrapper]] =
+    events(seasonId).map(_.map(x => (x.date, x)).toMap.toJSDictionary)
 
 
   def events:Observable[js.Array[DateWrapper]] = season.flatMap(s => events(s.id))

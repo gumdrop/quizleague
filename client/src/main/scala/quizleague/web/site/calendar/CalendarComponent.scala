@@ -19,33 +19,33 @@ object CalendarPage extends RouteComponent with NoSideMenu{
   subscription("season")(c => CalendarViewService.season)
 }
 
-
-
 object CalendarComponent extends Component with GridSizeComponentConfig{
   type facade = SeasonIdComponent with VuetifyComponent
   val name = "ql-calendar" 
   val template = """
   <v-container v-bind="gridSize" class="ql-calendar" fluid >
     <v-scroll-x-transition>
-    <v-timeline v-bind="dense" v-if="items && viewType=='timeline'">
-      <v-timeline-item v-for="item in items" :key="item.date"  :color="colour(item.events)" :icon="icon(item.events)" fill-dot>
-          <v-card>
-             <v-card-title :class="colour(item.events)"><h5 class="display-1 white--text font-weight-light">{{item.date | date("EEEE d MMMM yyyy")}}</h5></v-card-title>
-             <v-card-text>
-              <v-lazy>
-                <div v-for="event in item.events">
-                    <ql-fixtures-event v-if="event.eventType === 'fixtures'" :event="event" :panelVisible="false"></ql-fixtures-event>
-                    <ql-calendar-event v-if="event.eventType === 'calendar'" :event="event"></ql-calendar-event>
-                    <ql-competition-event v-if="event.eventType === 'competition'" :event="event"></ql-competition-event>
-                </div>
-              </v-lazy>
-             </v-card-text>
-          </v-card>
-      </v-timeline-item>
-    </v-timeline>
+      <v-timeline v-bind="dense" v-if="items && viewType=='timeline'">
+        <v-timeline-item v-for="item in items" :key="item.date"  :color="colour(item.events)" :icon="icon(item.events)" fill-dot>
+            <v-card>
+               <v-card-title :class="colour(item.events)"><ql-responsive-header classes="white--text">{{item.date | date("EEEE d MMMM yyyy")}}</ql-responsive-header></v-card-title>
+               <v-card-text>
+                <v-lazy>
+                  <div>
+                    <div v-for="event in item.events">
+                        <ql-fixtures-event v-if="event.eventType === 'fixtures'" :event="event" :showPanel="false"></ql-fixtures-event>
+                        <ql-calendar-event v-if="event.eventType === 'calendar'" :event="event"></ql-calendar-event>
+                        <ql-competition-event v-if="event.eventType === 'competition'" :event="event"></ql-competition-event>
+                    </div>
+                  </div>
+                </v-lazy>
+               </v-card-text>
+            </v-card>
+        </v-timeline-item>
+      </v-timeline>
     </v-scroll-x-transition>
     <v-scroll-x-transition>
-    <ql-calendar-calendar v-if="items && viewType=='calendar'"></ql-calendar-calendar>
+      <ql-calendar-calendar v-if="items && viewType=='calendar'" :seasonId="seasonId"></ql-calendar-calendar>
     </v-scroll-x-transition>
   </v-container>"""
 
@@ -61,9 +61,6 @@ object CalendarComponent extends Component with GridSizeComponentConfig{
     case s: CompetitionEventWrapper => "purple"
   }) + " darken-3")
 
-
-
-
   props("seasonId")
   subscription("items", "seasonId")(c => CalendarViewService.events(c.seasonId))
   subscription("viewType")(c => CalendarViewService.viewType)
@@ -78,6 +75,8 @@ object CalendarComponent extends Component with GridSizeComponentConfig{
 
 
 object CalendarCalendarComponent extends Component{
+
+  type facade = SeasonIdComponent with VuetifyComponent
 
   val name = "ql-calendar-calendar"
 
@@ -125,7 +124,7 @@ object CalendarCalendarComponent extends Component{
                     <v-spacer></v-spacer>
                    </v-toolbar>
                    <v-card-text>
-                    <ql-fixtures-event v-if="event.eventType === 'fixtures'" :event="event" :panelVisible="true"></ql-fixtures-event>
+                    <ql-fixtures-event v-if="event.eventType === 'fixtures'" :event="event" :showPanel="true"></ql-fixtures-event>
                     <ql-calendar-event v-if="event.eventType === 'calendar'" :event="event"></ql-calendar-event>
                     <ql-competition-event v-if="event.eventType === 'competition'" :event="event"></ql-competition-event>
                    </v-card-text>
@@ -161,9 +160,11 @@ object CalendarCalendarComponent extends Component{
     </v-layout>
   """
 
+  props("seasonId")
+
   data("now", LocalDate.now.toString)
 
-  subscription( "dateMap")(c => CalendarViewService.allEvents())
+  subscription( "dateMap")(c => CalendarViewService.calendarEvents(c.seasonId))
 
   method("colour"){CalendarComponent.colour _}
   method("icon"){CalendarComponent.icon _}
@@ -184,7 +185,7 @@ object CalendarTitleComponent extends RouteComponent with SeasonFormatComponent{
       </v-toolbar-title>
       <span style="padding-left:.5em;"></span>
       <v-toolbar-items>
-        <ql-season-select :season="season" :inline="true" :disabled="viewType !== 'timeline'"></ql-season-select>
+        <ql-season-select :season="season" :inline="true"></ql-season-select>
         <v-btn-toggle v-model="viewType" dark>
           <v-btn text value="timeline" color="yellow lighten-3">Timeline</v-btn>
           <v-btn text value="calendar" color="yellow lighten-3">Calendar</v-btn>
@@ -210,12 +211,12 @@ trait EventComponent extends VueRxComponent{
 trait PanelComponent extends EventComponent{
 
   var panelVisible:Boolean
-
+  var showPanel:Boolean
 }
 
 
 trait EventComponentConfig extends Component{
-   
+
    type facade = PanelComponent
    data("panelVisible",false)
    props("event")
@@ -230,18 +231,19 @@ object FixturesEventComponent extends EventComponentConfig{
    val template = s"""
       <v-layout column align-start class="panel-component">
           <v-flex align-start><b><router-link :to="'/competition/' + event.competition.key.encode + '/' + event.competition.typeName"><v-icon>{{event.competition.icon}}</v-icon>&nbsp;{{async(event.fixtures.parent).name}} {{event.fixtures.description}}</router-link></b>
-            <v-btn icon v-on:click="togglePanel" class="#view-btn">
-             <v-icon v-if="!panelVisible">mdi-eye</v-icon>
-             <v-icon v-if="panelVisible">mdi-eye-off</v-icon>
+            <v-btn icon v-on:click.stop="togglePanel" class="#view-btn">
+             <fragment v-if="!showPanel">
+               <v-icon v-if="!(expanded)">mdi-eye</v-icon>
+               <v-icon v-if="expanded">mdi-eye-off</v-icon>
+             </fragment>
             </v-btn>
           </v-flex> 
-          <v-flex><v-slide-y-transition><ql-fixtures-simple v-if="panelVisible" :fixtures="event.fixtures.fixture"></ql-fixtures-simple></v-slide-y-transition></v-flex>
+          <v-flex><v-slide-y-transition><ql-fixtures-simple v-if="expanded" :fixtures="event.fixtures.fixture"></ql-fixtures-simple></v-slide-y-transition></v-flex>
 
      </v-layout>
 """
-
-  prop("panelVisible")
-
+  prop("showPanel")
+  computed("expanded")({(c:facade) => if(c.showPanel) c.panelVisible || c.showPanel else c.panelVisible}:js.ThisFunction)
 }
 
 object CalendarEventComponent extends EventComponentConfig{
@@ -254,7 +256,6 @@ object CalendarEventComponent extends EventComponentConfig{
       <v-flex v-if="event.event.venue">Venue : <router-link router-link :to="'/venue/' + event.event.venue.id">{{async(event.event.venue).name}}</router-link></v-flex>
      </v-layout>
       """
-
 }
 
 object CompetitionEventComponent extends EventComponentConfig{
@@ -267,6 +268,5 @@ object CompetitionEventComponent extends EventComponentConfig{
         <v-flex>Time : {{event.event.time}}</v-flex>
         <v-flex>Venue : <router-link v-if="event.event.venue"router-link :to="'/venue/' + event.event.venue.id">{{async(event.event.venue).name}}</router-link></v-flex>
        </v-layout>"""
-
 }
 
