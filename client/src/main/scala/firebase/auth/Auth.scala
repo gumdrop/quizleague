@@ -167,12 +167,12 @@ import firebase.User
     }
 
     @js.native
-    @JSGlobal("firebase.auth.GoogleAuthProvider")
+    @JSImport("firebase/auth")
     class GoogleAuthProvider extends GoogleAuthProvider_Instance {
     }
 
     @js.native
-    @JSGlobal("firebase.auth.GoogleAuthProvider")
+    @JSImport("firebase/auth")
     object GoogleAuthProvider extends js.Object {
       var PROVIDER_ID: String = js.native
 

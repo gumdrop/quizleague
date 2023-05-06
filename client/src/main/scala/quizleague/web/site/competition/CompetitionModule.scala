@@ -4,6 +4,7 @@ import quizleague.util.collection._
 import quizleague.web.core._
 import quizleague.web.model.{Competition, CompetitionType, Fixtures, Key}
 import quizleague.web.service.competition.CompetitionGetService
+import quizleague.web.site.lazyimp
 import quizleague.web.site.fixtures.FixturesService
 import quizleague.web.site.leaguetable.LeagueTableService
 import quizleague.web.site.season.{SeasonService, SeasonWatchService}
@@ -16,16 +17,19 @@ import scala.reflect.ClassTag
 import scala.scalajs.js
 
 object CompetitionModule extends Module {
-  
-  override val routes = @@(
-        RouteConfig(path="/competition/:key/league", components=Map("default" -> LeagueCompetitionPage, "title" -> CompetitionTitle, "sidenav" -> CompetitionMenu)),
-        RouteConfig(path="/competition/:key/subsidiary", components=Map("default" -> BeerCompetitionPage, "title" -> CompetitionTitle, "sidenav" -> CompetitionMenu)),
-        RouteConfig(path="/competition/:key/cup", components=Map("default" -> CupCompetitionPage, "title" -> CompetitionTitle, "sidenav" -> CompetitionMenu)),
-        RouteConfig(path="/competition/:key/singleton", components=Map("default" -> SingletonCompetitionPage, "title" -> CompetitionTitle, "sidenav" -> CompetitionMenu)),
-        RouteConfig(path="/competition/:key/results", components=Map("default" -> ResultsPage, "title" -> CompetitionResultsTitle, "sidenav" -> CompetitionMenu)),
-        RouteConfig(path="/competition/:key/fixtures", components=Map("default" -> FixturesPage, "title" -> CompetitionFixturesTitle, "sidenav" -> CompetitionMenu)),
 
-        RouteConfig(path="/competition", components=Map("default" -> CompetitionsComponent, "title" -> CompetitionsTitleComponent, "sidenav" -> CompetitionMenu)
+  private val sideMenu = {() => js.dynamicImport{CompetitionMenu}}
+  private val title = {() => js.dynamicImport{CompetitionTitle}}
+
+  override val routes = @@(
+        RouteConfig(path="/competition/:key/league", components=Map("default" -> {() => js.dynamicImport{LeagueCompetitionPage}}, "title" -> title, "sidenav" -> sideMenu)),
+        RouteConfig(path="/competition/:key/subsidiary", components=Map("default" -> {() => js.dynamicImport{BeerCompetitionPage}}, "title" -> title, "sidenav" -> sideMenu)),
+        RouteConfig(path="/competition/:key/cup", components=Map("default" -> {() => js.dynamicImport{CupCompetitionPage}}, "title" -> title, "sidenav" -> sideMenu)),
+        RouteConfig(path="/competition/:key/singleton", components=Map("default" -> {() => js.dynamicImport{SingletonCompetitionPage}}, "title" -> title, "sidenav" -> sideMenu)),
+        RouteConfig(path="/competition/:key/results", components=Map("default" -> {() => js.dynamicImport{ResultsPage}}, "title" -> {() => js.dynamicImport{CompetitionResultsTitle}}, "sidenav" -> sideMenu)),
+        RouteConfig(path="/competition/:key/fixtures", components=Map("default" -> {() => js.dynamicImport{FixturesPage}}, "title" -> {() => js.dynamicImport{CompetitionFixturesTitle}}, "sidenav" -> sideMenu)),
+
+        RouteConfig(path="/competition", components=Map("default" -> {() => js.dynamicImport{CompetitionsComponent}}, "title" -> {() => js.dynamicImport{CompetitionsTitleComponent}}, "sidenav" -> sideMenu)
   ))
 }
 

@@ -8,7 +8,7 @@ import js.JSConverters._
 import quizleague.web.site.home.HomeModule
 import quizleague.web.core._
 import quizleague.web.site.team.TeamModule
-import quizleague.web.store.Firestore
+import quizleague.web.store.Storage
 import io.circe._
 import io.circe.parser._
 import io.circe.syntax._
@@ -44,7 +44,7 @@ import quizleague.web.site.competition.statistics.CompetitionStatisticsModule
 import quizleague.web.site.login.LoginModule
 import rxscalajs.Observable
 
-
+def lazyimp[T](component:T):() => js.Promise[T] = () => js.dynamicImport{component}
 
 object SiteModule extends Module {
   
@@ -60,16 +60,15 @@ object SiteModule extends Module {
     CompetitionModule,
     SeasonModule,
     CalendarModule,
-    //MaintainModule,
     CompetitionStatisticsModule,
     ChatModule,
     LoginModule,
     SharedModule)
   
   override val routes = @@(
-      RouteConfig(path="/links", components = Map("default" -> LinksComponent, "title" -> LinksTitleComponent)),
-      RouteConfig(path="/rules", components = Map("default" -> RulesComponent)),
-      RouteConfig(path="/contact", components = Map("default" -> ContactUsComponent)),
+      RouteConfig(path="/links", components = Map("default" -> {() => js.dynamicImport{LinksComponent}}, "title" -> {() => js.dynamicImport{LinksTitleComponent}})),
+      RouteConfig(path="/rules", components = Map("default" -> {() => js.dynamicImport{RulesComponent}})),
+      RouteConfig(path="/contact", components = Map("default" -> {() => js.dynamicImport{ContactUsComponent}})),
       RouteConfig(path = "",redirect = "/home")
       )
   

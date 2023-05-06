@@ -40,21 +40,21 @@ object TeamStatsComponent extends Component with GridSizeComponentConfig{
           <v-container v-bind="gridSize" fluid>
             <v-layout column>
             <v-flex><ql-season-select :season="season" label="Season" :inline="false"></ql-season-select></v-flex>
-            <v-flex><season-stats v-if="id && s" :teamId="id" :seasonId="s.id"></season-stats><v-flex>
+            <v-flex><season-stats v-if="id && s" :teamId="id" :seasonId="s.id"></season-stats></v-flex>
             </v-layout>
           </v-container>
         </v-tab-item>
         <v-tab-item key="2" >
           <v-container v-bind="gridSize" fluid>
             <v-layout column>
-            <v-flex><all-season-stats v-if="id" :teamId="id"></all-season-stats><v-flex>
+            <v-flex><all-season-stats v-if="id" :teamId="id"></all-season-stats></v-flex>
             </v-layout>
           </v-container>
         </v-tab-item>
-        <v-tab-item key="2" >
+        <v-tab-item key="3" >
           <v-container v-bind="gridSize" fluid>
             <v-layout column>
-            <v-flex><stats-head-to-head v-if="id" :teamId="id"></stats-head-to-head><v-flex>
+            <v-flex><stats-head-to-head v-if="id" :teamId="id"></stats-head-to-head></v-flex>
             </v-layout>
           </v-container>
         </v-tab-item>

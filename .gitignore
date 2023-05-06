@@ -25,6 +25,8 @@ firestore.rules
 /.idea/*
 /project/metals.sbt
 /project/project/.bloop/bloop.settings.json
+/project/bloop/
+/project/project/
 /.bloop/bloop.settings.json
 /project/.bloop/bloop.settings.json
 /.metals/metals.lock.db

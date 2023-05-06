@@ -18,7 +18,6 @@ object App {
   def main(args: Array[String]): Unit = {
     // create the Express application instance
     val app = Express()
-    app.use(Express.static("static"))
     app.use(Express.static("built"))
     app.use(bodyParser);
 
@@ -39,9 +38,9 @@ object App {
 
   val indexMapping:js.Any = (req: Request, res: Response) => {
     if (req.originalUrl.contains("/maintain/"))
-      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/static/maintain/index.html"))
+      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/built/maintain/index.html"))
     else
-      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/static/index.html"))
+      res.sendFile(Path.join(js.Dynamic.global.__dirname.toString + "/built/index.html"))
   }
 
   val bodyParser:js.Any = {(req:js.Dynamic, res:Request, next:js.Function0[Unit]) =>{

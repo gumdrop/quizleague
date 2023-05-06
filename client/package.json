@@ -1,9 +1,28 @@
 {
-  "devDependencies": {
-    "lite-server": "^2.3.0"
-  },
+  "name": "quizleague",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "lite-server",
-    "useredit": "lite-server -c user-edit-bs-config.json"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.0.0",
+    "@scala-js/vite-plugin-scalajs": "^1.0.0",
+    "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "chart.js": "^2.7.2",
+    "firebase": "^8.2.2",
+    "rxjs": "^5.5.6",
+    "vue": "^2.6.14",
+    "vue-frag": "^1.4.2",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "3.03",
+    "vue-rx": "^5.0.0",
+    "vue-showdown": "^2.4.1",
+    "vuetify": "^2.6.0"
   }
 }

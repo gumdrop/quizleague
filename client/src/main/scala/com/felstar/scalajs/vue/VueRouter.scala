@@ -9,9 +9,9 @@ import org.scalajs.dom._
 
 import js.annotation._
 
-@JSGlobal("VueRouter")
+@JSImport("vue-router", JSImport.Default)
 @js.native
-class Router extends js.Object {
+class VueRouter extends js.Object {
   def this(obj: js.Any) = this()
   val routes:js.Array[js.Any] = js.native
   val mode:String = js.native
@@ -22,6 +22,10 @@ class Router extends js.Object {
 
 }
 
+@JSImport("vue-router", JSImport.Default)
+@js.native
+object VueRouter extends js.Object
+
 
 object Router{
   def apply(
@@ -31,7 +35,7 @@ object Router{
   linkActiveClass:String = null,
   linkExactActiveClass:String = null,
   scrollBehavior:js.Function = null
-  ) = new Router(literal(
+  ) = new VueRouter(literal(
     routes=routes.toJSArray,
     mode=mode,
     base=base,

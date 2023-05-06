@@ -8,7 +8,7 @@
  import messaging.Messaging
  import storage.Storage
  import firestore.Firestore
- 
+
  @JSGlobal("firebase")
   @js.native
   object Firebase extends js.Object {

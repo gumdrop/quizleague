@@ -14,7 +14,7 @@ object VenueListComponent extends ItemListComponentConfig[Venue] with RouteCompo
   val template = s"""
   <v-container>
     <v-layout column>
-      <div v-for="item in items">
+      <div v-for="item in items" v-bind:key="item.id">
         <v-btn :to="'venue/' + item.id" text left>{{item.name}}</v-btn>
       </div>
       $addFAB

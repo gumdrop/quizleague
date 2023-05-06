@@ -45,6 +45,7 @@ object SimpleFixturesComponent extends Component {
   prop("fixtures")
   prop("inlineDetails")
   data("active",false)
+  data("list", null)
 
   data("loaderTypes", $("fixture-row" -> "list-item, divider", "fixture-table" -> "fixture-row@3") )
   subscription("list","fixtures")(_.fixtures)
