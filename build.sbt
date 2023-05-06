@@ -63,9 +63,7 @@ lazy val server = (project in file("server"))
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.6",
-      libraryDependencies += "dev.optics" %% "monocle-core" % "3.1.0",
-      libraryDependencies += "dev.optics" %% "monocle-macro" % "3.1.0"
- )
+)
 
 lazy val devServer = taskKey[Unit]("copy test JS")
 lazy val prodServer = taskKey[Unit]("copy test JS")

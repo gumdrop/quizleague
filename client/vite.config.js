@@ -19,6 +19,13 @@ export default defineConfig({
         resolve(__dirname, './index.html'),
         resolve(__dirname, './maintain/index.html'),
        ],
+       output: {
+       manualChunks: {
+       		firebase: ['firebase'],
+       		vuetify: ['vuetify'],
+       		rxjs: ['rxjs']
+       	}
+       }
     },
   },
   server: {
