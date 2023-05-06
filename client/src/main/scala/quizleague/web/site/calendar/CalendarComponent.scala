@@ -164,7 +164,7 @@ object CalendarCalendarComponent extends Component{
 
   data("now", LocalDate.now.toString)
 
-  subscription( "dateMap")(c => CalendarViewService.calendarEvents(c.seasonId))
+  subscription( "dateMap", "seasonId")(c => CalendarViewService.calendarEvents(c.seasonId))
 
   method("colour"){CalendarComponent.colour _}
   method("icon"){CalendarComponent.icon _}
