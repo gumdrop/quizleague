@@ -129,6 +129,7 @@ trait VueComponent extends Vue {
   val $route:RouteInstance = js.native
   val $router:RouterInstance = js.native
   val $refs:js.Dynamic = js.native
+  val name:String = js.native
 }
 
 

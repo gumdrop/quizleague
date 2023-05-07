@@ -45,6 +45,7 @@ trait Component {
   private var addedData:Map[String,Any] = Map()
   private var addedComponents:List[Component] = List()
   private var addedWatch: Map[String, ((facade,js.Any) => Unit)] = Map()
+  private var addedNativeComponents:List[VueComponent] = List()
   private def data: facade => Map[String, Any] = c => Map()
   private def methods: Map[String, js.Function] = Map()
   def components: js.Array[Component] = addedComponents.toJSArray
@@ -119,6 +120,10 @@ trait Component {
   protected final def components(comps:Component*):Unit = {
     addedComponents = addedComponents ++ comps
   }
+
+  protected final def nativeComponents(comps:VueComponent*):Unit = {
+    addedNativeComponents = addedNativeComponents ++ comps
+  }
   
   protected final def computed(name:String)(fn:js.Function):Unit = {
     addedComputed = addedComputed + ((name, fn))
@@ -135,7 +140,7 @@ trait Component {
 
 
   
-  def apply():js.Dynamic = {
+  def apply():js.Any = {
 
     def update(subject: Subject[Any])(fn: facade => Observable[Any])(c: facade) = {
       c.$subscribeTo(
@@ -179,7 +184,7 @@ trait Component {
 
       methods = (commonMethods ++ addedMethods).toJSDictionary,
       computed = addedComputed.toJSDictionary,
-      components = addedComponents.map(c => ((c.name, c()))).toMap.toJSDictionary,
+      components = (addedComponents.map(c => (c.name, c())).toMap ++ addedNativeComponents.map(c => (c.name, c)).toMap).toJSDictionary,
       mounted = mounted,
       activated = activated,
       deactivated = deactivated,

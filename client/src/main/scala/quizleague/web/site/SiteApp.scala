@@ -25,7 +25,6 @@ object SiteApp{
 
   def main():Unit = {
     Vue.use(VueRouter)
-    Vue.use(VueQuillEditor)
     Vue.use(VueShowdown, showdown.defaultOptions)
     Vue.component("fragment",Fragment)
     Vue.filter("date", (date:String, format:String) => DateTimeFormatter.ofPattern(format).format(DateTimeFormatter.ISO_LOCAL_DATE.parse(date)))

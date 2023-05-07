@@ -39,7 +39,7 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
       <v-flex offset-xs0 offset-md1 xs12>
         <v-layout column>
           <ql-text-box>
-            <ql-named-text name="front-page"></ql-named-text>
+            <ql-named-text textName="front-page"></ql-named-text>
             <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
           </ql-text-box>
         <!--ql-hot-chats></ql-hot-chats-->
@@ -50,7 +50,7 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
       timeout="3000"
       :multi-line="true"
       v-model="sponsorMessage">
-      <ql-named-text name="sponsor-message"></ql-named-text>
+      <ql-named-text textName="sponsor-message"></ql-named-text>
      </v-snackbar>
   </v-container>
 """

@@ -8,7 +8,7 @@ object VenuesComponent extends RouteComponent with GridSizeComponentConfig{
    override val template="""
      <v-container v-bind="gridSize" fluid>
        <v-layout>
-         <v-flex><ql-text-box><ql-named-text name="venues-front-page"></ql-named-text></ql-text-box></v-flex>
+         <v-flex><ql-text-box><ql-named-text textName="venues-front-page"></ql-named-text></ql-text-box></v-flex>
        </v-layout>
      </v-container>
        """

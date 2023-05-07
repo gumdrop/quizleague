@@ -35,7 +35,7 @@ object LoginPage extends RouteComponent with NoSideMenu{
     <v-layout column>
     <v-card>
       <v-card-text>
-        <ql-named-text name="login-text"></ql-named-text>
+        <ql-named-text textName="login-text"></ql-named-text>
         <v-text-field v-model.email="email" label="Enter your email address"></v-text-field>
         <v-btn button text v-on:click="login(email,$route.query.forward?$route.query.forward : '/home')" :disabled="!email">Sign in by email</v-btn>
         <v-btn button text v-on:click="doPasswordLogin(email)" :disabled="!email">Sign in with password</v-btn>

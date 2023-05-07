@@ -19,7 +19,7 @@ object KnockoutCompetitionComponent extends Component with GridSizeComponentConf
     <v-layout column v-bind="gridSize">
       <v-flex>      
         <ql-text-box>
-        <ql-named-text :name="item.textName"></ql-named-text>
+        <ql-named-text :textName="item.textName"></ql-named-text>
         <ql-text :id="item.text.id"></ql-text>
         </ql-text-box>
       </v-flex>

@@ -144,7 +144,7 @@ object SubmitResultsInstructionsComponent extends RouteComponent with GridSizeCo
   val template = """
   <v-container v-bind="gridSize" fluid>
     <v-layout>
-    <v-flex><ql-text-box><ql-named-text name="submit-results-instructions"></ql-named-text></ql-text-box></v-flex>
+    <v-flex><ql-text-box><ql-named-text textName="submit-results-instructions"></ql-named-text></ql-text-box></v-flex>
     </v-layout>
   </v-container>"""
 }

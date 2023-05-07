@@ -21,7 +21,7 @@ object BeerCompetitionComponent extends Component with GridSizeComponentConfig{
     <v-layout column v-bind="gridSize">
       <v-flex>      
         <ql-text-box>
-        <ql-named-text :name="item.textName"></ql-named-text>
+        <ql-named-text :textName="item.textName"></ql-named-text>
         </ql-text-box>
       </v-flex>
       <v-flex><league-tables :keyval="keyval"></league-tables></v-flex>

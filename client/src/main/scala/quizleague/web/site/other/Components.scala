@@ -10,7 +10,7 @@ object LinksComponent extends RouteComponent with NoSideMenu with GridSizeCompon
   val template = """
   <v-container v-bind="gridSize" fluid>
     <v-layout>
-    <v-flex><ql-text-box><ql-named-text name="links-content"></ql-named-text></ql-text-box></v-flex>
+    <v-flex><ql-text-box><ql-named-text textName="links-content"></ql-named-text></ql-text-box></v-flex>
     </v-layout>
   </v-container>"""  
 }
@@ -33,7 +33,7 @@ object RulesComponent extends RouteComponent with NoSideMenu with GridSizeCompon
   <v-container v-bind="gridSize" fluid>
   <ql-title>Rules</ql-title>
     <v-layout>
-    <v-flex><ql-text-box><ql-named-text name="rules-content"></ql-named-text></ql-text-box></v-flex>
+    <v-flex><ql-text-box><ql-named-text textName="rules-content"></ql-named-text></ql-text-box></v-flex>
     </v-layout>
   </v-container>"""
 }

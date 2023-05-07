@@ -23,7 +23,8 @@ export default defineConfig({
        manualChunks: {
        		firebase: ['firebase'],
        		vuetify: ['vuetify'],
-       		rxjs: ['rxjs']
+       		rxjs: ['rxjs'],
+       		quill: ['quill']
        	}
        }
     },

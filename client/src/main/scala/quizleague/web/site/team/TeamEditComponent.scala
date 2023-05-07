@@ -1,21 +1,21 @@
 package quizleague.web.site.team
 
 import java.util.regex.Pattern
-
 import scala.scalajs.js
 import com.felstar.scalajs.vue.VueRxComponent
 import firebase.Firebase
-import firebase.auth._
-import quizleague.web.core._
+import firebase.auth.*
+import quizleague.web.core.*
 import quizleague.web.maintain.user.UserService
 import quizleague.web.model.{Team, Text, User}
 import quizleague.web.maintain.text.TextService
-import quizleague.web.maintain.team.{TeamService => Service}
+import quizleague.web.maintain.team.TeamService as Service
 import quizleague.web.util.component.SelectUtils
 
 import js.Dynamic.literal
 import scala.scalajs.js.UndefOr
-import org.scalajs.dom._
+import org.scalajs.dom.*
+import quill.VueQuillEditorComponent
 import quizleague.web.site.login.LoginService
 import rxscalajs.Observable
 
@@ -29,7 +29,6 @@ object TeamEditPage extends RouteComponent{
   subscription("user")(c => LoginService.userProfile)
 
 }
-
 
 @js.native
 trait TeamEditComponent extends IdComponent{
@@ -106,6 +105,7 @@ object TeamEditComponent extends Component with GridSizeComponentConfig{
 
   val emailPattern =  """^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"""
 
+  nativeComponents(VueQuillEditorComponent)
 
   props("id")
   data("dialog", false)

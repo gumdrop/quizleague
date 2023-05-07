@@ -9,7 +9,7 @@ import scalajs.js
 
 @js.native
 trait NamedText extends VueComponent with VueRxComponent{
-  val name:String = js.native
+  val textName:String = js.native
 }
 
 object NamedTextComponent extends Component{
@@ -19,9 +19,9 @@ object NamedTextComponent extends Component{
   val template = """
         <ql-text v-if="textId" :id="textId"></ql-text>
     """
-  props("name")
+  props("textName")
   
-  subscription("textId","name")(c => ApplicationContextService.get().flatMap(ac => ac.textSet.obs).map(t => get(c.name,t).map(e => e.text.id).getOrElse(null)))
+  subscription("textId","name")(c => ApplicationContextService.get().flatMap(ac => ac.textSet.obs).map(t => get(c.textName,t).map(e => e.text.id).getOrElse(null)))
   
   def get(name:String, globalText:GlobalText):Option[TextEntry] = globalText.text.find(e => e.name == name)
 }
