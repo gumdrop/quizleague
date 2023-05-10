@@ -3,8 +3,6 @@ package quizleague.web.site.team
 import java.util.regex.Pattern
 import scala.scalajs.js
 import com.felstar.scalajs.vue.VueRxComponent
-import firebase.Firebase
-import firebase.auth.*
 import quizleague.web.core.*
 import quizleague.web.maintain.user.UserService
 import quizleague.web.model.{Team, Text, User}

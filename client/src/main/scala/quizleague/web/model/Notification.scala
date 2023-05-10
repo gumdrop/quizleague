@@ -1,7 +1,5 @@
 package quizleague.web.model
 
-import scala.scalajs.js.annotation.JSExportAll
-
 class Notification(
   val id:String,
   val typeName:String,

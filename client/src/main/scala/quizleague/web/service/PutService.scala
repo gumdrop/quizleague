@@ -1,7 +1,5 @@
 package quizleague.web.service
 
-import firebase.Promise
-
 import scalajs.js
 import quizleague.web.util.UUID
 import quizleague.domain.{Entity, Key, Ref}
@@ -13,6 +11,7 @@ import quizleague.web.util.Logging.*
 import quizleague.web.model.{Model, Key as ModelKey}
 import rxscalajs.Observable
 import rxscalajs.subjects.ReplaySubject
+import quizleague.web.store.Storage.*
 
 trait PutService[T <: Model] {
   this: GetService[T] with ComponentNames=>
@@ -35,15 +34,15 @@ trait PutService[T <: Model] {
   private[service] def saveDom(i:U):Observable[Unit] = {
     val path = i.key.getOrElse(throw new RuntimeException("no key")).key
     val json = enc(i.withKey(None))
-    val promise = db.doc(path).set(convertJsonToJs(json).asInstanceOf[js.Dictionary[js.Any]])
+    val promise = setDoc(doc(path), convertJsonToJs(json).asInstanceOf[js.Dictionary[js.Any]])
     log(json.toString,s"saved $path to firestore", false)
     deCache(i)
     promiseToObs(promise)
   }
 
-  private[service] def promiseToObs[X](promise:Promise[X]):Observable[X]=  {
+  private[service] def promiseToObs[X](promise:js.Promise[X]):Observable[X]=  {
     val obs = ReplaySubject[X]()
-    promise.`then`(obs.next _, obs.error _)
+    promise.`then`(x => obs.next(x), e => obs.error(e.asInstanceOf[js.Any]))
     obs
   }
 
@@ -53,7 +52,7 @@ trait PutService[T <: Model] {
   def delete(id:String):Observable[Unit] = doDelete(new ModelKey(null,uriRoot,id))
   private[service] def doDelete(key:ModelKey) = {
     items -= key.id
-    promiseToObs(db.doc(key.key).delete())
+    promiseToObs(deleteDoc(doc(key.key)))
   }
   def instance() = add(mapOutWithKey(make()))
   def instance(parentKey:ModelKey) = add(mapOutWithKey(make(Key(parentKey.key))))

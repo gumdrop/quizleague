@@ -144,7 +144,7 @@ object HotChats extends Component{
   </ql-text-box>
   """
 
-  subscription("chats")(c => ChatMessageService.hotChats())
+  //subscription("chats")(c => ChatMessageService.hotChats())
   method("parentKey")((chat:ChatMessage) => Key(Key(chat.key.parentKey).parentKey))
   method("chatID")((chat:ChatMessage) => Key(chat.key.parentKey).id)
 }

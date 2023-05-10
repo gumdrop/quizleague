@@ -70,7 +70,7 @@ object TeamStandings extends Component {
         <v-card-title primary-title><h3 class="headline mb-0">Standings</h3></v-card-title>
         <v-card-text>
           <table>
-            <standing v-for="s in standings" :standing="s"></standing>
+            <standing v-for="s in standings" :standing="s" :key="s.name"></standing>
           </table>
         </v-card-text>
       </v-card>

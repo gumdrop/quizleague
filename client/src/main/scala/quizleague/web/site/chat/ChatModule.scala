@@ -22,10 +22,6 @@ object ChatMessageService extends ChatMessageGetService with ChatMessagePutServi
   def listMessages(chatKey:Key):Observable[js.Array[ChatMessage]] =
     list(chatKey).map(_.sortBy(_.date)(Desc))
 
-  def hotChats() = {
-    query(db.collectionGroup(typeName).orderBy("date","desc").limit(5))
-  }
-
 }
 
 

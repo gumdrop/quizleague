@@ -9,6 +9,7 @@ import quizleague.web.maintain._
 import quizleague.web.core._
 import com.felstar.scalajs.vue._
 import quizleague.web.model.User
+import quizleague.web.store.Storage.*
 
 
 object UserModule extends Module{
@@ -21,8 +22,8 @@ object UserModule extends Module{
 
 
 object UserService extends UserGetService with UserPutService{
-  def userExists(user:User) = query(db.collection(uriRoot).where("email","=",user.email)).map(!_.isEmpty)
-  def userForEmail(email:String) = query(db.collection(uriRoot).where("email","==",email)).map(_.headOption)
+  def userExists(user:User) = runQuery(query(collection(uriRoot), where("email","=",user.email))).map(!_.isEmpty)
+  def userForEmail(email:String) = runQuery(query(collection(uriRoot),  where("email","==",email))).map(_.headOption)
 }
 
 object SiteUserService extends SiteUserGetService with SiteUserPutService{

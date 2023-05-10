@@ -27,6 +27,8 @@ import java.time.format.DateTimeFormatter
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 
+import quizleague.web.store.Storage.*
+
 
 
 object TeamModule extends Module{
@@ -116,16 +118,16 @@ object StatisticsService extends StatisticsGetService{
   
   def teamStats(teamId:String, seasonId:String):Observable[Statistics] = {
     
-    val q = db.collection(uriRoot).where("team.id","==", teamId).where("season.id","==",seasonId)
+    val q = query(collection(uriRoot), where("team.id","==", teamId), where("season.id","==",seasonId))
     
-    query(q).map(_.headOption.fold[Statistics](null)(identity))
+    runQuery(q).map(_.headOption.fold[Statistics](null)(identity))
   }
   
   def allTeamStats(teamId:String):Observable[js.Array[Statistics]] = {
    
-    val q = db.collection(uriRoot).where("team.id","==", teamId)
+    val q = query(collection(uriRoot), where("team.id","==", teamId))
     
-    query(q)
+    runQuery(q)
   }
   
   def teamsInTable(stats:Statistics):Observable[Int] = stats.table.obs.map(_.rows.size)

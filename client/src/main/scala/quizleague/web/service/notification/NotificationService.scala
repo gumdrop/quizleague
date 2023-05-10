@@ -8,6 +8,7 @@ import quizleague.domain.notification.{ Notification => Dom, ResultPayload => Do
 import quizleague.web.names.NotificationNames
 import io.circe._,io.circe.parser._,io.circe.syntax._,io.circe.scalajs.convertJsToJson
 import java.time.LocalDateTime
+import quizleague.web.store.Storage.*
 
 
 trait NotificationGetService extends GetService[Notification] with NotificationNames {
@@ -30,7 +31,7 @@ trait NotificationGetService extends GetService[Notification] with NotificationN
   protected def dec(json:js.Any) = decodeJson[U](json)
   
   def messages(typeName:String, threshold:LocalDateTime) = {
-    val q = db.collection(uriRoot).where("timestamp", ">=", threshold.toString.asInstanceOf[js.Any])
-    query(q).map(_.filter(_.typeName == typeName)).filter(!_.isEmpty)
+    val q = query(collection(uriRoot), where("timestamp", ">=", threshold.toString.asInstanceOf[js.Any]))
+    runQuery(q).map(_.filter(_.typeName == typeName)).filter(!_.isEmpty)
   }
 }

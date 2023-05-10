@@ -5,10 +5,7 @@ import quizleague.web.model.*
 import quizleague.web.site.competition.{CompetitionMenu, CompetitionMenuComponent, CompetitionService}
 import quizleague.web.site.season.SeasonService
 import quizleague.web.site.team.TeamService
-import quizleague.web.model.ResultEntry
 import quizleague.web.service.statistics.CompetitionStatisticsGetService
-import quizleague.web.site.fixtures.FixturesService.{db, uriRoot}
-import rxscalajs.Observable
 
 import scala.scalajs.js
 

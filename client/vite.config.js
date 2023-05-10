@@ -21,7 +21,7 @@ export default defineConfig({
        ],
        output: {
        manualChunks: {
-       		firebase: ['firebase'],
+       		firebase: ['firebase/firestore', 'firebase/app', 'firebase/auth'],
        		vuetify: ['vuetify'],
        		rxjs: ['rxjs'],
        		quill: ['quill']
