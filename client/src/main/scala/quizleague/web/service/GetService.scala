@@ -15,7 +15,8 @@ import quizleague.web.store.Storage
 import quizleague.web.util.rx.RefObservable
 import rxscalajs._
 import rxscalajs.subjects._
-import quizleague.web.util.Logging._
+import quizleague.web.util.Logging.*
+import quizleague.web.store.Storage.*
 
 trait GetService[T <: Model] {
   this: ComponentNames =>
@@ -23,7 +24,6 @@ trait GetService[T <: Model] {
 
   lazy val uriRoot = typeName
 
-  protected val db = Storage.db
   private[service] val items: Map[String, T] = Map()
   private val observables = Map[String, Observable[U]]()
   private val refObsCache = Map[String, RefObservable[T]]()
@@ -41,8 +41,8 @@ trait GetService[T <: Model] {
 
   def list(parentKey:Option[Key]): Observable[js.Array[T]] = list(parentKey.map(k => ModKey(k.key)).getOrElse(null))
   def list(parentKey:ModKey=null): Observable[js.Array[T]] = listFromStorage(parentKey).map(c => c.map(u => mapOutWithKey(u)))
-  def groupQuery():Query = db.collectionGroup(uriRoot)
-  protected def query(query:Query):Observable[js.Array[T]] = listFromQuery(query).map(_.map(mapOutWithKey _))
+  def groupQuery():Query = collectionGroup(uriRoot)
+  protected def runQuery(query:Query):Observable[js.Array[T]] = listFromQuery(query).map(_.map(mapOutWithKey _))
 
   def flush() = items.clear()
 
@@ -50,14 +50,14 @@ trait GetService[T <: Model] {
   
   protected final def listFromStorage(parentKey:ModKey = null): Observable[js.Array[U]] = {
     val mapKey = if(parentKey == null) then "" else parentKey.key
-    listObservables.getOrElseUpdate(mapKey,{listFromQuery(db.collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
+    listObservables.getOrElseUpdate(mapKey,{listFromQuery(collection(s"${if(parentKey == null)""else s"${parentKey.key}/"}$uriRoot"))})
   }
   
   protected final def listFromQuery(query:Query): Observable[js.Array[U]] = {
 
       val subject = ReplaySubject[QuerySnapshot]()
 
-      query.onSnapshot(subject.inner)
+      onSnapshot(query, subject.inner)
 
       subject.map(q => q.docs.map(d => dec(d.data()).fold(e => {throw e}, u => u.withKey(Key(d.ref.path))))).map(_.filter(filterList _))
    
@@ -70,10 +70,10 @@ trait GetService[T <: Model] {
     observables.getOrElseUpdate(key.id, {
       val subject = ReplaySubject[DocumentSnapshot]()
 
-      db.doc(key.key).onSnapshot(subject.inner)
+      onSnapshot(doc(key.key), subject.inner)
 
       subject
-        .map(a => if(a.exists) dec(a.data())
+        .map(a => if(a.exists()) dec(a.data())
           .fold(e => {throw e}, u => u
             .withKey(Key(a.ref.path))
           )

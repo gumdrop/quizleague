@@ -12,7 +12,7 @@ import quizleague.web.service.PostService
 
 import scalajs.js
 import js.JSConverters._
-
+import quizleague.web.store.Storage.*
 
 object UserService extends UserGetService with UserPutService{
   
@@ -32,7 +32,7 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
   }
 
   def siteUserForUid(uid:String):Observable[Option[SiteUser]] = {
-    query(db.collection(uriRoot).where("uid","==", uid)).map(_.headOption)
+    runQuery(query(collection(uriRoot), where("uid","==", uid))).map(_.headOption)
   }
 
   def saveUser(user:SiteUser):Unit = {

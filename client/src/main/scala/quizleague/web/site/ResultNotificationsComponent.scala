@@ -28,14 +28,15 @@ object ResultNotificationsComponent extends Component {
       color="info"
       v-if="fixtures"
     >
-    <ql-fixtures-simple :fixtures="fixtures"></ql-fixtures-simple>
-    <v-btn icon text dark @click.native="messages = false"><v-icon right>mdi-close</v-icon></v-btn>
+      <ql-fixtures-simple :fixtures="fixtures"></ql-fixtures-simple>
+      <v-btn icon text dark @click.native="messages = false"><v-icon right>mdi-close</v-icon></v-btn>
    </v-snackbar>
 """
 
   private def utcDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime
 
   data("now", utcDateTime)
+  data("fixtures", null)
   data("messages", false)
   subscription("fixtures", "now")(c => NotificationService.messages(c.now).map(m => { c.messages = true; m }))
   watch("messages")((c: facade, value: js.Any) => if (!c.messages) { c.now = utcDateTime })

@@ -1,9 +1,7 @@
 package quizleague.web.site.login
 
 import com.felstar.scalajs.vue.VueComponent
-import firebase.Firebase
 import firebase.auth.{ActionCodeSettings, UserCredential}
-import firebase.firestore.DocumentSnapshot
 import org.scalajs.dom.window
 import quizleague.web.core.{Module, RouteConfig, _}
 import quizleague.web.model._
@@ -18,7 +16,7 @@ import quizleague.web.util.Logging.log
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal
 import scala.scalajs.js.|
-import quizleague.web.store.Storage.{firebase as fbase}
+import quizleague.web.store.Storage.*
 
 
 object LoginModule extends Module{
@@ -59,7 +57,7 @@ object LoginService{
 
   val userProfile:Observable[LoggedInUser] = _loggedInUser
 
-  fbase.auth().onAuthStateChanged((user:firebase.User) => {
+  onAuthStateChanged((user:firebase.User) => {
     if (user != null) {
       val obs =
         SiteUserService
@@ -79,7 +77,7 @@ object LoginService{
   })
 
   def logout() = {
-    fbase.auth().signOut()
+    signOut()
   }
 
   def login(email:String, forward:String) = {
@@ -95,7 +93,7 @@ object LoginService{
             val url = s"https://${location.hostname}/login/signin?forward=$forward"
             actionCodeSettings.url = url
             actionCodeSettings.handleCodeInApp = true
-            toObservable(fbase.auth().sendSignInLinkToEmail(email, actionCodeSettings))
+            toObservable(sendSignInLinkToEmail(email, actionCodeSettings))
               .map(x => {
                 window.localStorage.setItem("emailForSignIn", email)
                 true})
@@ -111,13 +109,13 @@ object LoginService{
   }
 
   def loginWithPassword(c:VueComponent,email:String, password:String, forward:String) =
-    authAction(c,email,forward, fbase.auth().signInWithEmailAndPassword(email,password))
+    authAction(c,email,forward, signInWithEmailAndPassword(email,password))
 
   def createAcccount(c: VueComponent, email:String, password:String, forward:String) =
-    authAction(c,email,forward, fbase.auth().createUserWithEmailAndPassword(email,password))
+    authAction(c,email,forward, createUserWithEmailAndPassword(email,password))
 
 
-  def authAction(c: VueComponent, email: String, forward: String, promise: => firebase.Promise[UserCredential]): Observable[Boolean] = {
+  def authAction(c: VueComponent, email: String, forward: String, promise: => js.Promise[UserCredential]): Observable[Boolean] = {
     val user = SiteUserService.siteUserForEmail(email)
 
     user.flatMap(su =>
@@ -129,7 +127,7 @@ object LoginService{
   def check(c:VueComponent, forward:String): Unit ={
 
     val url = window.location.href
-    if (fbase.auth().isSignInWithEmailLink(url)) {
+    if (isSignInWithEmailLink(url)) {
       // Additional state parameters can also be passed via URL.
       // This can be used to continue the user's intended action before triggering
       // the sign-in operation.
@@ -146,7 +144,7 @@ object LoginService{
       }
 
       // The client SDK will parse the code from the link for you.
-      fbase.auth().signInWithEmailLink(email, url)
+      signInWithEmailLink(email, url)
           .`then`(handleLoginSuccess(c,forward))
           .`catch`(handleLoginFailure(c))
     }
@@ -171,7 +169,7 @@ object LoginService{
     )
     true
   }
-  private def handleLoginFailure(c:VueComponent)(error:js.Any) ={
+  private def handleLoginFailure(c:VueComponent)(error:Any) ={
     println(error)
     c.$router.push("/login/failed")
   }
@@ -184,9 +182,9 @@ object LoginService{
     userProfile.filter(_ == null).subscribe(u => next.asInstanceOf[js.Function0[Unit]]())
   }
 
-  private def  toObservable[T](promise:firebase.Promise[T]) = {
+  private def toObservable[T](promise:js.Promise[T]) = {
     val subject = ReplaySubject[T]()
-    promise.`then`(subject.next _).`catch`(subject.error _)
+    promise.`then`(subject.next _).`catch`(e => subject.error(e.asInstanceOf[js.Any]))
     subject.take(1)
   }
 
