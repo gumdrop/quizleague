@@ -70,16 +70,14 @@ lazy val prodServer = taskKey[Unit]("copy test JS")
 lazy val release = taskKey[Unit]("release to prod")
 lazy val releaseTest = taskKey[Unit]("release to test")
 lazy val prodClient = taskKey[Unit]("copy release JS")
-lazy val copyTestClient = taskKey[Unit]("copy test JS")
 lazy val copyTestConnection = taskKey[Unit]("copy test connection file")
 lazy val copyConnection = taskKey[Unit]("copy connection file")
 lazy val devClient = taskKey[Unit]("copy dev JS")
 lazy val buildAppFile = taskKey[Unit]("build app.yaml")
 lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
 lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
-lazy val buildDevClient= taskKey[Unit]("Build the dev client")
+lazy val localClient= taskKey[Unit]("Build the dev client")
 lazy val buildClient= taskKey[Unit]("Build the prod client")
-
 
 buildAppFile := {
     val content = IO.read(file("./app.yaml"))
@@ -118,12 +116,17 @@ copyConnection := {
 }
 
 prodClient := {
-  copyConnection.value
   buildClient.value
   val built = file("./server/built")
   IO.delete(built.listFiles())
   IO.copyDirectory(file("./client/dist"), built)
 }
+
+localClient := {
+  copyConnection
+  prodClient.value
+}
+
 
 buildClient := {
   "bash -c ./buildClient.sh"!
