@@ -11,6 +11,7 @@ import rxscalajs.Observable
 
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr
+import org.scalajs.dom.window
 
 @js.native
 trait ChatComponent extends VueRxComponent {
@@ -167,6 +168,7 @@ object LoginButton extends Component{
   </div>
   """
   prop("label")
+  data("window", window)
   subscription("user")(c => LoginService.userProfile)
 
 }

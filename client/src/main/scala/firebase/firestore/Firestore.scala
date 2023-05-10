@@ -29,7 +29,8 @@ trait QuerySnapshot extends js.Object {
   def empty(): Boolean = js.native
 }
 
-trait QueryFieldFilterConstraint
+@js.native
+trait QueryFieldFilterConstraint extends js.Object
 
 @js.native
 trait CollectionReference extends Query

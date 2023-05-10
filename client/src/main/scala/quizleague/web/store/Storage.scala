@@ -52,7 +52,7 @@ object Storage {
     if (window.location.hostname == "localhost") {
       connectFirestoreEmulator(firestore, "localhost", 8082)
     }
-    enableMultiTabIndexedDbPersistence(firestore).`then`(x => {})
+    //enableMultiTabIndexedDbPersistence(firestore).`then`(x => {})
     firestore
   }
 
