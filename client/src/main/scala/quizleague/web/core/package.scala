@@ -1,13 +1,12 @@
-package quizleague.web
+package quizleague.web.core
 
-import scalajs.js.JSConverters._
+import scala.annotation.targetName
+import scalajs.js.JSConverters.*
 import scalajs.js.Dynamic.literal
 
-package object core {
-  object @@{
-    def apply[T](items:T*) = items.toJSArray
-  }
 
-  val $ = literal
+@targetName("arr")
+def @@[T](items: T*) = items.toJSArray
 
-}
+val $ = literal
+

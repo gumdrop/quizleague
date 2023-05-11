@@ -16,6 +16,7 @@ import quizleague.web.site.leaguetable.LeagueTableService
 import com.felstar.scalajs.vue.VuetifyComponent
 import quizleague.web.site.*
 import quizleague.web.core.GridSizeComponentConfig
+import quizleague.web.site.calendar.CalendarViewService
 import quizleague.web.site.home.HomeComponent.{components, data}
 
 @js.native
@@ -71,7 +72,7 @@ trait HomePageTabsComponent extends VueRxComponent with VuetifyComponent{
 object HomePageTabsComponent extends Component {
   type facade = HomePageTabsComponent
 
-  private val tabs = js.Array("league","results","fixtures")
+  private val tabs = js.Array("league","results","fixtures","events")
   val name = "home-page-tabs"
   override val template = """
      <v-card>
@@ -79,6 +80,7 @@ object HomePageTabsComponent extends Component {
             <v-tab key="1">Tables</v-tab>
             <v-tab key="2">Results</v-tab>
             <v-tab key="3">Fixtures</v-tab>
+            <v-tab key="4">Events</v-tab>
             <v-tab-item key="1">
              <ql-home-page-table style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-home-page-table>
             </v-tab-item>
@@ -88,10 +90,13 @@ object HomePageTabsComponent extends Component {
             <v-tab-item key="3">
               <ql-next-fixtures style="min-width:300px" :seasonId="appData.currentSeason.id"></ql-next-fixtures></v-carousel-item>
             </v-tab-item>
+            <v-tab-item key="4">
+              <ql-home-page-events :seasonId="appData.currentSeason.id"></ql-home-page-events>
+            </v-tab-item>
         </v-tabs>
       </v-card>
       """
-    components(HomePageLeagueTable, NextFixturesComponent, LatestResultsComponent)
+    components(HomePageLeagueTable, NextFixturesComponent, LatestResultsComponent, EventsComponent)
     data("activeTab", 0)
     data("tabsHandle", null)
     method("haltTabs")({haltTabs _}:js.ThisFunction)
@@ -133,12 +138,8 @@ object NextFixturesComponent extends Component{
    </v-card>
 
 """
-  
-
-  
   props("seasonId")
   subscription("fixtures", "seasonId")(c => FixturesService.nextFixtures(c.seasonId))
-
 }
 
 object LatestResultsComponent extends Component{
@@ -162,6 +163,38 @@ object LatestResultsComponent extends Component{
   
   props("seasonId")
   subscription("fixtures", "seasonId")(c => FixturesService.latestResults(c.seasonId))
+}
+
+object EventsComponent extends Component{
+  type facade = NextFixturesComponent
+
+  val name = "ql-home-page-events"
+  val template =
+
+    """
+   <v-card text>
+     <v-card-title primary-title><h3 class="headline mb-0">Upcoming Events</h3></v-card-title>
+     <v-card-text v-if="events">
+        <div v-for="event in events" :key="event.date" style="margin-bottom:1em;">
+          <fragment v-if="event.eventType=='calendar'">
+            <v-layout column align-start>
+              <v-flex><b>{{event.event.description}}  : {{event.date | date("d MMMM yyyy")}} {{event.event.time}}</b></v-flex>
+              <v-flex v-if="event.event.venue">Venue : <router-link router-link :to="'/venue/' + event.event.venue.id">{{async(event.event.venue).name}}</router-link></v-flex>
+             </v-layout>
+          </fragment>
+          <fragment v-else>
+            <v-layout column align-start >
+              <v-flex><b><router-link :to="'/competition/' + event.competition.key.encode + '/' + event.competition.typeName"><v-icon>{{event.competition.icon}}</v-icon>&nbsp;{{event.competition.name}}</router-link>  : {{event.date | date("d MMMM yyyy")}} {{event.event.time}}</b></v-flex>
+              <v-flex v-if="event.event.venue">Venue : <router-link router-link :to="'/venue/' + event.event.venue.id">{{async(event.event.venue).name}}</router-link></v-flex>
+            </v-layout>
+          </fragment>
+        </div>
+     </v-card-text>
+   </v-card>
+
+"""
+  props("seasonId")
+  subscription("events", "seasonId")(c => CalendarViewService.standaloneEvents(c.seasonId))
 }
 
 
