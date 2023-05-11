@@ -1,6 +1,4 @@
-package quizleague.util
+package quizleague.util.collection
 
-package object collection {
-  def Desc[T : Ordering] = implicitly[Ordering[T]].reverse
-  def Asc[T : Ordering] = implicitly[Ordering[T]]
-}
+def Desc[T : Ordering] = implicitly[Ordering[T]].reverse
+def Asc[T : Ordering] = implicitly[Ordering[T]]
