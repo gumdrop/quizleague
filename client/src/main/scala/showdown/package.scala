@@ -1,6 +1,6 @@
-package object showdown {
+package showdown
 
-  import quizleague.web.core._
+import quizleague.web.core._
 
-  val defaultOptions = $(flavor="github", vueTemplate=true, options=$(emoji=true, table=true))
-}
+val defaultOptions = $(flavor = "github", vueTemplate = true, options = $(emoji = true, table = true))
+

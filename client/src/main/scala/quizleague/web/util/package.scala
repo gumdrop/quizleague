@@ -1,5 +1,4 @@
-package quizleague.web
+package quizleague.web.util
 
-package object util {
-  val unit = (_:Any) => ()
-}
+val unit = (_:Any) => ()
+

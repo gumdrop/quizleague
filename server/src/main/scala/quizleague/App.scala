@@ -33,7 +33,7 @@ object App {
       .listen(port)
 
     println(s"Server started on port $port")
-    Process.env("FIRESTORE_EMULATOR_HOST").foreach(port => println(s"emulator port : $port"))
+    Process.env("FIRESTORE_EMULATOR_HOST").foreach(port => println(s"emulator address : $port"))
   }
 
   val indexMapping:js.Any = (req: Request, res: Response) => {
