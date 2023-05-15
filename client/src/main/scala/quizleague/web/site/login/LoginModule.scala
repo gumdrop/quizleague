@@ -3,8 +3,8 @@ package quizleague.web.site.login
 import com.felstar.scalajs.vue.VueComponent
 import firebase.auth.{ActionCodeSettings, UserCredential}
 import org.scalajs.dom.window
-import quizleague.web.core.{Module, RouteConfig, _}
-import quizleague.web.model._
+import quizleague.web.core.{Module, RouteConfig, *}
+import quizleague.web.model.*
 import quizleague.web.site.team.TeamService
 import quizleague.web.site.user.SiteUserService
 import rxscalajs.facade.ObservableFacade
@@ -12,11 +12,13 @@ import rxscalajs.subjects.ReplaySubject
 import rxscalajs.{Observable, Subject}
 import quizleague.web.util.Logging.log
 
-
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.literal
 import scala.scalajs.js.|
 import quizleague.web.store.Storage.*
+
+import java.time.ZonedDateTime
+import scala.concurrent.duration.*
 
 
 object LoginModule extends Module{
@@ -57,6 +59,13 @@ object LoginService{
 
   val userProfile:Observable[LoggedInUser] = _loggedInUser
 
+
+  SiteUserService.heartbeat.combineLatest(userProfile).subscribe((_, user) => {
+    if(user != null){
+      SiteUserService.heartbeat(user.siteUser)
+    }
+  })
+
   onAuthStateChanged((user:firebase.User) => {
     if (user != null) {
       val obs =
@@ -67,9 +76,9 @@ object LoginService{
               .map(su => TeamService.teamForUser(su.user.id).map(to => to.map(t => (su, t))))
               .getOrElse(Observable.just(None)))
 
-      obs.subscribe(sto => sto.foreach(st => st match {
-        case (s, t) => _loggedInUser.next(new LoggedInUser(s, String.valueOf(user.email), t))
-      }))
+      obs.first.subscribe(sto => sto.foreach((s,t) => {
+        SiteUserService.heartbeat(s)
+        _loggedInUser.next(new LoggedInUser(s, String.valueOf(user.email), t))}))
     }
     else{
       _loggedInUser.next(null)

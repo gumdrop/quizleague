@@ -17,6 +17,7 @@ case class ChatMessage(
                         user: Ref[SiteUser],
                         message: String,
                         date: LocalDateTime,
+                        index: List[String] = List(),
                         retired: Boolean = false
                       ) extends Entity derives Codec.AsObject
 

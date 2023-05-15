@@ -38,6 +38,6 @@ object ResultNotificationsComponent extends Component {
   data("now", utcDateTime)
   data("fixtures", null)
   data("messages", false)
-  subscription("fixtures", "now")(c => NotificationService.messages(c.now).map(m => { c.messages = true; m }))
+  subscription("fixtures", "now")(c => NotificationService.resultMessages(c.now).map(m => { c.messages = true; m }))
   watch("messages")((c: facade, value: js.Any) => if (!c.messages) { c.now = utcDateTime })
 }

@@ -20,6 +20,8 @@ object EmailSender{
   def team(sender: String, team: Team, text: String) = new EmailSender().sendTeamMail(sender, team, text)
  
   def alias(sender: String, recipientName: String, text: String) = new EmailSender().sendAliasMail(sender, recipientName, text)
+
+  def user(user:User, text:String, subject:String) = EmailSender().sendUserEmail(user, text, subject)
 }
 
 private class EmailSender {
@@ -51,6 +53,13 @@ private class EmailSender {
       val user = await{load(alias.user)}
       sendMail(sender, text, g, List(user.email))
     }
+  }
+
+  def sendUserEmail(user:User, text:String, subject:String) = async[Future]{
+    val g = await{applicationContext()}
+
+    sendMail("unmonitored@chilternquizleague.uk", text, g, List(user.email), subject)
+
   }
 
   def sendMail(sender: String, text: String, g: ApplicationContext, addresses: List[String], subject: String = "") = {

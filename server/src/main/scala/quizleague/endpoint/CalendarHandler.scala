@@ -11,6 +11,7 @@ import cps._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future._
+import java.lang.StringBuilder
 
 
 object CalendarHandler {
@@ -22,11 +23,10 @@ object CalendarHandler {
 
   def teamCalendar(id:String):Future[String] = async[Future]{
 
-
     def saveNewIcal(): Future[String] = async[Future] {
       val ical = await(makeICal(await(load[Team](id))))
       val cache = CalendarCache(id, LocalDateTime.now(), ical)
-      await(save(cache))
+      save(cache)
       ical
     }
 
@@ -108,9 +108,8 @@ END:VEVENT
     }
 
     private def makeICal(team:Team) = async[Future] {
-
-      val header = "\"BEGIN:VCALENDAR\\nVERSION:2.0\\n\""
-      //val builder = new StringBuilder("BEGIN:VCALENDAR\nVERSION:2.0\n")
+      val header = """"BEGIN:VCALENDAR\nVERSION:2.0\n""""
+      var builder = header
 
         def teamCompetitions(season:Season):Future[List[Competition & TeamCompetition]] = {
           async[Future] {
@@ -151,7 +150,7 @@ END:VEVENT
           }
 
         }
-        //builder.append(s"X-WR-CALNAME:${gap.leagueName} calendar for ${t.name}\n")
+        builder += s"X-WR-CALNAME:${gap.leagueName} calendar for ${t.name}\n"
 
         val entries = await{sequence(for{
           (c, fixtures, fixtureList) <- teamFixtures
@@ -160,7 +159,7 @@ END:VEVENT
         yield{
           formatFixture(fixture, fixtures ,c,s"${c.name} ${fixtures.description}")
         })}
-        //entries.foreach(builder.append(_))
+        entries.foreach(entry => builder += entry)
 
         val singletonComps = await{singletonCompetitions(currentSeason)}.iterator
 
@@ -168,7 +167,7 @@ END:VEVENT
           val c = singletonComps.next()
           if(c.event.isDefined){
             val text = await{formatEvent(c.event.get, s"${gap.leagueName} ${c.name}")}
-           // builder.append(text)
+            builder += text
           }
         }
 
@@ -176,17 +175,16 @@ END:VEVENT
           (c, fixtures, fixtureList) <- teamFixtures if fixtureList.isEmpty
         }
         yield{
-         // builder.append(formatBlankFixtures(fixtures, c, c.name))
+          builder += formatBlankFixtures(fixtures, c, c.name)
         }
 
         val calendarIt = currentSeason.calendar.iterator
         while(calendarIt.hasNext){
           val e = calendarIt.next()
-          //builder.append(await(formatEvent(e, e.description)))
+          builder += await(formatEvent(e, e.description))
         }
 
-      //builder.append("END:VCALENDAR\n").toString()
-      ""
+      builder + ("END:VCALENDAR\n")
     }
 
     def toUtc(dateTime:LocalDateTime) = ZonedDateTime.of(dateTime,local).format(dateFormat)

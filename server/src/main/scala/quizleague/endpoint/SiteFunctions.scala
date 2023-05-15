@@ -1,19 +1,25 @@
 package quizleague.endpoint
 
-import quizleague.domain.command.{AliasEmailCommand, ResultsSubmitCommand, TeamEmailCommand}
+import quizleague.domain.command.{AliasEmailCommand, ChatNotificationCommand, ResultsSubmitCommand, TeamEmailCommand}
 import quizleague.task.TaskQueue.taskQueue
 import quizleague.domain.*
 import quizleague.data.Storage.*
+import quizleague.data.*
+import quizleague.util.UUID.randomUUID as uuid
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import cps.monads.{*, given}
-import cps._
-import TaskFunctions._
+import cps.*
+import TaskFunctions.*
+import quizleague.domain.notification.{ChatNotificationPayload, Notification, NotificationTypeNames}
 import quizleague.mail.EmailSender
-import quizleague.util.UUID
+import quizleague.task.TaskQueue
+import quizleague.util.{UUID, londonTime}
 
+import scala.Console.println
 import scala.concurrent.Future
+import scalajs.js.JSConverters.*
 
 object SiteFunctions {
 
@@ -44,7 +50,7 @@ object SiteFunctions {
 
     def createAndSave(user: User) = async[Future]{
       val uuid = UUID.randomUUID().toString
-      val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None).withKey(Key(None, "siteuser", uuid))
+      val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Key(None, "siteuser", uuid))
       await(save(siteUser))
       siteUser
     }
@@ -81,8 +87,40 @@ object SiteFunctions {
   }
 
   def contactPerson(mail: AliasEmailCommand) = async[Future]{
-    
+
     await(EmailSender.alias(mail.sender, mail.alias, mail.text))
     List[String]()
+  }
+
+  def chatNotifications(command:ChatNotificationCommand):Future[Unit] = async[Future]{
+
+    TaskQueue.taskQueue.send(sendNotifications)
+
+    def sendNotifications():Unit = async[Future]{
+
+      val query = collection[SiteUser]().where("handle", "in", command.handles.toJSArray)
+      val users = await(runQuery[SiteUser](query))
+      val context = await(applicationContext())
+      //val message = await(load[ChatMessage](command.messageKey))
+
+      val it = users.iterator
+      while (it.hasNext) {
+        val siteUser = it.next()
+        val user = await(load(siteUser.user.get))
+
+        if (siteUser.isActive) {
+          val key = Key(None, "notification", uuid().toString)
+          save(Notification(
+            key.id,
+            NotificationTypeNames.chat,
+            londonTime,
+            ChatNotificationPayload(siteUser.key.get, command.messageKey)
+          ))
+        }
+        else {
+          EmailSender.user(user, s"""<a href=${command.hostUrl}/home">${context.leagueName}</a>""", "You were mentioned in a chat message")
+        }
+      }
+    }
   }
 }

@@ -4,6 +4,7 @@ import io.circe.{Decoder, Encoder}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.scalajs.npm.express.{Request, Response}
 
+import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
@@ -35,4 +36,3 @@ def send[T](result: T, res: Response)(implicit encoder: Encoder[T]): Unit = {
 }
 
 def param(name: String, req: Request): Option[String] = req.params.get(name)
-

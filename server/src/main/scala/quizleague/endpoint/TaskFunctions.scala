@@ -1,24 +1,23 @@
 package quizleague.endpoint
 
-import quizleague.data.Storage
-
-import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
-import quizleague.data.Storage._
-import quizleague.data._
-import quizleague.endpoint.HistoricalStatsAggregator
-import quizleague.util.UUID.{randomUUID => uuid}
-import quizleague.domain._
-import quizleague.domain.command.{ResultValues, ResultsSubmitCommand}
-import quizleague.domain.notification._
-import quizleague.domain.util.LeagueTableRecalculator
-import quizleague.task.TaskQueue._
-
+import cps.*
 import cps.monads.{*, given}
-import cps._
+import quizleague.data.*
+import quizleague.data.Storage.*
+import quizleague.domain.*
+import quizleague.domain.command.{ResultValues, ResultsSubmitCommand}
+import quizleague.domain.notification.*
+import quizleague.domain.util.LeagueTableRecalculator
+import quizleague.endpoint.HistoricalStatsAggregator
+import quizleague.task.TaskQueue.*
+import quizleague.util.*
+import quizleague.util.UUID.randomUUID as uuid
+
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future._
 import scala.concurrent.Future
-//import io.circe.*, io.circe.generic.auto._
+import scala.concurrent.Future.*
+
 object TaskFunctions {
 
   def resultSubmission(result: ResultsSubmitCommand) = {
@@ -60,7 +59,7 @@ object TaskFunctions {
           await(save(Notification(
             uuid().toString(),
             NotificationTypeNames.result,
-            LocalDateTime.now(),
+            londonTime,
             ResultPayload(fixture.key.get.key))))
         }
       }
@@ -156,7 +155,7 @@ object TaskFunctions {
       save(Notification(
         key.id,
         NotificationTypeNames.maintain,
-        ZonedDateTime.now(ZoneId.of("Europe/London")).toLocalDateTime,
+        londonTime,
         MaintainMessagePayload(s"Stats regenerated for ${season.startYear}/${season.endYear}")
       ).withKey(key))
     }

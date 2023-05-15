@@ -6,7 +6,7 @@ import quizleague.web.core.*
 import quizleague.web.site.ApplicationContextService
 import quizleague.web.site.fixtures.FixturesService
 import com.felstar.scalajs.vue.VueComponent
-import quizleague.web.model.Season
+import quizleague.web.model.{Key, Season}
 
 import scalajs.js
 import js.timers.*
@@ -43,7 +43,9 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
             <ql-named-text textName="front-page"></ql-named-text>
             <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
           </ql-text-box>
-        <!--ql-hot-chats></ql-hot-chats-->
+          <ql-text-box>
+              <ql-chat :chatkey="chatkey"></ql-chat>
+          </ql-text-box>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -55,8 +57,11 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
      </v-snackbar>
   </v-container>
 """
+  val key = Key("chat/homepagechat")
+
   components(HomePageTabsComponent)
   data("sponsorMessage", false)
+  data("chatkey", key)
 
   subscription("appData")(c => ApplicationContextService.get())
 

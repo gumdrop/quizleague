@@ -1,6 +1,6 @@
 package quizleague.web.store
 
-import firebase.firestore.{CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Query, QueryFieldFilterConstraint}
+import firebase.firestore.*
 import firebase.auth.{ActionCodeSettings, Auth, GoogleAuthProvider, UserCredential}
 import firebase.User
 import org.scalajs.dom.window
@@ -52,7 +52,7 @@ object Storage {
     if (window.location.hostname == "localhost") {
       connectFirestoreEmulator(firestore, "localhost", 8082)
     }
-    enableMultiTabIndexedDbPersistence(firestore).`then`(x => {})
+    //enableMultiTabIndexedDbPersistence(firestore).`then`(x => {})
     firestore
   }
 
@@ -112,6 +112,14 @@ object Storage {
   @JSImport("firebase/firestore")
   @js.native
   def deleteDoc(doc:DocumentReference):js.Promise[Unit] = js.native
+
+  @JSImport("firebase/firestore")
+  @js.native
+  def orderBy(field:String, ordering:String): Ordering = js.native
+
+  @JSImport("firebase/firestore")
+  @js.native
+  def limit(limit:Int): Limit = js.native
 
   @JSImport("firebase/auth")
   @js.native

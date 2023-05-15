@@ -1,17 +1,19 @@
 package quizleague.web.site.chat
 
-import quizleague.util.collection._
+import quizleague.util.collection.*
 import quizleague.web.core.{@@, Module}
-import quizleague.web.model._
+import quizleague.web.model.*
 import quizleague.web.service.chat.{ChatGetService, ChatMessageGetService, ChatMessagePutService, ChatPutService}
 import quizleague.web.site.user.SiteUserService
+import quizleague.web.store.Storage.*
 import rxscalajs.Observable
 
 import scala.scalajs.js
+import scala.scalajs.js.JSConverters.*
 
 object ChatModule extends Module {
 
-  override val components = @@(ChatComponent, LoginButton, HotChats)
+  override val components = @@(ChatComponent, LoginButton, AvatarComponent)
 }
 
 object ChatMessageService extends ChatMessageGetService with ChatMessagePutService {
@@ -19,9 +21,29 @@ object ChatMessageService extends ChatMessageGetService with ChatMessagePutServi
   val userService = SiteUserService
   val chatService = ChatService
 
-  def listMessages(chatKey:Key):Observable[js.Array[ChatMessage]] =
-    list(chatKey).map(_.sortBy(_.date)(Desc))
+  def getMatchingMessages(filter: String, chatKey: Key, fetch:Int = 50): Observable[js.Array[ChatMessage]] = {
 
+    val tags = parseTags(filter).toJSArray
+
+    val messagesKey = chatKey / typeName
+    val messages = query(collection(messagesKey.key), orderBy("date", "desc"), limit(fetch))
+    val chats = if(tags.isEmpty) messages else query(messages, where("index", "array-contains-any", tags))
+    runQuery(chats)
+  }
+
+  def addMessage(chatKey:Key, text: String, user:SiteUser, chat:Option[Chat]):Unit = {
+
+    def saveMessage(chatKey: Key): Unit = {
+      ChatMessageService.saveMessage(text, user, chatKey)
+    }
+
+    if (chat.filter(_ != null).isEmpty) {
+      ChatService.add(chatKey, "").first.subscribe(saveMessage _)
+    }
+    else {
+      saveMessage(chatKey)
+    }
+  }
 }
 
 
@@ -29,10 +51,10 @@ object ChatService extends ChatGetService with ChatPutService {
 
   val chatMessageService = ChatMessageService
 
-  def add(parentKey:Key, name:String):Observable[Key] = {
-    val chat = instance(parentKey,name)
+  def add(key:Key, name:String):Observable[Key] = {
+    val chat = instance(key,name)
 
-    save(chat).map(x => chat.key)
+    save(chat).map(_ => chat.key)
 
   }
 }

@@ -1,26 +1,31 @@
 package quizleague.web.site.chat
 
-import java.time.LocalDateTime
-
+import java.time.{LocalDateTime, ZonedDateTime}
 import com.felstar.scalajs.vue.VueRxComponent
-import quizleague.util.collection._
-import quizleague.web.core._
-import quizleague.web.model._
+import quizleague.util.collection.*
+import quizleague.web.core.*
+import quizleague.web.model.*
 import quizleague.web.site.login.{LoggedInUser, LoginService}
 import rxscalajs.Observable
+import quizleague.web.util.rx.*
+import quizleague.web.site.user.*
 
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr
 import org.scalajs.dom.window
 
+import scala.concurrent.duration.*
+
 @js.native
 trait ChatComponent extends VueRxComponent {
   val parentKey:Key
+  val chatkey:Key
   val chat:js.UndefOr[Chat]
   var messagesObs:js.UndefOr[Observable[js.Array[ChatMessage]]]
   val user:SiteUser
   var text:String
   val name:String
+  val filter:String
 }
 
 object ChatComponent extends Component{
@@ -28,6 +33,12 @@ object ChatComponent extends Component{
   val name = "ql-chat"
   val template = """
   <v-layout column>
+  <v-flex class="pb-0">
+    <v-text-field
+            label="Filter"
+            v-model="filter">
+    </v-text-field>
+  </v-flex class="pb-0">
     <v-flex class="pb-0">
       <div v-if="user" >
         <v-textarea label="Your message here"
@@ -53,43 +64,34 @@ object ChatComponent extends Component{
        </div>
     </v-flex>
     <v-flex v-if="chat" class="pt-0">
-      <ql-chat-messages  :chatKey="chat.key" ></ql-chat-messages>
+      <ql-chat-messages  :chatKey="chat.key" :filter="filter"></ql-chat-messages>
     </v-flex>
   </v-layout>"""
 
   components(ChatMessages)
 
   prop("parentKey")
+  prop("chatkey")
   prop("name")
   data("text",null)
-  subscription("chat", "parentKey")(c => ChatService
-    .list(c.parentKey)
-    .map(chats => chats.headOption.getOrElse(null)))
+  data("filter","")
+  data("user", null)
+  subscription("chat", "key")(c => ChatService.get(c.chatkey))
   subscription("user")(c => LoginService.userProfile.filter(_ != null).map(_.siteUser))
   method("addMessage")({addMessage _}:js.ThisFunction)
 
 
   def addMessage(c:facade, text:String) = {
-
-    def saveMessage(chatKey:Key): Unit ={
-      ChatMessageService.saveMessage(text, c.user.id, chatKey).subscribe(x => x)
-    }
-
-    if(c.chat.filter(_ != null).isEmpty){
-      ChatService.add(c.parentKey, c.name).subscribe(saveMessage _)
-    }
-    else{
-      saveMessage(c.chat.get.key)
-    }
+    ChatMessageService.addMessage(c.chatkey,text, c.user, c.chat.toOption)
     c.text = null
   }
-
 }
 
 @js.native
 trait ChatMessages extends VueRxComponent {
   val chatKey:Key
   val user:UndefOr[LoggedInUser]
+  val filter:String
 }
 
 object ChatMessages extends Component{
@@ -106,14 +108,12 @@ object ChatMessages extends Component{
          transition="fade-transition"
         >
         <template v-slot:icon>
-          <v-avatar size="36">
-            <img :src="async(message.user).avatar">
-          </v-avatar>
+          <ql-user-avatar :user="message.user"></ql-user-avatar>
         </template>
         <template v-slot:opposite>
           <div>
             <span>{{async(message.user).handle}}</span>
-            <div class="caption">{{message.date | datetime('d MMM yyy - hh:mm')}}</div>
+            <div class="caption">{{message.date | datetime('d MMM yyy - kk:mm')}}</div>
           </div>
         </template>
         <v-card class="elevation-2">
@@ -123,9 +123,11 @@ object ChatMessages extends Component{
     </v-timeline>
   """
 
-  props("chatKey")
+  prop("chatKey")
 
-  subscription("messages","chatKey")(c => ChatService.get(c.chatKey).flatMap(_.messages).map(_.sortBy(_.date)(Desc)))
+  prop("filter")
+
+  subscription("messages","filter")(c => ChatMessageService.getMatchingMessages(c.filter, c.chatKey))
   subscription("user")(c => LoginService.userProfile)
 
   method("isLeft")({(c:facade,m:ChatMessage) => c.user.fold(true)(_.siteUser.id != m.user.id)}:js.ThisFunction)
@@ -135,21 +137,37 @@ object ChatMessages extends Component{
 
 }
 
-object HotChats extends Component{
-  val name = "ql-hot-chats"
-  val template = """
-  <ql-text-box>
-    <v-layout column>
-      <v-flex v-for="chat in chats"><ql-chat :parentKey="parentKey(chat)" name="dummy"></ql-chat></v-flex  >
-    </v-layout>
-  </ql-text-box>
-  """
-
-  //subscription("chats")(c => ChatMessageService.hotChats())
-  method("parentKey")((chat:ChatMessage) => Key(Key(chat.key.parentKey).parentKey))
-  method("chatID")((chat:ChatMessage) => Key(chat.key.parentKey).id)
+@js.native
+trait AvatarComponent extends VueRxComponent {
+  val user:RefObservable[SiteUser]
 }
 
+object AvatarComponent extends Component{
+  type facade = AvatarComponent
+
+  val name = "ql-user-avatar"
+  val template = """
+  <fragment>
+    <div style="display:none">{{heartbeat}}</div>
+    <v-badge bordered v-if="siteUser"
+       top
+       :color="badgeColour(siteUser)"
+       dot
+       offset-x="10"
+       offset-y="10">
+       <v-avatar size="36">
+         <img :src="siteUser.avatar">
+       </v-avatar>
+    </v-badge>
+  </fragment>
+"""
+  prop("user")
+  data("heartbeat", 1)
+  subscription("siteUser")(c => c.user.obs)
+  //subscription("heartbeat")(_ => SiteUserService.heartbeat)
+  method("badgeColour")((user:SiteUser) => if(user.isActive) "green accent-4" else "black")
+
+}
 
 object LoginButton extends Component{
 
