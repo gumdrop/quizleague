@@ -21,26 +21,25 @@ object ChatNotificationsComponent extends Component {
 
   val template = """
    <v-snackbar
-      :bottom="true"
-      :right="true"
+      timeout="-1"
+      bottom
+      right
       v-model="messages"
-      color="info"
+      color="success"
+      outlined
+      elevation="6"
       v-if="notifications"
     >
-      <v-layout column>
-        <v-flex align-self-end><v-btn icon text dark @click.native="messages = false"><v-icon right small>mdi-close</v-icon></v-btn></v-flex>
-        <v-flex v-for="notification in notifications" :key="notification.chatMessage.id">
-        You have been mentioned in a message by {{async(async(notification.chatMessage).user).handle}}
-        </v-flex>
+     <v-layout column>
+        <v-flex v-for="notification in notifications" :key="notification.chatMessage.id">You have been mentioned in a message by @{{async(async(notification.chatMessage).user).handle}}</v-flex>
       </v-layout>
-
+      <template v-slot:action="{ attrs }">
+         <v-btn icon text @click.native="messages = false"><v-icon small>mdi-close</v-icon></v-btn>
+       </template>
    </v-snackbar>
 """
-
-  private def utcDateTime = londonTime
-
-  data("now", utcDateTime)
+  data("now", londonTime)
   data("messages", false)
   subscription("notifications", "now")(c => NotificationService.chatNotificationMessages(c.now).map(m => { c.messages = true; m }))
-  watch("messages")((c: facade, value: js.Any) => if (!c.messages) { c.now = utcDateTime })
+  watch("messages")((c: facade, value: js.Any) => if (!c.messages) { c.now = londonTime })
 }

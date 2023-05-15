@@ -123,7 +123,7 @@ prodClient := {
 }
 
 localClient := {
-  copyConnection
+  copyConnection.value
   prodClient.value
 }
 
