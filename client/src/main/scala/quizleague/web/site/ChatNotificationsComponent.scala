@@ -30,9 +30,11 @@ object ChatNotificationsComponent extends Component {
       elevation="6"
       v-if="notifications"
     >
-     <v-layout column>
-        <v-flex v-for="notification in notifications" :key="notification.chatMessage.id">You have been mentioned in a message by @{{async(async(notification.chatMessage).user).handle}}</v-flex>
-      </v-layout>
+      <v-container>
+        <v-col>
+          <v-flex v-for="notification in notifications" :key="notification.chatMessage.id">You have been mentioned in a message by @{{async(async(notification.chatMessage).user).handle}}</v-flex>
+        </v-col>
+      </v-container>
       <template v-slot:action="{ attrs }">
          <v-btn icon text @click.native="messages = false"><v-icon small>mdi-close</v-icon></v-btn>
        </template>

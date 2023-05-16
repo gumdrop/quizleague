@@ -133,6 +133,8 @@ object UUID {
     new UUID(i1, i2, i3, i4, null, null)
   }
 
+  def uuid:String = randomUUID().toString()
+
   // Not implemented (requires messing with MD5 or SHA-1):
   //def nameUUIDFromBytes(name: Array[Byte]): UUID = ???
 

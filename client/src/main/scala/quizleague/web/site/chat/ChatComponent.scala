@@ -18,10 +18,7 @@ import scala.concurrent.duration.*
 
 @js.native
 trait ChatComponent extends VueRxComponent {
-  val parentKey:Key
-  val chatkey:Key
-  val chat:js.UndefOr[Chat]
-  var messagesObs:js.UndefOr[Observable[js.Array[ChatMessage]]]
+  val chat:Chat
   val user:SiteUser
   var text:String
   val name:String
@@ -32,14 +29,12 @@ object ChatComponent extends Component{
   type facade = ChatComponent
   val name = "ql-chat"
   val template = """
-  <v-layout column>
-  <v-flex class="pb-0">
-    <v-text-field
-            label="Filter"
-            v-model="filter">
-    </v-text-field>
-  </v-flex class="pb-0">
-    <v-flex class="pb-0">
+  <v-row>
+    <v-col>
+      <v-text-field
+              label="Filter"
+              v-model="filter">
+      </v-text-field>
       <div v-if="user" >
         <v-textarea label="Your message here"
           :clearable="false"
@@ -53,7 +48,7 @@ object ChatComponent extends Component{
           <template v-slot:append v-if="text" >
             <v-tooltip top >
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small icon @click="addMessage(text)" style="top:-5px;">
+                <v-btn v-on="on" small icon @click="addMessage(text)" style="top:-2px;">
                 <v-icon color="primary">mdi-send</v-icon>
                 </v-btn>
               </template>
@@ -62,27 +57,23 @@ object ChatComponent extends Component{
           </template>
         </v-textarea>
        </div>
-    </v-flex>
-    <v-flex v-if="chat" class="pt-0">
-      <ql-chat-messages  :chatKey="chat.key" :filter="filter"></ql-chat-messages>
-    </v-flex>
-  </v-layout>"""
+       <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="filter"></ql-chat-messages>
+    </v-col>
+  </v-row>"""
 
   components(ChatMessages)
 
-  prop("parentKey")
-  prop("chatkey")
   prop("name")
   data("text",null)
   data("filter","")
   data("user", null)
-  subscription("chat", "key")(c => ChatService.get(c.chatkey))
+  subscription("chat")(c => ChatService.getByName(c.name))
   subscription("user")(c => LoginService.userProfile.filter(_ != null).map(_.siteUser))
   method("addMessage")({addMessage _}:js.ThisFunction)
 
 
   def addMessage(c:facade, text:String) = {
-    ChatMessageService.addMessage(c.chatkey,text, c.user, c.chat.toOption)
+    ChatMessageService.addMessage(c.chat.key, text, c.user)
     c.text = null
   }
 }

@@ -33,22 +33,20 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
   override val template="""
    <v-container v-bind="gridSize" v-if="appData">
      <ql-title>Home</ql-title>
-     <v-layout v-bind="align">
-      <v-flex xs12 smAndUp5>
+     <v-row>
+      <v-col xs12 smAndUp5>
         <home-page-tabs></home-page-tabs>
-      </v-flex>
-      <v-flex offset-xs0 offset-md1 xs12>
-        <v-layout column>
-          <ql-text-box>
-            <ql-named-text textName="front-page"></ql-named-text>
-            <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
-          </ql-text-box>
-          <ql-text-box>
-              <ql-chat :chatkey="chatkey"></ql-chat>
-          </ql-text-box>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+      </v-col>
+      <v-col offset-xs0 offset-md1 xs12>
+        <ql-text-box>
+          <ql-named-text textName="front-page"></ql-named-text>
+          <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
+        </ql-text-box>
+        <ql-text-box style="margin-top:1em;">
+          <ql-chat name="homepagechat"></ql-chat>
+        </ql-text-box>
+      </v-col>
+     </v-row>
      <v-snackbar
       timeout="3000"
       :multi-line="true"
@@ -57,16 +55,11 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
      </v-snackbar>
   </v-container>
 """
-  val key = Key("chat/homepagechat")
 
   components(HomePageTabsComponent)
   data("sponsorMessage", false)
-  data("chatkey", key)
 
   subscription("appData")(c => ApplicationContextService.get())
-
-  def align(c: facade) = js.Dictionary("column" -> c.$vuetify.breakpoint.smAndDown)
-  computed("align")({ align _ }: js.ThisFunction)
 }
 
 @js.native
