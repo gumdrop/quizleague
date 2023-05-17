@@ -10,6 +10,7 @@ case class Team (
     venue:Ref[Venue],
     text:Ref[Text],
     users:List[Ref[User]] = List(),
+    handle: Option[String] = None,            
     retired:Boolean = false) extends Entity derives Codec.AsObject{
   
   def emailName = if(shortName == null) null else shortName.replace(' ', '.').toLowerCase

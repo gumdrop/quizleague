@@ -11,7 +11,7 @@ import quizleague.domain.util.LeagueTableRecalculator
 import quizleague.endpoint.HistoricalStatsAggregator
 import quizleague.task.TaskQueue.*
 import quizleague.util.*
-import quizleague.util.UUID.randomUUID as uuid
+import quizleague.util.UUID.*
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -56,11 +56,7 @@ object TaskFunctions {
           }
         }
         if (!isSubsidiary) {
-          await(save(Notification(
-            uuid().toString(),
-            NotificationTypeNames.result,
-            londonTime,
-            ResultPayload(fixture.key.get.key))))
+          await(fireNotifications(fixture))
         }
       }
     }
@@ -72,6 +68,45 @@ object TaskFunctions {
     taskQueue.send(() => statsUpdate(season.id, List((fixture, key))))
 
   }
+
+  private def fireNotifications(fixture:Fixture) = async[Future]{
+
+    def snackbarNotification() = async[Future]{
+      await(save(Notification(
+        uuid,
+        NotificationTypeNames.result,
+        londonTime,
+        ResultPayload(fixture.key.get.key))))
+    }
+
+    def chatNotification() = async[Future]{
+      val user = await(systemUser)
+      val homechat = await(runQuery[Chat](Storage.collection[Chat]().where("name", "==", "homepagechat"))).head
+      val home = await(load(fixture.home))
+      val away = await(load(fixture.away))
+
+      val result = fixture.result.get
+      val hashtag = s"#${home.handle}vs${away.handle}"
+
+      val message = ChatMessage(
+        uuid,
+        ref(user),
+        s"#$hashtag ${home.name} ${result.homeScore}:${result.awayScore} ${away.name}",
+        LocalDateTime.now,
+        List(hashtag,s"#${home.handle}",s"#${away.handle}")
+      )
+      val key = Key.of(homechat.key, "chatmessage", message.id)
+
+      await(save(message.withKey(key)))
+
+    }
+
+    taskQueue.send(snackbarNotification)
+    taskQueue.send(chatNotification)
+
+  }
+
+
 
   private def updateTables(tables: List[LeagueTable], fixture: Fixture) = {
 
@@ -96,7 +131,7 @@ object TaskFunctions {
       val report = reportIn.filter(r => !r.trim.isEmpty && !isSubsidiary)
 
       def newText(reportText: String) = async[Future] {
-        val id = uuid().toString
+        val id = uuid
         val text = Text(id, reportText, "text/markdown").withKey(Key(None, "text", id))
         await{save(text)}
         Ref[Text]("text", text.id)
@@ -108,7 +143,7 @@ object TaskFunctions {
 
       def newReport(reportText: String) = async[Future]{
         val team = await{teamFromUser(user)}
-        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid().toString))
+        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid))
       }
 
       val res = fixture.copy(result = fixture.result.fold(newResult())(Some(_))).withKey(fixture.key)
@@ -150,7 +185,7 @@ object TaskFunctions {
       season <- load[Season](seasonId)
       _ <- HistoricalStatsAggregator.perform(season)
     } yield {
-      val key = Key(None, "notification", uuid().toString)
+      val key = Key(None, "notification", uuid)
 
       save(Notification(
         key.id,
