@@ -91,7 +91,7 @@ object TaskFunctions {
       val message = ChatMessage(
         uuid,
         ref(user),
-        s"#$hashtag ${home.name} ${result.homeScore}:${result.awayScore} ${away.name}",
+        s"$hashtag<br>${home.name} ${result.homeScore}:${result.awayScore} ${away.name}",
         LocalDateTime.now,
         List(hashtag,s"#${home.handle}",s"#${away.handle}")
       )

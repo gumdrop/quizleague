@@ -33,7 +33,8 @@ object ChatComponent extends Component{
     <v-col>
       <v-text-field
               label="Filter"
-              v-model="filter">
+              v-model="filter"
+              :clearable="true">
       </v-text-field>
       <div v-if="user" >
         <v-textarea label="Your message here"

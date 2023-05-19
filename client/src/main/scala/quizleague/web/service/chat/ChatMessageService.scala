@@ -55,7 +55,8 @@ trait ChatMessagePutService extends PutService[ChatMessage] with ChatMessageGetS
 
   override def enc(item: Dom) = item.asJson
 
-  private def matches(pattern: Pattern, text:String) = {
+  private def matches(pattern: Pattern, text:String):List[String] = {
+    if(text == null) return Nil
     val matcher = pattern.matcher(text)
     var result = Set[String]()
     while (matcher.find) {

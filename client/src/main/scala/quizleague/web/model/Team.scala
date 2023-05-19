@@ -11,6 +11,7 @@ class Team (
     val venue:RefObservable[Venue],
     val text:RefObservable[Text],
     val users:js.Array[RefObservable[User]],
+    val handle:String,
     val retired:Boolean
 )  extends Model
 
@@ -22,8 +23,9 @@ object Team{
     venue:RefObservable[Venue],
     text:RefObservable[Text],
     users:js.Array[RefObservable[User]],
+    handle:String,
     retired:Boolean) = new Team(
-      id,name,shortName,venue,text,users,retired    
+      id,name,shortName,venue,text,users,handle,retired
     )
   
   
