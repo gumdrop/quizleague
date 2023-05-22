@@ -42,6 +42,6 @@ object ChatNotificationsComponent extends Component {
 """
   data("now", londonTime)
   data("messages", false)
-  subscription("notifications", "now")(c => NotificationService.chatNotificationMessages(c.now).map(m => { c.messages = true; m }))
+  subscription("notifications", "now")(c => NotificationService.chatNotificationMessages(c.now).map(m => { c.messages = !m.isEmpty; m }))
   watch("messages")((c: facade, value: js.Any) => if (!c.messages) { c.now = londonTime })
 }

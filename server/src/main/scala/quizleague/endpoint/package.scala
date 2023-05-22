@@ -30,7 +30,7 @@ def send[T](result: Future[T], res: Response)(implicit encoder: Encoder[T]): Uni
   }
 
   def success(value: T) = res.json(asJs(value))
-
+  
   result.onComplete(t => t.fold(failure _, success _))
 }
 

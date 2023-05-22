@@ -34,42 +34,58 @@ object SiteFunctions {
   def teamForEmail(email: String): Future[List[Team]] = async[Future] {
 
     val lce = email.toLowerCase()
-    val teams = await(list[Team])
+
+    val teams = await(list[Team]).filterNot(_.retired)
     val it = teams.iterator
     var retval = List[Team]()
     while (it.hasNext) {
       val team = it.next()
-      val users = await(loadAll[User](team.users))
-      if (users.exists(_.email.toLowerCase == lce))
-        retval = List(team)
+      try {
+        val users = await(loadAll[User](team.users))
+        if (users.exists(_.email.toLowerCase == lce)) {
+          retval = List(team)
+        }
+      }
+      catch {
+        case e:Exception => e.printStackTrace()
+      }
     }
+    println(s"\nretval = $retval")
     retval
   }
 
   def siteUserForEmail(email: String): Future[Option[SiteUser]] = async[Future]{
 
-    def createAndSave(user: User) = async[Future]{
-      val uuid = UUID.randomUUID().toString
-      val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Key(None, "siteuser", uuid))
-      await(save(siteUser))
-      siteUser
-    }
+      def createAndSave(user: User):Future[SiteUser] = async[Future] {
+        println("createAndSave start")
+        val uuid = UUID.randomUUID().toString
+        val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Key(None, "siteuser", uuid))
+        save(siteUser)
+        println("createAndSave end")
+        siteUser
+      }
 
-    val lce = email.toLowerCase()
+      val lce = email.toLowerCase()
 
-    val user = await(list[User]).find(_.email.toLowerCase == lce)
+      val user = await(list[User]).find(_.email.toLowerCase == lce)
 
-    def hasTeam(user: User) = async[Future]{await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined}
+      def hasTeam(user: User) = async[Future] {
+        await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined
+      }
 
-    val siteUsers = await(list[SiteUser])
-    if(user.isDefined){
-      val u = user.get
-      val userHasTeam = await(hasTeam(u))
-      if(userHasTeam)
-        siteUsers.find(su => su.user.exists(_.id == u.id))
-      else Option(await(createAndSave(u)))
-    }
-    else None
+      val siteUsers = await(list[SiteUser])
+
+      if (user.isDefined) {
+          println("user is defined")
+          val u = user.get
+          val userHasTeam = await(hasTeam(u))
+          if (userHasTeam) {
+            val siteUser = siteUsers.find(su => su.user.exists(_.id == u.id))
+            if(siteUser.isDefined) siteUser
+            else Option(await(createAndSave(u)))
+          }else None
+        }else None
+
   }
 
   def saveSiteUser(in: SiteUser): Future[SiteUser] = async[Future]{
@@ -118,7 +134,7 @@ object SiteFunctions {
           ))
         }
         else {
-          EmailSender.user(user, s"""<a href=${command.hostUrl}/home">${context.leagueName}</a>""", "You were mentioned in a chat message")
+          EmailSender.user(user, s"""<a href=${command.hostUrl}/home">${context.leagueName}</a>""", s"You have been mentioned in a chat message by @${siteUser.handle}")
         }
       }
     }

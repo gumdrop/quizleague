@@ -116,7 +116,6 @@ object ChatMessages extends Component{
   """
 
   prop("chatKey")
-
   prop("filter")
 
   subscription("messages","filter")(c => ChatMessageService.getMatchingMessages(c.filter, c.chatKey))
@@ -156,7 +155,7 @@ object AvatarComponent extends Component{
   prop("user")
   data("heartbeat", 1)
   subscription("siteUser")(c => c.user.obs)
-  //subscription("heartbeat")(_ => SiteUserService.heartbeat)
+  subscription("heartbeat")(_ => SiteUserService.heartbeat)
   method("badgeColour")((user:SiteUser) => if(user.isActive) "green accent-4" else "black")
 
 }
