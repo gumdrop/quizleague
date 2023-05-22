@@ -85,8 +85,8 @@ object LoginService{
     }
   })
 
-  def logout() = {
-    signOut()
+  def logout(user:LoggedInUser) = {
+        SiteUserService.resetHeartbeat(user.siteUser).first.subscribe(_ => signOut())
   }
 
   def login(email:String, forward:String) = {

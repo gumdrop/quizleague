@@ -6,7 +6,7 @@ import scalajs.js
 import js.DynamicImplicits.*
 import com.felstar.scalajs.vue.VuetifyComponent
 import com.felstar.scalajs.vue.VueRxComponent
-import quizleague.web.site.login.LoginService
+import quizleague.web.site.login.{LoggedInUser, LoginService}
 import quizleague.web.core.*
 import quizleague.web.util.Logging.*
 
@@ -161,7 +161,7 @@ object LoggedOnMenu extends Component{
           <v-list-item-action><v-icon text left>mdi-account</v-icon></v-list-item-action>
           <v-list-item-content><v-list-item-title>Edit Profile</v-list-item-title></v-list-item-content>
         </v-list-item>
-        <v-list-item key="2" @click="logout()">
+        <v-list-item key="2" @click="logout(user)">
           <v-list-item-action><v-icon text left>mdi-logout</v-icon></v-list-item-action>
           <v-list-item-content><v-list-item-title>Logout</v-list-item-title></v-list-item-content>
         </v-list-item>
@@ -171,7 +171,7 @@ object LoggedOnMenu extends Component{
 
   props("user")
 
-  method("logout"){LoginService.logout _}
+  method("logout"){(user:LoggedInUser) => LoginService.logout(user)}
 }
 
 trait NoSideMenu{
