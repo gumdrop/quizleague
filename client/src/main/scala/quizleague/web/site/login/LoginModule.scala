@@ -99,7 +99,8 @@ object LoginService{
           case _ => {
             val actionCodeSettings = literal().asInstanceOf[ActionCodeSettings]
             import window.location
-            val url = s"https://${location.hostname}/login/signin?forward=$forward"
+            val port = if(location.port == null || location.port == "80" || location.port == "443" || location.port.isBlank) "" else s":${location.port}"
+            val url = s"${location.protocol}//${location.hostname}$port/login/signin?forward=$forward"
             actionCodeSettings.url = url
             actionCodeSettings.handleCodeInApp = true
             toObservable(sendSignInLinkToEmail(email, actionCodeSettings))
