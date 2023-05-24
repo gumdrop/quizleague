@@ -25,7 +25,6 @@ object TaskFunctions {
   }
 
   def resultSubmit(result: ResultsSubmitCommand) = async[Future]{
-    println(s"submit result arrived : $result")
 
     def haveResults = sequence(result.fixtures.map(f => {
       load[Fixture](f.fixtureKey).map(_.result.isDefined)
@@ -56,7 +55,7 @@ object TaskFunctions {
           }
         }
         if (!isSubsidiary) {
-          await(fireNotifications(fixture))
+          await(fireNotifications(fixture, result.reportText))
         }
       }
     }
@@ -69,7 +68,7 @@ object TaskFunctions {
 
   }
 
-  private def fireNotifications(fixture:Fixture) = async[Future]{
+  private def fireNotifications(fixture:Fixture, report:Option[String]) = async[Future]{
 
     def snackbarNotification() = async[Future]{
       await(save(Notification(
@@ -88,10 +87,12 @@ object TaskFunctions {
       val result = fixture.result.get
       val hashtag = s"#${home.handle}vs${away.handle}"
 
+      val reportText = report.map(t => s"<br>$t").getOrElse("")
+
       val message = ChatMessage(
         uuid,
         ref(user),
-        s"$hashtag<br>${home.name} ${result.homeScore}:${result.awayScore} ${away.name}",
+        s"$hashtag<br>${home.name} ${result.homeScore}:${result.awayScore} ${away.name}$reportText",
         LocalDateTime.now,
         List(hashtag,s"#${home.handle}",s"#${away.handle}")
       )

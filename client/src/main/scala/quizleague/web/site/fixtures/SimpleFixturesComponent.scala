@@ -1,9 +1,9 @@
 package quizleague.web.site.fixtures
 
-import com.felstar.scalajs.vue._
-import quizleague.web.core.KeyComponent._
-import quizleague.web.core._
-import quizleague.web.model.{Fixture, Fixtures}
+import com.felstar.scalajs.vue.*
+import quizleague.web.core.KeyComponent.*
+import quizleague.web.core.*
+import quizleague.web.model.{Fixture, Fixtures, Team}
 import quizleague.web.site.results.TableUtils
 import rxscalajs.Observable
 
@@ -60,7 +60,7 @@ trait FixtureLineComponent extends VueRxComponent {
 object FixtureLineComponent extends Component with TableUtils with DialogComponentConfig{
   type facade = FixtureLineComponent with VuetifyComponent with DialogComponent
   val name = "ql-fixture-line"
-  val template = """
+  val template = s"""
         <fragment>
           <tr v-if="inlineDetails && short">
            <td class="inline-details" colspan="6">
@@ -111,6 +111,13 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
                      </v-tooltip>
                    </v-card-title>
                   <ql-reports :keyval="fixture.key" ></ql-reports>
+                  <v-card-text v-if="parent">
+                    <ql-chat :lockedFilter="filter(async(fixture.home), async(fixture.away))" name="homepagechat"></ql-chat>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <ql-login-button label="Login for chat" ></ql-login-button>
+                   </v-card-actions>
                 </v-card>
              </v-dialog>
             </td>
@@ -124,6 +131,7 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
   subscription("parent")(_.fixture.parent)
   subscription("reports")(c => if(c.fixture.result != null) c.fixture.result.report else Observable.just(js.Array()))
   method("nameClass")(nameClass _ )
+  method("filter")((home:Team, away:Team) => s"#${home.handle}vs${away.handle}")
 
  }
 

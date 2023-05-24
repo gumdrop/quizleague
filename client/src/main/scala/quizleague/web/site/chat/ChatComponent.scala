@@ -13,6 +13,7 @@ import quizleague.web.site.user.*
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr
 import org.scalajs.dom.window
+import quizleague.web.site.chat.ChatComponent.subscription
 
 import scala.concurrent.duration.*
 
@@ -23,6 +24,7 @@ trait ChatComponent extends VueRxComponent {
   var text:String
   val name:String
   val filter:String
+  val lockedFilter:String
 }
 
 object ChatComponent extends Component{
@@ -31,11 +33,12 @@ object ChatComponent extends Component{
   val template = """
   <v-row>
     <v-col>
-      <v-text-field
+      <v-text-field v-if="!lockedFilter"
               label="Filter"
               v-model="filter"
               :clearable="true">
       </v-text-field>
+      <div v-if="lockedFilter">{{lockedFilter}}</div>
       <div v-if="user" >
         <v-textarea label="Your message here"
           :clearable="false"
@@ -58,13 +61,14 @@ object ChatComponent extends Component{
           </template>
         </v-textarea>
        </div>
-       <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="filter"></ql-chat-messages>
+       <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="lockedFilter || filter"></ql-chat-messages>
     </v-col>
   </v-row>"""
 
   components(ChatMessages)
 
   prop("name")
+  prop("lockedFilter")
   data("text",null)
   data("filter","")
   data("user", null)
@@ -74,7 +78,8 @@ object ChatComponent extends Component{
 
 
   def addMessage(c:facade, text:String) = {
-    ChatMessageService.addMessage(c.chat.key, text, c.user)
+    val factoredtext = if(text.contains(c.lockedFilter)) text else s"${c.lockedFilter} $text"
+    ChatMessageService.addMessage(c.chat.key, factoredtext, c.user)
     c.text = null
   }
 }
@@ -139,10 +144,11 @@ object AvatarComponent extends Component{
   val name = "ql-user-avatar"
   val template = """
   <fragment>
-    <div style="display:none">{{heartbeat}}</div>
+    <div v-if="loggedIn" style="display:none">{{heartbeat}}</div>
     <v-badge bordered v-if="siteUser"
        top
        :color="badgeColour(siteUser)"
+       :value="loggedIn"
        dot
        offset-x="10"
        offset-y="10">
@@ -156,6 +162,7 @@ object AvatarComponent extends Component{
   data("heartbeat", 1)
   subscription("siteUser")(c => c.user.obs)
   subscription("heartbeat")(_ => SiteUserService.heartbeat)
+  subscription("loggedIn")(c => LoginService.userProfile.map(_ != null))
   method("badgeColour")((user:SiteUser) => if(user.isActive) "green accent-4" else "black")
 
 }
