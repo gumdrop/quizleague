@@ -3,7 +3,7 @@ package quizleague.web.site.chat
 import java.time.{LocalDateTime, ZonedDateTime}
 import com.felstar.scalajs.vue.VueRxComponent
 import quizleague.util.collection.*
-import quizleague.web.core.*
+import quizleague.web.core.{DialogComponentConfig, *}
 import quizleague.web.model.*
 import quizleague.web.site.login.{LoggedInUser, LoginService}
 import rxscalajs.Observable
@@ -24,61 +24,137 @@ trait ChatComponent extends VueRxComponent {
   var text:String
   val name:String
   val filter:String
-  val lockedFilter:String
+  val lockedFilter:UndefOr[String]
 }
 
-object ChatComponent extends Component{
-  type facade = ChatComponent
+object ChatComponent extends Component with DialogComponentConfig{
+  type facade = ChatComponent with DialogComponent
   val name = "ql-chat"
   val template = """
-  <v-row>
-    <v-col>
-      <v-text-field v-if="!lockedFilter"
-              label="Filter"
-              v-model="filter"
-              :clearable="true">
-      </v-text-field>
-      <div v-if="lockedFilter">{{lockedFilter}}</div>
-      <div v-if="user" >
-        <v-textarea label="Your message here"
-          :clearable="false"
-          solo
-          outline
-          auto-grow
-          v-model="text"
-          hide-details
-          rows="1"
-          >
-          <template v-slot:append v-if="text" >
-            <v-tooltip top >
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small icon @click="addMessage(text)" style="top:-2px;">
-                <v-icon color="primary">mdi-send</v-icon>
-                </v-btn>
+  <fragment v-if="chat">
+    <fragment v-if="!fullscreen">
+      <v-row>
+        <v-col><h3>{{displayName}}</h3></v-col>
+        <v-spacer></v-spacer>
+        <v-col style="text-align:right;">
+          <v-tooltip top>
+           <template v-slot:activator="{ on }">
+            <v-btn icon v-on:click="fullscreen=!fullscreen"  v-on="on" >
+              <v-icon>mdi-open-in-new</v-icon>
+            </v-btn>
+            </template>
+            <span>Popout</span>
+          </v-tooltip>
+        </v-col>
+      </v-row
+      <v-row>
+        <v-col>
+          <v-text-field v-if="!lockedFilter"
+                  label="Filter"
+                  v-model="filter"
+                  :clearable="true">
+          </v-text-field>
+          <div v-if="lockedFilter">{{lockedFilter}}</div>
+          <div v-if="user" >
+            <v-textarea label="Your message here"
+              :clearable="false"
+              solo
+              outline
+              auto-grow
+              v-model="text"
+              hide-details
+              rows="1"
+              >
+              <template v-slot:append v-if="text" >
+                <v-tooltip top >
+                  <template v-slot:activator="{ on }">
+                    <v-btn v-on="on" small icon @click="addMessage(text)" style="top:-2px;">
+                    <v-icon color="primary">mdi-send</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Send</span>
+                </v-tooltip>
               </template>
-              <span>Send</span>
-            </v-tooltip>
-          </template>
-        </v-textarea>
-       </div>
-       <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="lockedFilter || filter"></ql-chat-messages>
-    </v-col>
-  </v-row>"""
+            </v-textarea>
+           </div>
+           <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="lockedFilter || filter"></ql-chat-messages>
+        </v-col>
+      </v-row>
+    </fragment>
+    <v-dialog v-model="fullscreen" max-width="60%" v-bind="dialogSize">
+      <v-card>
+        <v-card-title>
+          <v-row>
+            <v-col><h3>{{displayName}}</h3></v-col>
+            <v-spacer></v-spacer>
+            <v-col style="text-align:right;">
+              <v-tooltip top>
+               <template v-slot:activator="{ on }">
+                <v-btn icon v-on:click="fullscreen=!fullscreen"  v-on="on" >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+                </template>
+                <span>Close</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-text-field v-if="!lockedFilter"
+                      label="Filter"
+                      v-model="filter"
+                      :clearable="true">
+              </v-text-field>
+              <div v-if="lockedFilter">{{lockedFilter}}</div>
+              <div v-if="user" >
+                <v-textarea label="Your message here"
+                  :clearable="false"
+                  solo
+                  outline
+                  auto-grow
+                  v-model="text"
+                  hide-details
+                  rows="1"
+                  >
+                  <template v-slot:append v-if="text" >
+                    <v-tooltip top >
+                      <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" small icon @click="addMessage(text)" style="top:-2px;">
+                        <v-icon color="primary">mdi-send</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Send</span>
+                    </v-tooltip>
+                  </template>
+                </v-textarea>
+               </div>
+               <ql-chat-messages v-if="chat"  :chatKey="chat.key" :filter="lockedFilter || filter"></ql-chat-messages>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+   </fragment>"""
 
   components(ChatMessages)
 
   prop("name")
   prop("lockedFilter")
+  prop("displayName")
+  data("fullscreen", false)
   data("text",null)
   data("filter","")
   data("user", null)
+
   subscription("chat")(c => ChatService.getByName(c.name))
   subscription("user")(c => LoginService.userProfile.filter(_ != null).map(_.siteUser))
   method("addMessage")({addMessage _}:js.ThisFunction)
 
 
   def addMessage(c:facade, text:String) = {
-    val factoredtext = if(text.contains(c.lockedFilter)) text else s"${c.lockedFilter} $text"
+    val factoredtext = c.lockedFilter.map(lf => if(text.contains(lf)) text else s"$lf $text").getOrElse(text)
     ChatMessageService.addMessage(c.chat.key, factoredtext, c.user)
     c.text = null
   }

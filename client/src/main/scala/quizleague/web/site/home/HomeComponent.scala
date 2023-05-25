@@ -43,8 +43,7 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
           <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
         </ql-text-box>
         <ql-text-box style="margin-top:1em;">
-          <div><h3>Chat</h3></div>
-          <ql-chat name="homepagechat"></ql-chat>
+          <ql-chat name="homepagechat" displayName="Chat"></ql-chat>
         </ql-text-box>
       </v-col>
      </v-row>

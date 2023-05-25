@@ -50,7 +50,6 @@ object SiteFunctions {
         case e:Exception => e.printStackTrace()
       }
     }
-    println(s"\nretval = $retval")
     retval
   }
 
