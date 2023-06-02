@@ -1,13 +1,17 @@
 package quizleague.endpoint
 
-import io.circe.{Decoder, Encoder}
+import cps.*
+import cps.monads.{*, given}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
+import io.circe.{Decoder, Encoder}
 import io.scalajs.npm.express.{Request, Response}
 
+import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+
 
 
 def parse[T](req: Request)(implicit decoder: Decoder[T]): T = {
@@ -26,7 +30,7 @@ def send[T](result: Future[T], res: Response)(implicit encoder: Encoder[T]): Uni
   }
 
   def success(value: T) = res.json(asJs(value))
-
+  
   result.onComplete(t => t.fold(failure _, success _))
 }
 
@@ -35,4 +39,5 @@ def send[T](result: T, res: Response)(implicit encoder: Encoder[T]): Unit = {
 }
 
 def param(name: String, req: Request): Option[String] = req.params.get(name)
+
 

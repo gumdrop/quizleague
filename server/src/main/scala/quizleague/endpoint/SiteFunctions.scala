@@ -1,19 +1,25 @@
 package quizleague.endpoint
 
-import quizleague.domain.command.{AliasEmailCommand, ResultsSubmitCommand, TeamEmailCommand}
+import quizleague.domain.command.{AliasEmailCommand, ChatNotificationCommand, ResultsSubmitCommand, TeamEmailCommand}
 import quizleague.task.TaskQueue.taskQueue
 import quizleague.domain.*
 import quizleague.data.Storage.*
+import quizleague.data.*
+import quizleague.util.UUID.uuid
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import cps.monads.{*, given}
-import cps._
-import TaskFunctions._
+import cps.*
+import TaskFunctions.*
+import quizleague.domain.notification.{ChatNotificationPayload, Notification, NotificationTypeNames}
 import quizleague.mail.EmailSender
-import quizleague.util.UUID
+import quizleague.task.TaskQueue
+import quizleague.util.{UUID, londonTime}
 
+import scala.Console.println
 import scala.concurrent.Future
+import scalajs.js.JSConverters.*
 
 object SiteFunctions {
 
@@ -28,42 +34,53 @@ object SiteFunctions {
   def teamForEmail(email: String): Future[List[Team]] = async[Future] {
 
     val lce = email.toLowerCase()
-    val teams = await(list[Team])
+
+    val teams = await(list[Team]).filterNot(_.retired)
     val it = teams.iterator
     var retval = List[Team]()
     while (it.hasNext) {
       val team = it.next()
-      val users = await(loadAll[User](team.users))
-      if (users.exists(_.email.toLowerCase == lce))
-        retval = List(team)
+      try {
+        val users = await(loadAll[User](team.users))
+        if (users.exists(_.email.toLowerCase == lce)) {
+          retval = List(team)
+        }
+      }
+      catch {
+        case e:Exception => e.printStackTrace()
+      }
     }
     retval
   }
 
   def siteUserForEmail(email: String): Future[Option[SiteUser]] = async[Future]{
 
-    def createAndSave(user: User) = async[Future]{
-      val uuid = UUID.randomUUID().toString
-      val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None).withKey(Key(None, "siteuser", uuid))
-      await(save(siteUser))
-      siteUser
-    }
+      def createAndSave(user: User):Future[SiteUser] = async[Future] {
+        val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Storage.key[SiteUser](uuid))
+        save(siteUser)
+        siteUser
+      }
 
-    val lce = email.toLowerCase()
+      val lce = email.toLowerCase()
 
-    val user = await(list[User]).find(_.email.toLowerCase == lce)
+      val user = await(list[User]).find(_.email.toLowerCase == lce)
 
-    def hasTeam(user: User) = async[Future]{await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined}
+      def hasTeam(user: User) = async[Future] {
+        await(list[Team]).find(t => t.users.exists(_.id == user.id)).isDefined
+      }
 
-    val siteUsers = await(list[SiteUser])
-    if(user.isDefined){
-      val u = user.get
-      val userHasTeam = await(hasTeam(u))
-      if(userHasTeam)
-        siteUsers.find(su => su.user.exists(_.id == u.id))
-      else Option(await(createAndSave(u)))
-    }
-    else None
+      val siteUsers = await(list[SiteUser])
+
+      if (user.isDefined) {
+          val u = user.get
+          val userHasTeam = await(hasTeam(u))
+          if (userHasTeam) {
+            val siteUser = siteUsers.find(su => su.user.exists(_.id == u.id))
+            if(siteUser.isDefined) siteUser
+            else Option(await(createAndSave(u)))
+          }else None
+        }else None
+
   }
 
   def saveSiteUser(in: SiteUser): Future[SiteUser] = async[Future]{
@@ -81,8 +98,39 @@ object SiteFunctions {
   }
 
   def contactPerson(mail: AliasEmailCommand) = async[Future]{
-    
+
     await(EmailSender.alias(mail.sender, mail.alias, mail.text))
     List[String]()
+  }
+
+  def chatNotifications(command:ChatNotificationCommand):Future[Unit] = async[Future]{
+
+    TaskQueue.taskQueue.send(sendNotifications)
+
+    def sendNotifications():Unit = async[Future]{
+
+      val query = collection[SiteUser]().where("handle", "in", command.handles.toJSArray)
+      val users = if(command.handles.isEmpty) Nil else await(runQuery[SiteUser](query))
+      val context = await(applicationContext())
+
+      val it = users.iterator
+      while (it.hasNext) {
+        val siteUser = it.next()
+        val user = await(load(siteUser.user.get))
+
+        if (siteUser.isActive) {
+          val key = Storage.key[Notification](uuid)
+          save(Notification(
+            key.id,
+            NotificationTypeNames.chat,
+            londonTime,
+            ChatNotificationPayload(siteUser.key.get, command.messageKey)
+          ))
+        }
+        else {
+          EmailSender.user(user, s"""<a href=${command.hostUrl}/home">${context.leagueName}</a>""", s"You have been mentioned in a chat message by @${siteUser.handle}")
+        }
+      }
+    }
   }
 }

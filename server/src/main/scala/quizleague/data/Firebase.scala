@@ -39,6 +39,10 @@ object Storage extends StorageUtils {
     save(key(entity), encoder(entity))
   }
 
+  def save[T <: Entity](parentKey:Option[Key], entity: T)(implicit tag: ClassTag[T], encoder: Encoder[T]): Future[Unit] = {
+    save(key(parentKey,entity), encoder(entity))
+  }
+
   def saveAll[T <: Entity](entities: List[T])(implicit tag: ClassTag[T], encoder: Encoder[T]) = {
     val objrefs = entities.map(e => (datastore.doc(key(e).key),convertJsonToJs(e.asJson).asInstanceOf[js.Dictionary[js.Any]]))
 
@@ -142,6 +146,10 @@ trait StorageUtils{
   def ref[T <: Entity](entity: T)(implicit tag: ClassTag[T]):Ref[T] = entity.key.fold(Ref[T](makeKind(None),entity.id,None))(x => Ref[T](x.entityName,x.id,entity.key))
 
   def key[T <: Entity](entity:T)(implicit tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(None), entity.id))
+
+  def key[T <: Entity](id:String)(implicit tag: ClassTag[T]):Key = Key(None,makeKind(None), id)
+  
+  def key[T <: Entity](parentKey:Option[Key], entity:T)(implicit tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(parentKey), entity.id))
 
   private[data] def makeKind[T](parent:Option[Key])(implicit tag: ClassTag[T]) = s"${parent.fold("")(x =>s"${x.key}/")}${tag.runtimeClass.getSimpleName.toLowerCase}"
 

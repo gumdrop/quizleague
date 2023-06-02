@@ -30,6 +30,12 @@ trait QuerySnapshot extends js.Object {
 }
 
 @js.native
+trait Ordering extends QueryFieldFilterConstraint
+
+@js.native
+trait Limit extends QueryFieldFilterConstraint
+
+@js.native
 trait QueryFieldFilterConstraint extends js.Object
 
 @js.native

@@ -6,7 +6,7 @@ import scalajs.js
 import js.DynamicImplicits.*
 import com.felstar.scalajs.vue.VuetifyComponent
 import com.felstar.scalajs.vue.VueRxComponent
-import quizleague.web.site.login.LoginService
+import quizleague.web.site.login.{LoggedInUser, LoginService}
 import quizleague.web.core.*
 import quizleague.web.util.Logging.*
 
@@ -103,6 +103,7 @@ object SiteComponent extends Component {
          </v-flex>
          </v-layout>
       <notifications></notifications>
+      <chat-notifications></chat-notifications>
       </v-container>
     </v-main>
 
@@ -113,7 +114,7 @@ object SiteComponent extends Component {
       </v-bottom-navigation>
   </v-app>"""
 
-  components(ResultNotificationsComponent, TitleComponent, LoggedOnMenu)
+  components(ResultNotificationsComponent, ChatNotificationsComponent,TitleComponent, LoggedOnMenu)
 
   def drawerGet(c: facade) = (c.sidemenu && c.$vuetify.breakpoint.lgAndUp) || (c.showMenu && c.$vuetify.breakpoint.mdAndDown)
 
@@ -160,7 +161,7 @@ object LoggedOnMenu extends Component{
           <v-list-item-action><v-icon text left>mdi-account</v-icon></v-list-item-action>
           <v-list-item-content><v-list-item-title>Edit Profile</v-list-item-title></v-list-item-content>
         </v-list-item>
-        <v-list-item key="2" @click="logout()">
+        <v-list-item key="2" @click="logout(user)">
           <v-list-item-action><v-icon text left>mdi-logout</v-icon></v-list-item-action>
           <v-list-item-content><v-list-item-title>Logout</v-list-item-title></v-list-item-content>
         </v-list-item>
@@ -170,7 +171,7 @@ object LoggedOnMenu extends Component{
 
   props("user")
 
-  method("logout"){LoginService.logout _}
+  method("logout"){(user:LoggedInUser) => LoginService.logout(user)}
 }
 
 trait NoSideMenu{

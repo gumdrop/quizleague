@@ -1,13 +1,16 @@
 package quizleague.web.maintain.team
 
-import quizleague.web.core._
-import quizleague.web.maintain.component.TemplateElements._
+import quizleague.web.core.*
+import quizleague.web.maintain.component.TemplateElements.*
 import com.felstar.scalajs.vue.VueRxComponent
 import quizleague.web.maintain.component.ItemComponentConfig
-import quizleague.web.model._
-import quizleague.web.maintain.venue._
+import quizleague.web.model.*
+import quizleague.web.maintain.venue.*
 import quizleague.web.maintain.user.UserService
 import quizleague.web.util.component.SelectUtils
+import quizleague.web.util.rx.RefObservable
+
+import scala.scalajs.js.UndefOr
 
 object TeamComponent extends ItemComponentConfig[Team] with RouteComponent {
 
@@ -33,6 +36,12 @@ object TeamComponent extends ItemComponentConfig[Team] with RouteComponent {
           :rules=${valRequired("Short Name")}
           required
         ></v-text-field>
+        <v-text-field
+          label="Handle"
+          v-model="item.handle"
+          :rules=${valRequired("Handle")}
+          required
+        ></v-text-field>
         <v-select
           label="Venue"
           :items="venues"
@@ -45,6 +54,7 @@ object TeamComponent extends ItemComponentConfig[Team] with RouteComponent {
           v-model="item.users"
           multiple
           chips
+          :value-comparator="(a,b) => a && b && a.id && b.id && (a.id == b.id)"
           >
         </v-select>
         <div><v-btn v-on:click ="editText(item.text.id)" text><v-icon>mdi-card-text-outline</v-icon>Text</v-btn></div>
@@ -56,4 +66,5 @@ object TeamComponent extends ItemComponentConfig[Team] with RouteComponent {
 
   subscription("venues"){(c:facade) => venues()}
   subscription("users"){(c:facade) => users()}
+
 }

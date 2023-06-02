@@ -1,9 +1,10 @@
 package quizleague.web.model
 
 import scalajs.js
-import quizleague.domain.{Key => DomKey}
+import quizleague.domain.Key as DomKey
 
 import scala.scalajs.js.URIUtils
+import scala.scalajs.js.annotation.JSName
 
 abstract class Model extends js.Object {
   val id:String
@@ -15,6 +16,9 @@ class Key(val parentKey:String, val entityName:String, val id:String) extends js
   def key = s"${Option(parentKey).fold("")(x => s"$x/")}$entityName/$id"
 
   def encode = key.replace('/', '|')
+  
+  @JSName("add")
+  def /(segment:String) = Key(s"$key/$segment")
 }
 
 

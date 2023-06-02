@@ -35,7 +35,7 @@ trait PutService[T <: Model] {
     val path = i.key.getOrElse(throw new RuntimeException("no key")).key
     val json = enc(i.withKey(None))
     val promise = setDoc(doc(path), convertJsonToJs(json).asInstanceOf[js.Dictionary[js.Any]])
-    log(json.toString,s"saved $path to firestore", false)
+    //log(json.toString,s"saved $path to firestore", false)
     deCache(i)
     promiseToObs(promise)
   }

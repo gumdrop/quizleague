@@ -8,4 +8,5 @@ case class Ref[T <: Entity](typeName:String,id:String, key:Option[Key] = None) d
 
 object Ref{
   def apply[T <: Entity](key: Key): Ref[T] = new Ref(key.entityName, key.id, Option(key))
+  
 }

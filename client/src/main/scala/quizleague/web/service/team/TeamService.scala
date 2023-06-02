@@ -22,7 +22,7 @@ trait TeamGetService extends GetService[Team] with TeamNames {
   val textService: TextGetService
   val userService: UserGetService
 
-  override protected def mapOutSparse(team: Dom) = Team(team.id, team.name, team.shortName, refObs(team.venue,venueService), refObs(team.text, textService), team.users.map(u => userService.getRO(u.id)).toJSArray, team.retired)
+  override protected def mapOutSparse(team: Dom) = Team(team.id, team.name, team.shortName, refObs(team.venue,venueService), refObs(team.text, textService), team.users.map(u => userService.getRO(u.id)).toJSArray, team.handle.getOrElse(null), team.retired)
 
   override def flush() = { textService.flush(); super.flush() }
   
@@ -37,7 +37,7 @@ trait TeamPutService extends PutService[Team] with TeamGetService {
   override val userService: UserPutService
   override val venueService: VenuePutService
 
-  override protected def mapIn(team: Team) = Dom(team.id, team.name, team.shortName, venueService.ref(team.venue.id), textService.ref(team.text.id), team.users.map(u => userService.ref(u.id)).toList, team.retired)
+  override protected def mapIn(team: Team) = Dom(team.id, team.name, team.shortName, venueService.ref(team.venue.id), textService.ref(team.text.id), team.users.map(u => userService.ref(u.id)).toList, Option(team.handle), team.retired)
   override protected def make() = withKey(Dom(newId, "", "", null, textService.getRef(textService.instance())), null)
   override def save(team: Team) = {textService.save(team.text);super.save(team) }
 

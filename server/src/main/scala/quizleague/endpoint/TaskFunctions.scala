@@ -1,24 +1,23 @@
 package quizleague.endpoint
 
-import quizleague.data.Storage
-
-import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
-import quizleague.data.Storage._
-import quizleague.data._
-import quizleague.endpoint.HistoricalStatsAggregator
-import quizleague.util.UUID.{randomUUID => uuid}
-import quizleague.domain._
-import quizleague.domain.command.{ResultValues, ResultsSubmitCommand}
-import quizleague.domain.notification._
-import quizleague.domain.util.LeagueTableRecalculator
-import quizleague.task.TaskQueue._
-
+import cps.*
 import cps.monads.{*, given}
-import cps._
+import quizleague.data.*
+import quizleague.data.Storage.*
+import quizleague.domain.*
+import quizleague.domain.command.{ResultValues, ResultsSubmitCommand}
+import quizleague.domain.notification.*
+import quizleague.domain.util.LeagueTableRecalculator
+import quizleague.endpoint.HistoricalStatsAggregator
+import quizleague.task.TaskQueue.*
+import quizleague.util.*
+import quizleague.util.UUID.*
+
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future._
 import scala.concurrent.Future
-//import io.circe.*, io.circe.generic.auto._
+import scala.concurrent.Future.*
+
 object TaskFunctions {
 
   def resultSubmission(result: ResultsSubmitCommand) = {
@@ -26,7 +25,6 @@ object TaskFunctions {
   }
 
   def resultSubmit(result: ResultsSubmitCommand) = async[Future]{
-    println(s"submit result arrived : $result")
 
     def haveResults = sequence(result.fixtures.map(f => {
       load[Fixture](f.fixtureKey).map(_.result.isDefined)
@@ -57,11 +55,7 @@ object TaskFunctions {
           }
         }
         if (!isSubsidiary) {
-          await(save(Notification(
-            uuid().toString(),
-            NotificationTypeNames.result,
-            LocalDateTime.now(),
-            ResultPayload(fixture.key.get.key))))
+          await(fireNotifications(fixture, result.reportText))
         }
       }
     }
@@ -73,6 +67,47 @@ object TaskFunctions {
     taskQueue.send(() => statsUpdate(season.id, List((fixture, key))))
 
   }
+
+  private def fireNotifications(fixture:Fixture, report:Option[String]) = async[Future]{
+
+    def snackbarNotification() = async[Future]{
+      await(save(Notification(
+        uuid,
+        NotificationTypeNames.result,
+        londonTime,
+        ResultPayload(fixture.key.get.key))))
+    }
+
+    def chatNotification() = async[Future]{
+      val user = await(systemUser)
+      val homechat = await(runQuery[Chat](Storage.collection[Chat]().where("name", "==", "homepagechat"))).head
+      val home = await(load(fixture.home))
+      val away = await(load(fixture.away))
+
+      val result = fixture.result.get
+      val hashtag = s"#${home.handle.getOrElse(null)}vs${away.handle.getOrElse(null)}"
+
+      val reportText = report.map(t => s"<br>$t").getOrElse("")
+
+      val message = ChatMessage(
+        uuid,
+        ref(user),
+        s"$hashtag<br>${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}$reportText",
+        londonZonedTime,
+        List(hashtag,s"#${home.handle}",s"#${away.handle}")
+      )
+      val key = homechat.key.map(_ / Storage.key[ChatMessage](message.id))
+
+      await(save(message.withKey(key)))
+
+    }
+
+    taskQueue.send(snackbarNotification)
+    taskQueue.send(chatNotification)
+
+  }
+
+
 
   private def updateTables(tables: List[LeagueTable], fixture: Fixture) = {
 
@@ -97,7 +132,7 @@ object TaskFunctions {
       val report = reportIn.filter(r => !r.trim.isEmpty && !isSubsidiary)
 
       def newText(reportText: String) = async[Future] {
-        val id = uuid().toString
+        val id = uuid
         val text = Text(id, reportText, "text/markdown").withKey(Key(None, "text", id))
         await{save(text)}
         Ref[Text]("text", text.id)
@@ -109,7 +144,7 @@ object TaskFunctions {
 
       def newReport(reportText: String) = async[Future]{
         val team = await{teamFromUser(user)}
-        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid().toString))
+        Report(Ref("team", team.id), await(newText(reportText))).withKey(fixture.key.map(_ / Storage.key[Report](uuid)))
       }
 
       val res = fixture.copy(result = fixture.result.fold(newResult())(Some(_))).withKey(fixture.key)
@@ -151,12 +186,12 @@ object TaskFunctions {
       season <- load[Season](seasonId)
       _ <- HistoricalStatsAggregator.perform(season)
     } yield {
-      val key = Key(None, "notification", uuid().toString)
+      val key = Key(None, "notification", uuid)
 
       save(Notification(
         key.id,
         NotificationTypeNames.maintain,
-        ZonedDateTime.now(ZoneId.of("Europe/London")).toLocalDateTime,
+        londonTime,
         MaintainMessagePayload(s"Stats regenerated for ${season.startYear}/${season.endYear}")
       ).withKey(key))
     }

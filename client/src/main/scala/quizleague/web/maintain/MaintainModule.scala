@@ -2,6 +2,7 @@ package quizleague.web.maintain
 
 import quizleague.web.core.{RouteConfig, *}
 import quizleague.web.maintain.applicationcontext.ApplicationContextModule
+import quizleague.web.maintain.chat.ChatMessageService
 import quizleague.web.maintain.competitionstatistics.CompetitionStatisticsModule
 import quizleague.web.maintain.globaltext.GlobalTextModule
 import quizleague.web.maintain.season.SeasonModule
@@ -39,6 +40,8 @@ object MaintainModule extends Module {
 }
 
 object NotificationService extends NotificationGetService {
+
+  override val chatMessageService = ChatMessageService
   def messages(threshold: LocalDateTime): Observable[String] = super.messages("maintain", threshold)
     .map(_.map(m => {
       m.payload match {

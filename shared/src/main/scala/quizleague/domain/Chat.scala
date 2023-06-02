@@ -3,8 +3,8 @@ package quizleague.domain
 import io.circe.Codec
 
 import java.net.URL
-import java.time.LocalDateTime
-import quizleague.util.json.codecs.ScalaTimeCodecs._
+import java.time.{LocalDateTime, ZonedDateTime}
+import quizleague.util.json.codecs.ScalaTimeCodecs.*
 
 case class Chat(
                  id: String,
@@ -16,7 +16,8 @@ case class ChatMessage(
                         id:String,
                         user: Ref[SiteUser],
                         message: String,
-                        date: LocalDateTime,
+                        date: ZonedDateTime,
+                        index: List[String] = List(),
                         retired: Boolean = false
                       ) extends Entity derives Codec.AsObject
 

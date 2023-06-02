@@ -6,7 +6,7 @@ import quizleague.web.core.*
 import quizleague.web.site.ApplicationContextService
 import quizleague.web.site.fixtures.FixturesService
 import com.felstar.scalajs.vue.VueComponent
-import quizleague.web.model.Season
+import quizleague.web.model.{Key, Season}
 
 import scalajs.js
 import js.timers.*
@@ -33,20 +33,19 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
   override val template="""
    <v-container v-bind="gridSize" v-if="appData">
      <ql-title>Home</ql-title>
-     <v-layout v-bind="align">
-      <v-flex xs12 smAndUp5>
+     <v-row>
+      <v-col xs12 smAndUp5>
         <home-page-tabs></home-page-tabs>
-      </v-flex>
-      <v-flex offset-xs0 offset-md1 xs12>
-        <v-layout column>
-          <ql-text-box>
-            <ql-named-text textName="front-page"></ql-named-text>
-            <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
-          </ql-text-box>
-        <!--ql-hot-chats></ql-hot-chats-->
-        </v-layout>
-      </v-flex>
-    </v-layout>
+      </v-col>
+      <v-col offset-xs0 offset-md1 xs12>
+        <ql-text-box>
+          <ql-named-text textName="front-page"></ql-named-text>
+          <ql-text v-if="async(appData.currentSeason).id" :id="async(appData.currentSeason).text.id"></ql-text>
+        </ql-text-box>
+        <div style="margin-top:1em;"></div>
+        <ql-chat name="homepagechat" displayName="Chat" ></ql-chat>
+      </v-col>
+     </v-row>
      <v-snackbar
       timeout="3000"
       :multi-line="true"
@@ -55,13 +54,11 @@ object HomeComponent extends RouteComponent with NoSideMenu with GridSizeCompone
      </v-snackbar>
   </v-container>
 """
+
   components(HomePageTabsComponent)
   data("sponsorMessage", false)
 
   subscription("appData")(c => ApplicationContextService.get())
-
-  def align(c: facade) = js.Dictionary("column" -> c.$vuetify.breakpoint.smAndDown)
-  computed("align")({ align _ }: js.ThisFunction)
 }
 
 @js.native

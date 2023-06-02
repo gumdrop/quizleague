@@ -2,6 +2,7 @@ package quizleague.web.model
 
 import quizleague.web.util.rx.RefObservable
 
+import java.time.ZonedDateTime
 import scala.scalajs.js
 
 
@@ -24,6 +25,9 @@ class SiteUser(
                 var avatar: String,
                 val user: RefObservable[User],
                 val uid:Option[String],
+                val heartbeat: ZonedDateTime,
                 val retired: Boolean = false
 
-              ) extends Model
+              ) extends Model {
+  def isActive:Boolean = heartbeat != null && heartbeat.isAfter(ZonedDateTime.now().minusMinutes(1))
+}
