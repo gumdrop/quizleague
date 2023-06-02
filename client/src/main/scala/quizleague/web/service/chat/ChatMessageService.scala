@@ -14,9 +14,10 @@ import quizleague.web.site.chat.ChatService
 import quizleague.web.store.Storage
 import quizleague.web.store.Storage.*
 import quizleague.web.util.Logging
+import quizleague.util.*
 import rxscalajs.Observable
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZonedDateTime}
 import java.util.regex.Pattern
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters.*
@@ -29,7 +30,7 @@ trait ChatMessageGetService extends GetService[ChatMessage] with ChatMessageName
 
   override protected def mapOutSparse(message: Dom) = new ChatMessage(
     message.id,
-    userService.refObs(message.user.id), message.message, message.date.toString)
+    userService.refObs(message.user.id), message.message, message.date.withZoneSameInstant(london).toLocalDateTime.toString)
 
   protected def dec(json:js.Any) = decodeJson[U](json)
 
@@ -41,10 +42,10 @@ trait ChatMessagePutService extends PutService[ChatMessage] with ChatMessageGetS
 
   override protected def mapIn(message: ChatMessage) = Dom(
     message.id,
-    userService.ref(message.user), message.message, LocalDateTime.parse(message.date)
+    userService.ref(message.user), message.message, ZonedDateTime.parse(message.date)
     )
 
-  override protected def make() = Dom(newId, null,"", LocalDateTime.now())
+  override protected def make() = Dom(newId, null,"", londonZonedTime)
 
   override def enc(item: Dom) = item.asJson
 

@@ -2,4 +2,7 @@ package quizleague.util
 
 import java.time.{ZoneId, ZonedDateTime}
 
-def londonTime = ZonedDateTime.now(ZoneId.of("Europe/London")).toLocalDateTime
+def londonTime = londonZonedTime.toLocalDateTime
+def londonZonedTime = ZonedDateTime.now(london)
+
+val london = ZoneId.of("Europe/London")

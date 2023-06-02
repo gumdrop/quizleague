@@ -85,18 +85,18 @@ object TaskFunctions {
       val away = await(load(fixture.away))
 
       val result = fixture.result.get
-      val hashtag = s"#${home.handle}vs${away.handle}"
+      val hashtag = s"#${home.handle.getOrElse(null)}vs${away.handle.getOrElse(null)}"
 
       val reportText = report.map(t => s"<br>$t").getOrElse("")
 
       val message = ChatMessage(
         uuid,
         ref(user),
-        s"$hashtag<br>${home.name} ${result.homeScore}:${result.awayScore} ${away.name}$reportText",
-        LocalDateTime.now,
+        s"$hashtag<br>${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}$reportText",
+        londonZonedTime,
         List(hashtag,s"#${home.handle}",s"#${away.handle}")
       )
-      val key = Key.of(homechat.key, "chatmessage", message.id)
+      val key = homechat.key.map(_ / Storage.key[ChatMessage](message.id))
 
       await(save(message.withKey(key)))
 
@@ -144,7 +144,7 @@ object TaskFunctions {
 
       def newReport(reportText: String) = async[Future]{
         val team = await{teamFromUser(user)}
-        Report(Ref("team", team.id), await(newText(reportText))).withKey(Key(fixture.key.get, "report", uuid))
+        Report(Ref("team", team.id), await(newText(reportText))).withKey(fixture.key.map(_ / Storage.key[Report](uuid)))
       }
 
       val res = fixture.copy(result = fixture.result.fold(newResult())(Some(_))).withKey(fixture.key)

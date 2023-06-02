@@ -56,7 +56,7 @@ object SiteFunctions {
   def siteUserForEmail(email: String): Future[Option[SiteUser]] = async[Future]{
 
       def createAndSave(user: User):Future[SiteUser] = async[Future] {
-        val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Key(None, "siteuser", uuid))
+        val siteUser = SiteUser(uuid, "", SiteFunctions.defaultAvatar, Some(new Ref[User]("user", user.id)), None, None).withKey(Storage.key[SiteUser](uuid))
         save(siteUser)
         siteUser
       }
@@ -110,7 +110,7 @@ object SiteFunctions {
     def sendNotifications():Unit = async[Future]{
 
       val query = collection[SiteUser]().where("handle", "in", command.handles.toJSArray)
-      val users = await(runQuery[SiteUser](query))
+      val users = if(command.handles.isEmpty) Nil else await(runQuery[SiteUser](query))
       val context = await(applicationContext())
 
       val it = users.iterator
@@ -119,7 +119,7 @@ object SiteFunctions {
         val user = await(load(siteUser.user.get))
 
         if (siteUser.isActive) {
-          val key = Key(None, "notification", uuid)
+          val key = Storage.key[Notification](uuid)
           save(Notification(
             key.id,
             NotificationTypeNames.chat,

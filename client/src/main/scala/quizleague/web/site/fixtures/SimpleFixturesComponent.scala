@@ -111,9 +111,9 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
                      </v-tooltip>
                    </v-card-title>
                   <ql-reports :keyval="fixture.key" ></ql-reports>
-                  <v-card-text v-if="parent">
-                    <ql-chat :lockedFilter="filter(async(fixture.home), async(fixture.away))" name="homepagechat"></ql-chat>
-                  </v-card-text>
+                  <div v-if="parent">
+                    <ql-chat :lockedFilter="filter(async(fixture.home), async(fixture.away))" name="homepagechat" :outlined="false" displayName="Match Chat"></ql-chat>
+                  </div>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <ql-login-button label="Login for chat" ></ql-login-button>
