@@ -7,6 +7,7 @@ import quizleague.web.model
 import quizleague.web.model.SiteUser
 import quizleague.web.service.PostService
 import quizleague.web.service.user.*
+import quizleague.web.store.Storage
 import quizleague.web.store.Storage.*
 import rxscalajs.subjects.ReplaySubject
 import rxscalajs.{Observable, Subject}
@@ -62,6 +63,10 @@ object SiteUserService extends SiteUserGetService with SiteUserPutService with P
   }
 
   lazy val heartbeat = Observable.interval(30 seconds span)
+
+  def isHandleTaken(handle:String):Observable[Boolean] = {
+    listFromQuery(query(collection(uriRoot), where("handle","==",handle))).map(!_.isEmpty)
+  }
 }
 
 

@@ -195,7 +195,10 @@ object LoginFailedComponent extends RouteComponent with NoSideMenu {
 
 @js.native
 trait ProfileEditComponent extends VueRxComponent{
- var user:SiteUser
+ var user:UndefOr[SiteUser]
+ val originalHandle:String
+ val handleExists:Boolean
+ var handle:String
 }
 object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSizeComponentConfig{
 
@@ -209,8 +212,9 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
        <v-card-text>
         <v-layout column>
           <ql-named-text v-if="$route.query.first == 'true'" name="profile-first-time"></ql-named-text>
-          <v-text-field prepend-icon="mdi-account" type="text" label="Handle" v-model="user.handle" :rules="[rules.required]" hint="This is how you'll be identified in chat messages." persistent-hint="true"></v-text-field>
-          <v-file-input prepend-icon="mdi-account-circle" label="Avatar" placeholder="This will appear alongside your handle in chat messages"  :rules="[]" hint="Select a file if you wish to customise your avatar." :show-size="true" persistent-hint="true" v-on:change="upload">
+          <v-text-field prepend-icon="mdi-account" type="text" label="Handle" v-model="handle" :rules="[rules.required, rules.nospaces]" hint="This is how you'll be identified in chat messages." :persistent-hint="true"></v-text-field>
+          <div v-if="handleTaken">Handle is already taken</div>
+          <v-file-input prepend-icon="mdi-account-circle" label="Avatar" placeholder="This will appear alongside your handle in chat messages"  :rules="[]" hint="Select a file if you wish to customise your avatar." :show-size="true" :persistent-hint="true" v-on:change="upload">
           </v-file-input>
 
         </v-layout>
@@ -221,13 +225,12 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
       </v-form>
     </v-card>
     <v-layout row>
-      <v-btn color="primary" text :disabled="!valid" @click="saveUser(user);forward($route.query.forward)"><v-icon left>mdi-content-save</v-icon>Save</v-btn>
+      <v-btn color="primary" text :disabled="!valid || handleTaken" @click="saveUser(user, handle);forward($route.query.forward)"><v-icon left>mdi-content-save</v-icon>Save</v-btn>
       <v-flex grow><v-alert type="info" :icon="false" outlined border="left" text transition="scroll-y-transition" :value="showAlert">Profile Settings Saved.</v-alert></v-flex>
     </v-layout>
   </v-layout>
 </v-container>
   """
-
 
   def uploadFiles(c:facade,file:File) = {
     val reader = new FileReader
@@ -235,7 +238,7 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
     reader.onload = (e:ProgressEvent) => {
       val data = reader.result
       if(data.toString.length <= 1000000){
-        c.user.avatar = data.toString
+        c.user.foreach(_.avatar = data.toString)
       }
       else{
         alert("Avatar images must be less than 1Mb in size")
@@ -246,12 +249,16 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
   data("showAlert", false)
   data("valid",false)
   data("rules", literal(
-    required=(value:UndefOr[String]) => if(value.filter(_ != null).exists(!_.isEmpty)) true else "Required"))
-  method("saveUser")({(c:facade,user:SiteUser) => SiteUserService.save(user).subscribe(u => c.showAlert = true)}:js.ThisFunction)
-  method("forward")({(c:facade, forward:UndefOr[String]) => forward.filter(_ != null).foreach(f => c.$router.push(f))}:js.ThisFunction)
-  method("upload")({uploadFiles _}:js.ThisFunction)
-  subscription("user")(c => LoginService.userProfile.filter(_ != null).map(_.siteUser))
+    required=(value:UndefOr[String]) => if(value.filter(_ != null).filter(!_.isBlank).exists(!_.isEmpty)) true else "Required",
+    nospaces=(value:UndefOr[String]) => if(value.exists(!_.contains(" "))) true else "Spaces not allowed")
+  )
+  data("handle","")
 
+  method("saveUser")({(c:facade,user:SiteUser, handle:String) => {user.handle = handle;SiteUserService.save(user).subscribe(u => c.showAlert = true)}}:js.ThisFunction)
+  method("forward")({(c:facade, forward:UndefOr[String]) => forward.filter(_ != null).foreach(f => c.$router.push(f))}:js.ThisFunction)
+  method("upload")({uploadFiles}:js.ThisFunction)
+  subscription("user")(c => LoginService.userProfile.filter(_ != null).map(_.siteUser).map(u => {c.handle = u.handle;u}))
+  subscription("handleTaken", "handle")((c:facade) => SiteUserService.isHandleTaken(c.user.filter(_.handle != c.handle).map(_ => c.handle).getOrElse("none")))
 }
 
 object ProfileEditTitleComponent extends RouteComponent{

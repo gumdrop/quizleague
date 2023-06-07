@@ -55,7 +55,7 @@ object TaskFunctions {
           }
         }
         if (!isSubsidiary) {
-          await(fireNotifications(fixture, result.reportText))
+          await(fireNotifications(fixture, result.reportText, user))
         }
       }
     }
@@ -68,7 +68,7 @@ object TaskFunctions {
 
   }
 
-  private def fireNotifications(fixture:Fixture, report:Option[String]) = async[Future]{
+  private def fireNotifications(fixture:Fixture, report:Option[String], user:User) = async[Future]{
 
     def snackbarNotification() = async[Future]{
       await(save(Notification(
@@ -88,11 +88,17 @@ object TaskFunctions {
       val hashtag = s"#${home.handle.getOrElse(null)}vs${away.handle.getOrElse(null)}"
 
       val reportText = report.map(t => s"<br>$t").getOrElse("")
+      val handle = await(list[SiteUser]).find(_.user.map(_.id).getOrElse("") == user.id).getOrElse("anon")
 
       val message = ChatMessage(
         uuid,
         ref(user),
-        s"$hashtag<br>${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}$reportText",
+        s"""$hashtag
+           <br>
+           Report by @$handle
+           <br>
+           ${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}
+           $reportText""",
         londonZonedTime,
         List(hashtag,s"#${home.handle}",s"#${away.handle}")
       )

@@ -16,3 +16,4 @@
 # Target directory for maven builds
 target/
 src/
+node_modules/
