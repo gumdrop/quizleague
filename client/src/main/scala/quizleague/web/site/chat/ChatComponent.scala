@@ -106,6 +106,15 @@ object ChatContent extends Component {
          <v-col><h3>{{displayName}}</h3></v-col>
          <v-spacer></v-spacer>
          <v-col style="text-align:right;">
+          <v-tooltip top v-if="user">
+           <template v-slot:activator="{ on }">
+            <v-btn icon to="/help"  v-on="on" >
+              <v-icon>mdi-help</v-icon>
+            </v-btn>
+            </template>
+            <span>Help</span>
+          </v-tooltip>
+
            <v-tooltip top>
             <template v-slot:activator="{ on }">
              <v-btn icon @click="$emit('update:popout',!popout)"  v-on="on" >

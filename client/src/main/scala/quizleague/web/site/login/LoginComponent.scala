@@ -197,7 +197,7 @@ object LoginFailedComponent extends RouteComponent with NoSideMenu {
 trait ProfileEditComponent extends VueRxComponent{
  var user:UndefOr[SiteUser]
  val originalHandle:String
- val handleExists:Boolean
+ val handleTaken:UndefOr[Boolean]
  var handle:String
 }
 object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSizeComponentConfig{
@@ -212,8 +212,7 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
        <v-card-text>
         <v-layout column>
           <ql-named-text v-if="$route.query.first == 'true'" name="profile-first-time"></ql-named-text>
-          <v-text-field prepend-icon="mdi-account" type="text" label="Handle" v-model="handle" :rules="[rules.required, rules.nospaces]" hint="This is how you'll be identified in chat messages." :persistent-hint="true"></v-text-field>
-          <div v-if="handleTaken">Handle is already taken</div>
+          <v-text-field prepend-icon="mdi-account" type="text" label="Handle" v-model="handle" :rules="[rules.required, rules.nospaces, rules.nospecials ,!handleTaken?true:'Handle is already taken']" hint="This is how you'll be identified in chat messages." :persistent-hint="true"></v-text-field>
           <v-file-input prepend-icon="mdi-account-circle" label="Avatar" placeholder="This will appear alongside your handle in chat messages"  :rules="[]" hint="Select a file if you wish to customise your avatar." :show-size="true" :persistent-hint="true" v-on:change="upload">
           </v-file-input>
 
@@ -246,12 +245,14 @@ object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSize
 
     }
   }
+
   data("showAlert", false)
   data("valid",false)
   data("rules", literal(
     required=(value:UndefOr[String]) => if(value.filter(_ != null).filter(!_.isBlank).exists(!_.isEmpty)) true else "Required",
-    nospaces=(value:UndefOr[String]) => if(value.exists(!_.contains(" "))) true else "Spaces not allowed")
-  )
+    nospaces=(value:UndefOr[String]) => if(value.exists(!_.contains(" "))) true else "Spaces are not allowed",
+    nospecials=(value:UndefOr[String]) => if(value.exists(_.matches("^[a-zA-Z0-9]+$"))) true else "Aplhanumerics only"
+  ))
   data("handle","")
 
   method("saveUser")({(c:facade,user:SiteUser, handle:String) => {user.handle = handle;SiteUserService.save(user).subscribe(u => c.showAlert = true)}}:js.ThisFunction)

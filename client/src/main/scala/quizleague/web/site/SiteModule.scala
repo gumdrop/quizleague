@@ -69,6 +69,7 @@ object SiteModule extends Module {
       RouteConfig(path="/links", components = Map("default" -> {() => js.dynamicImport{LinksComponent}}, "title" -> {() => js.dynamicImport{LinksTitleComponent}})),
       RouteConfig(path="/rules", components = Map("default" -> {() => js.dynamicImport{RulesComponent}})),
       RouteConfig(path="/contact", components = Map("default" -> {() => js.dynamicImport{ContactUsComponent}})),
+      RouteConfig(path="/help", components = Map("default" -> {() => js.dynamicImport{HelpComponent}},"title" -> {() => js.dynamicImport{HelpTitleComponent}},"sidenav" -> {() => js.dynamicImport{HelpMenuComponent}})),
       RouteConfig(path = "",redirect = "/home")
       )
   

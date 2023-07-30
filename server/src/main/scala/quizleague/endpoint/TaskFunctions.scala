@@ -68,7 +68,7 @@ object TaskFunctions {
 
   }
 
-  private def fireNotifications(fixture:Fixture, report:Option[String], user:User) = async[Future]{
+  private def fireNotifications(fixture:Fixture, report:Option[String], reporter:User) = async[Future]{
 
     def snackbarNotification() = async[Future]{
       await(save(Notification(
@@ -87,20 +87,16 @@ object TaskFunctions {
       val result = fixture.result.get
       val hashtag = s"#${home.handle.getOrElse(null)}vs${away.handle.getOrElse(null)}"
 
-      val reportText = report.map(t => s"<br>$t").getOrElse("")
-      val handle = await(list[SiteUser]).find(_.user.map(_.id).getOrElse("") == user.id).getOrElse("anon")
+
+      val handle = await(list[SiteUser]).find(_.user.map(_.id).getOrElse("") == reporter.id).map(_.handle).getOrElse("")
+      val reportText = report.map(t => s"<br>Report by @$handle<br>$t").getOrElse("")
 
       val message = ChatMessage(
         uuid,
         ref(user),
-        s"""$hashtag
-           <br>
-           Report by @$handle
-           <br>
-           ${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}
-           $reportText""",
+        s"""$hashtag<br>${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}$reportText""",
         londonZonedTime,
-        List(hashtag,s"#${home.handle}",s"#${away.handle}")
+        List(hashtag,s"#${home.handle}",s"#${away.handle}", s"@$handle")
       )
       val key = homechat.key.map(_ / Storage.key[ChatMessage](message.id))
 
@@ -192,7 +188,7 @@ object TaskFunctions {
       season <- load[Season](seasonId)
       _ <- HistoricalStatsAggregator.perform(season)
     } yield {
-      val key = Key(None, "notification", uuid)
+      val key = Storage.key[Notification](uuid)
 
       save(Notification(
         key.id,

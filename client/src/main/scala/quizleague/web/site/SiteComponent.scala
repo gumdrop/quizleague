@@ -134,7 +134,8 @@ object SiteComponent extends Component {
       menuItem("Calendar", "/calendar", "mdi-calendar"),
       menuItem("Rules", "/rules", "mdi-book-open-page-variant"),
       menuItem("Links", "/links", "mdi-link"),
-      menuItem("Contact Us", "/contact", "mdi-contact-mail")
+      menuItem("Contact Us", "/contact", "mdi-contact-mail"),
+      menuItem("Help", "/help", "mdi-help")
 
     ))
   subscription("appData")(c => ApplicationContextService.get())
