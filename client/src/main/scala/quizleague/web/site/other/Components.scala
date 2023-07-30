@@ -87,7 +87,7 @@ object HelpMenuComponent extends RouteComponent with SideMenu{
       <v-list-item @click="$vuetify.goTo('#help-content-submit')" >
        <v-list-item-content><v-list-item-title>Submit</v-list-item-title></v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="user" @click="$vuetify.goTo('/help#help-content-team')">
+      <v-list-item v-if="user" @click="$vuetify.goTo('#help-content-team')">
        <v-list-item-content><v-list-item-title>Team</v-list-item-title></v-list-item-content>
       </v-list-item>
    </ql-side-menu>
