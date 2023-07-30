@@ -12,7 +12,6 @@ object MarkdownComponent extends Component {
     :options="settings.options"
     :flavor="settings.flavor"
     :vue-template="settings.vueTemplate"
-    :vue-template-data="{clicked:() => alert('clicked')}"
     :extensions="settings.extensions">
     </vue-showdown>
   """
