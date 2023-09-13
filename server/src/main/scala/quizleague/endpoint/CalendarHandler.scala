@@ -108,7 +108,7 @@ END:VEVENT
     }
 
     private def makeICal(team:Team) = async[Future] {
-      val header = """"BEGIN:VCALENDAR\nVERSION:2.0\n""""
+      val header ="BEGIN:VCALENDAR\nVERSION:2.0\n"
       var builder = header
 
         def teamCompetitions(season:Season):Future[List[Competition & TeamCompetition]] = {
