@@ -47,11 +47,11 @@ object HelpComponent extends RouteComponent with GridSizeComponentConfig{
   <v-container v-bind="gridSize" fluid>
     <ql-title>Rules</ql-title>
     <v-layout column>
-      <v-flex><span id="help-content-main">Main</span><ql-text-box><ql-named-text textName="help-content-main"></ql-named-text></ql-text-box></v-flex>
-      <v-flex><span id="help-content-login">Login</span><ql-text-box><ql-named-text textName="help-content-login"></ql-named-text></ql-text-box></v-flex>
-      <v-flex v-if="user"><span id="help-content-chat">Chat</span><ql-text-box><ql-named-text textName="help-content-chat"></ql-named-text></ql-text-box></v-flex>
-      <v-flex><span id="help-content-submit">Submit</span><ql-text-box><ql-named-text textName="help-content-submit"></ql-named-text></ql-text-box></v-flex>
-      <v-flex v-if="user"><span id="help-content-team">Team</span><ql-text-box><ql-named-text textName="help-content-team"></ql-named-text></ql-text-box></v-flex>
+      <v-flex><ql-text-box><h3 id="help-content-main">Overview</h3><ql-named-text textName="help-content-main"></ql-named-text></ql-text-box></v-flex>
+      <v-flex><ql-text-box><h3 id="help-content-login">Login</h3><ql-named-text textName="help-content-login"></ql-named-text></ql-text-box></v-flex>
+      <v-flex v-if="user"><ql-text-box><h3 id="help-content-chat">Chat</h3><ql-named-text textName="help-content-chat"></ql-named-text></ql-text-box></v-flex>
+      <v-flex><ql-text-box><h3 id="help-content-submit">Submitting Results</h3><ql-named-text textName="help-content-submit"></ql-named-text></ql-text-box></v-flex>
+      <v-flex v-if="user"><ql-text-box><h3 id="help-content-team">Team Details</h3><ql-named-text textName="help-content-team"></ql-named-text></ql-text-box></v-flex>
     </v-layout>
   </v-container>"""
 
@@ -76,7 +76,7 @@ object HelpMenuComponent extends RouteComponent with SideMenu{
   override val template = """
      <ql-side-menu title="Help" icon="mdi-help">
        <v-list-item @click="$vuetify.goTo('#help-content-main')">
-        <v-list-item-content><v-list-item-title>Main</v-list-item-title></v-list-item-content>
+        <v-list-item-content><v-list-item-title>Overview</v-list-item-title></v-list-item-content>
       </v-list-item>
       <v-list-item @click="$vuetify.goTo('#help-content-login')">
          <v-list-item-content><v-list-item-title>Login</v-list-item-title></v-list-item-content>
@@ -85,10 +85,10 @@ object HelpMenuComponent extends RouteComponent with SideMenu{
        <v-list-item-content><v-list-item-title>Chat</v-list-item-title></v-list-item-content>
       </v-list-item>
       <v-list-item @click="$vuetify.goTo('#help-content-submit')" >
-       <v-list-item-content><v-list-item-title>Submit</v-list-item-title></v-list-item-content>
+       <v-list-item-content><v-list-item-title>Submitting Results</v-list-item-title></v-list-item-content>
       </v-list-item>
       <v-list-item v-if="user" @click="$vuetify.goTo('#help-content-team')">
-       <v-list-item-content><v-list-item-title>Team</v-list-item-title></v-list-item-content>
+       <v-list-item-content><v-list-item-title>Team Details</v-list-item-title></v-list-item-content>
       </v-list-item>
    </ql-side-menu>
      """
