@@ -206,24 +206,26 @@ object ChatMessages extends Component{
 
   val name = "ql-chat-messages"
   val template = """
-    <v-timeline v-if="messages">
-      <v-timeline-item v-bind="align(message)"
+    <v-timeline v-if="messages" dense>
+      <v-timeline-item right
         v-for="message in messages"
         :key="message.id"
         small
-         transition="fade-transition"
+        transition="fade-transition"
         >
         <template v-slot:icon>
           <ql-user-avatar :user="message.user"></ql-user-avatar>
         </template>
-        <template v-slot:opposite>
-          <div>
-            <span>{{async(message.user).handle}}</span>
-            <div class="caption">{{message.date | datetime('d MMM yyy - kk:mm')}}</div>
+
+        <v-card class="elevation-2" :class="colour(message)">
+          <div style="width:100%" class="px-4 py-1 d-flex">
+            <span class="text-caption justify-start">{{handle(async(message.user))}}</span>
+            <span class="flex-grow-1"></span>
+            <span class="text-caption justify-end">{{message.date | datetime('d MMM yyy - kk:mm')}}</span>
           </div>
-        </template>
-        <v-card class="elevation-2">
-          <v-card-text class="pb-1"><ql-markdown :text="message.message" ></ql-markdown></v-card-text>
+          <div class="px-4 pb-1">
+            <ql-markdown :text="message.message"></ql-markdown>
+          </div>
         </v-card>
       </v-timeline-item>
     </v-timeline>
@@ -235,10 +237,8 @@ object ChatMessages extends Component{
   subscription("messages","filter")(c => ChatMessageService.getMatchingMessages(c.filter, c.chatKey))
   subscription("user")(c => LoginService.userProfile)
 
-  method("isLeft")({(c:facade,m:ChatMessage) => c.user.fold(true)(_.siteUser.id != m.user.id)}:js.ThisFunction)
-  method("date"){(d:String) => LocalDateTime.parse(d).toLocalDate.toString}
-  method("time"){(d:String) => LocalDateTime.parse(d).toLocalTime.toString}
-  method("align")({(c:facade,m:ChatMessage) => c.user.filter(_!=null).fold(js.Object())(u => if(u.siteUser.id != m.user.id)$(left=true)else $(right=true))}:js.ThisFunction)
+  method("colour")({(c:facade,m:ChatMessage) => c.user.filter(_!=null).fold("")(u => if(u.siteUser.id == m.user.id)"blue lighten-4" else "")}:js.ThisFunction)
+  method("handle")({(c:facade,siteUser:SiteUser) => c.user.filter(_!=null).fold("anonymous")(u => if(u.siteUser.id == siteUser.id) "You" else siteUser.handle)}:js.ThisFunction)
 
 }
 

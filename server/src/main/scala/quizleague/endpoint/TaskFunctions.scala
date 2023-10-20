@@ -40,11 +40,11 @@ object TaskFunctions {
       await(saveFixture(user, result.reportText)(fixturesIt.next()))
     }
 
-    if (!hasResults) {
-      val fixturesIt = result.fixtures.iterator
-      while(fixturesIt.hasNext) {
-        val f = fixturesIt.next()
-        val fixture = await(load[Fixture](f.fixtureKey))
+    val fixturesIt2 = result.fixtures.iterator
+    while(fixturesIt2.hasNext) {
+      val f = fixturesIt2.next()
+      val fixture = await(load[Fixture](f.fixtureKey))
+      if(!hasResults) {
         val isSubsidiary = await(subsidiary(fixture))
         val leagueTables = await(tables(fixture))
         if (!leagueTables.isEmpty) {
@@ -55,9 +55,10 @@ object TaskFunctions {
           }
         }
         if (!isSubsidiary) {
-          await(fireNotifications(fixture, result.reportText, user))
+          await(fireNotifications(fixture))
         }
       }
+      await(sendChatUpdates(fixture, result.reportText, user))
     }
   }
 
@@ -68,7 +69,7 @@ object TaskFunctions {
 
   }
 
-  private def fireNotifications(fixture:Fixture, report:Option[String], reporter:User) = async[Future]{
+  private def fireNotifications(fixture:Fixture) = async[Future]{
 
     def snackbarNotification() = async[Future]{
       await(save(Notification(
@@ -78,7 +79,12 @@ object TaskFunctions {
         ResultPayload(fixture.key.get.key))))
     }
 
-    def chatNotification() = async[Future]{
+    taskQueue.send(snackbarNotification)
+
+  }
+  private def sendChatUpdates(fixture:Fixture, report:Option[String], reporter:User) = async[Future]{
+
+    def chatNotification() = async[Future] {
       val user = await(systemUser)
       val homechat = await(runQuery[Chat](Storage.collection[Chat]().where("name", "==", "homepagechat"))).head
       val home = await(load(fixture.home))
@@ -96,7 +102,7 @@ object TaskFunctions {
         ref(user),
         s"""$hashtag<br>${home.name} ${result.homeScore} - ${result.awayScore} ${away.name}$reportText""",
         londonZonedTime,
-        List(hashtag,s"#${home.handle}",s"#${away.handle}", s"@$handle")
+        List(hashtag, s"#${home.handle}", s"#${away.handle}", s"@$handle")
       )
       val key = homechat.key.map(_ / Storage.key[ChatMessage](message.id))
 
@@ -104,9 +110,7 @@ object TaskFunctions {
 
     }
 
-    taskQueue.send(snackbarNotification)
     taskQueue.send(chatNotification)
-
   }
 
 
