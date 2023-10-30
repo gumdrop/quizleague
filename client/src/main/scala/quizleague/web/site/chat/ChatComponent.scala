@@ -238,7 +238,7 @@ object ChatMessages extends Component{
   subscription("user")(c => LoginService.userProfile)
 
   method("colour")({(c:facade,m:ChatMessage) => c.user.filter(_!=null).fold("")(u => if(u.siteUser.id == m.user.id)"blue lighten-4" else "")}:js.ThisFunction)
-  method("handle")({(c:facade,siteUser:SiteUser) => c.user.filter(_!=null).fold("anonymous")(u => if(u.siteUser.id == siteUser.id) "You" else siteUser.handle)}:js.ThisFunction)
+  method("handle")({(c:facade,siteUser:SiteUser) => c.user.filter(_!=null).fold(siteUser.handle)(u => if(u.siteUser.id == siteUser.id) "You" else siteUser.handle)}:js.ThisFunction)
 
 }
 
