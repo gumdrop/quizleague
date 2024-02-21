@@ -4,7 +4,7 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 
 name := "Quiz League"
 
-val circeVersion = "0.14.5"
+val circeVersion = "0.14.6"
 
 lazy val commonSettings = Seq(
     organization := "quizleague",
