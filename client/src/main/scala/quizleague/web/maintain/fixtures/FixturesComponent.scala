@@ -161,7 +161,7 @@ object FixtureComponent extends Component{
       <v-layout row>
         <v-btn style="top:-14px;" icon v-if="fx.result" v-on:click="showResult = !showResult"><v-icon>mdi-check</v-icon></v-btn>
         <v-btn style="top:-14px;" icon v-if="!fx.result" v-on:click="addResult()"><v-icon>mdi-plus</v-icon></v-btn>
-        <span >{{async(fx.home).shortName}} - {{async(fx.away).shortName}} @ {{async(fx.venue).shortName}}</span>
+        <span >{{async(fx.home).shortName}} - {{async(fx.away).shortName}} @ {{async(fx.venue).name}}</span>
       </v-layout>
       <v-layout row v-if="showResult && fx.result">
         <span style="position:relative;top:28px;"><h4>Result :&nbsp;</h4></span>
