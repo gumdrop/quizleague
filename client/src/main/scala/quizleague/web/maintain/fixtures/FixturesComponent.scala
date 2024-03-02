@@ -60,17 +60,18 @@ object FixturesComponent extends CompetitionComponentConfig{
        </v-layout>
        <v-layout column>
         <h4>Fixture List</h4>
+        <br/>
         <v-layout row v-if="venues && teams">
           <v-select label="Home" v-model="homeTeam" :items="unusedTeams(awayTeam)" @input="setVenue(homeTeam)"></v-select>        
           <v-select label="Away" v-model="awayTeam" :items="unusedTeams(homeTeam)"></v-select>
           <v-select label="Venue" v-model="venue" :items="venues"></v-select>
           <v-btn style="top:5px;" icon v-on:click="addFixture()" :disabled="!(homeTeam && awayTeam && venue)"><v-icon >mdi-plus</v-icon></v-btn>
          </v-layout>
-         <v-layout column>
+
           <v-layout row  v-for="fixture in fixtures" :key="fixture.id">
            <v-btn style="top:-14px;" icon v-on:click="removeFixture(fixture)" ><v-icon>mdi-cancel</v-icon></v-btn>
            <fixture :fixture="fixture" :fixtures="fxs" :teamManager="teamManager"></fixture>
-          </v-layout>
+
          </v-layout>
         </v-layout>      
      </v-layout>
@@ -160,13 +161,13 @@ object FixtureComponent extends Component{
       <v-layout row>
         <v-btn style="top:-14px;" icon v-if="fx.result" v-on:click="showResult = !showResult"><v-icon>mdi-check</v-icon></v-btn>
         <v-btn style="top:-14px;" icon v-if="!fx.result" v-on:click="addResult()"><v-icon>mdi-plus</v-icon></v-btn>
-        <span >{{async(fx.home).name}} - {{async(fx.away).name}} @ {{async(fx.venue).name}}</span>
+        <span >{{async(fx.home).shortName}} - {{async(fx.away).shortName}} @ {{async(fx.venue).shortName}}</span>
       </v-layout>
       <v-layout row v-if="showResult && fx.result">
         <span style="position:relative;top:28px;"><h4>Result :&nbsp;</h4></span>
         <v-text-field label="Home Score" v-model.number="fx.result.homeScore" type="number"></v-text-field>
         <v-text-field label="Away Score" v-model.number="fx.result.awayScore" type="number"></v-text-field>
-        <v-btn icon fab color="primary" v-on:click="save(fx)"><v-icon>mdi-floppy</v-icon>
+        <v-btn icon fab color="primary" v-on:click="save(fx)"><v-icon>mdi-floppy</v-icon></v-btn>
       </v-layout>
       <v-layout row v-if="showResult && fx.result.reports">
         <span style="position:relative;top:14px;"><h4>Reports :&nbsp;</h4></span><v-btn text v-on:click="editText(report.text.id)" v-for="report in async(fx.result.reports).reports" :key="report.text.id">{{async(report.team).shortName}}...</v-btn>
