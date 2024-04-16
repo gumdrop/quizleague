@@ -41,7 +41,7 @@ lazy val server = (project in file("server"))
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
-    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.16"
+    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.21"
   )
 
   lazy val client = (project in file("client"))
