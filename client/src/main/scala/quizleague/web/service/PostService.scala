@@ -11,7 +11,7 @@ import rxscalajs.dom.Request
 
 trait PostService {
 
-  protected def command[R,V](pathParts:List[String],i:Option[V] = None)(implicit decoder:Decoder[R],encoder:Encoder[V]):Observable[R] = {
+  protected def command[R,V](pathParts:List[String],i:Option[V] = None)(using decoder:Decoder[R],encoder:Encoder[V]):Observable[R] = {
     
     val path = ("/rest"::pathParts).mkString("/")
     
@@ -25,7 +25,7 @@ trait PostService {
       .onErrorResumeNext(x => { log(request,s"error in ${request.method} for $path : $x ");null })
   }
 
-  protected def getRequest[R](pathParts: List[String])(implicit decoder: Decoder[R]): Observable[R] = {
+  protected def getRequest[R](pathParts: List[String])(using decoder: Decoder[R]): Observable[R] = {
 
     val path = ("/rest" :: pathParts).mkString("/")
 

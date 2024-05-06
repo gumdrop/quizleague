@@ -88,7 +88,7 @@ trait GetService[T <: Model] {
 
   private[service] def getDom(id: String) = items(id)
 
-  protected def decodeJson[X](obj: js.Any)(implicit dec: Decoder[X]) = convertJsToJson(obj).fold(t => null, dec.decodeJson(_))
+  protected def decodeJson[X](obj: js.Any)(using dec: Decoder[X]) = convertJsToJson(obj).fold(t => null, dec.decodeJson(_))
 
   protected[service] def getRefObs(id:String):RefObservable[T] = refObsCache.getOrElseUpdate(key(id).key, RefObservable(key(id), () => get(id)))
   protected[service] def getRefObs(domKey:Key):RefObservable[T] = refObsCache.getOrElseUpdate(domKey.toString, RefObservable(key(domKey), () => get(key(domKey))))
