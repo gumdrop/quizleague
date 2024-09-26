@@ -117,6 +117,7 @@ object ContactUsComponent extends RouteComponent with NoSideMenu with GridSizeCo
           </p>
         </ql-text-box>
       </v-flex>
+      <v-flex v-if="user"><ql-text-box><h3 id="help-content-chat">Team Mobile Numbers</h3><ql-named-text textName="help-content-mobiles"></ql-named-text></ql-text-box></v-flex>
     </v-layout>
   </v-container>"""
   components(AliasContactDialog)
