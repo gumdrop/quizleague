@@ -3,7 +3,6 @@ package quizleague.web.site.other
 import quizleague.web.core.{RouteComponent, *}
 import quizleague.web.site.*
 import quizleague.web.site.login.LoginService
-import quizleague.web.site.other.HelpComponent.subscription
 import quizleague.web.site.team.TeamMenuComponent.subscription
 import quizleague.web.site.team.TeamService
 
@@ -124,6 +123,7 @@ object ContactUsComponent extends RouteComponent with NoSideMenu with GridSizeCo
   data("contact",false)
   data("alias",null)
   data("aliasText",null)
+  subscription("user")(c => LoginService.userProfile)
 }
 
 @js.native
