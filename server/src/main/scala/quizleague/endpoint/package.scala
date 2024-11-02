@@ -14,15 +14,15 @@ import scala.scalajs.js.JSON
 
 
 
-def parse[T](req: Request)(using decoder: Decoder[T]): T = {
+def parse[T](req: Request)(implicit decoder: Decoder[T]): T = {
   decoder.decodeJson(convertJsToJson(JSON.parse(req.body.toString)).fold(fa => throw fa, fb => fb)).fold(fa => throw fa, fb => fb)
 }
 
-def asJs[T](payload: T)(using encoder: Encoder[T]): js.Any = {
+def asJs[T](payload: T)(implicit encoder: Encoder[T]): js.Any = {
   convertJsonToJs(encoder(payload))
 }
 
-def send[T](result: Future[T], res: Response)(using encoder: Encoder[T]): Unit = {
+def send[T](result: Future[T], res: Response)(implicit encoder: Encoder[T]): Unit = {
   def failure(t: Throwable) = {
     res.status(500)
     res.statusMessage = "Internal server error"
@@ -34,7 +34,7 @@ def send[T](result: Future[T], res: Response)(using encoder: Encoder[T]): Unit =
   result.onComplete(t => t.fold(failure _, success _))
 }
 
-def send[T](result: T, res: Response)(using encoder: Encoder[T]): Unit = {
+def send[T](result: T, res: Response)(implicit encoder: Encoder[T]): Unit = {
   res.json(asJs(result))
 }
 

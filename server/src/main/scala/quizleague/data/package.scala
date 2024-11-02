@@ -18,7 +18,7 @@ import scala.scalajs.js.{JSON, native}
 
 def applicationContext() = load[ApplicationContext](ApplicationContext.singletonId)
 
-def parse[T](payload: String)(using decoder: Decoder[T]): T = {
+def parse[T](payload: String)(implicit decoder: Decoder[T]): T = {
   decoder.decodeJson(convertJsToJson(JSON.parse(payload)).fold(fa => throw fa, fb => fb)).fold(fa => throw fa, fb => fb)
 }
 

@@ -26,8 +26,7 @@ import quizleague.web.service.text.TextGetService
 import quizleague.web.service.text.TextPutService
 import quizleague.web.service.venue.VenueGetService
 import quizleague.web.service.venue.VenuePutService
-import quizleague.web.util.Logging
-import quizleague.web.util.DateTimeConverters.given
+import quizleague.web.util.Logging 
 
 trait CompetitionGetService extends GetService[Competition] with CompetitionNames with Logging {
   override type U = Dom
@@ -136,7 +135,7 @@ trait CompetitionPutService extends CompetitionGetService with PutService[Compet
     import quizleague.domain.{ LeagueCompetition => DLC }
     import quizleague.domain.{ SingletonCompetition => DSiC }
     import quizleague.domain.{ SubsidiaryLeagueCompetition => DSC }
-    import quizleague.web.util.DateTimeConverters.given
+    import quizleague.web.util.DateTimeConverters._      
 
     def makeLeague = DLC(
       newId,

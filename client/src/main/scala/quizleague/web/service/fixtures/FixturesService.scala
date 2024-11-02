@@ -12,7 +12,7 @@ import quizleague.util.collection._
 import scala.scalajs.js
 import java.time.Year
 
-import quizleague.web.util.DateTimeConverters.{given, *}
+import quizleague.web.util.DateTimeConverters._
 
 import scala.scalajs.js.Date
 import quizleague.web.service._

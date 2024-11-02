@@ -31,19 +31,19 @@ object Storage extends StorageUtils {
 
   lazy val datastore = makedataStore
 
-  def delete[T <: Entity](entity: T)(using tag: ClassTag[T])={
+  def delete[T <: Entity](entity: T)(implicit tag: ClassTag[T])={
     promiseToFuture(datastore.doc(key(entity).key).delete())
   }
 
-  def save[T <: Entity](entity: T)(using tag: ClassTag[T], encoder: Encoder[T]):Future[Unit] = {
+  def save[T <: Entity](entity: T)(implicit tag: ClassTag[T], encoder: Encoder[T]):Future[Unit] = {
     save(key(entity), encoder(entity))
   }
 
-  def save[T <: Entity](parentKey:Option[Key], entity: T)(using tag: ClassTag[T], encoder: Encoder[T]): Future[Unit] = {
+  def save[T <: Entity](parentKey:Option[Key], entity: T)(implicit tag: ClassTag[T], encoder: Encoder[T]): Future[Unit] = {
     save(key(parentKey,entity), encoder(entity))
   }
 
-  def saveAll[T <: Entity](entities: List[T])(using tag: ClassTag[T], encoder: Encoder[T]) = {
+  def saveAll[T <: Entity](entities: List[T])(implicit tag: ClassTag[T], encoder: Encoder[T]) = {
     val objrefs = entities.map(e => (datastore.doc(key(e).key),convertJsonToJs(e.asJson).asInstanceOf[js.Dictionary[js.Any]]))
 
      val batchSets = objrefs.grouped(400)
@@ -60,7 +60,7 @@ object Storage extends StorageUtils {
      }))
   }
 
-  def deleteAll[T <: Entity](entities: List[T])(using tag: ClassTag[T]) = {
+  def deleteAll[T <: Entity](entities: List[T])(implicit tag: ClassTag[T]) = {
 
      val objrefs = entities.map(e => (datastore.doc(key(e).key)))
 
@@ -76,40 +76,40 @@ object Storage extends StorageUtils {
      }))
   }
 
-  def load[T <: Entity](key:Key)(using tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(key, decoder)
+  def load[T <: Entity](key:Key)(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(key, decoder)
 
-  def load[T <: Entity](ref:Ref[T])(using tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(ref.getKey(), decoder)
+  def load[T <: Entity](ref:Ref[T])(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[T] = load(ref.getKey(), decoder)
 
-  def load[T <: Entity](id: String, parent:Option[Key] = None)(using tag: ClassTag[T], decoder: Codec[T]): Future[T] = load(Key(s"${makeKind(parent)}/$id"), decoder)
+  def load[T <: Entity](id: String, parent:Option[Key] = None)(implicit tag: ClassTag[T], decoder: Codec[T]): Future[T] = load(Key(s"${makeKind(parent)}/$id"), decoder)
 
-  def loadAll[T <: Entity](refs:List[Ref[T]])(using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = loadAllByKey(refs.map(_.getKey()))
+  def loadAll[T <: Entity](refs:List[Ref[T]])(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = loadAllByKey(refs.map(_.getKey()))
 
-  def loadAll[T <: Entity](keys:Key*)(using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = loadAllByKey(keys.toList)
+  def loadAll[T <: Entity](keys:Key*)(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = loadAllByKey(keys.toList)
 
-  def loadAllByKey[T <: Entity](keys:List[Key])(using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = sequence(keys.map(key => load(key, decoder)))
+  def loadAllByKey[T <: Entity](keys:List[Key])(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = sequence(keys.map(key => load(key, decoder)))
 
-  def list[T <: Entity](using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = list(None)
+  def list[T <: Entity](implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = list(None)
 
-  def list[T <: Entity](parent:Option[Key] = None)(using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = {
+  def list[T <: Entity](parent:Option[Key] = None)(implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = {
     runQuery(collection(parent))
   }
 
-  def collection[T <: Entity](parent:Option[Key] = None)(using tag: ClassTag[T]) = {
+  def collection[T <: Entity](parent:Option[Key] = None)(implicit tag: ClassTag[T]) = {
     val key = makeKind(parent)
     datastore.collection(key)
   }
 
-  def runQuery[T <: Entity](query:Query)(using tag: ClassTag[T], decoder: Decoder[T]) = {
+  def runQuery[T <: Entity](query:Query)(implicit tag: ClassTag[T], decoder: Decoder[T]) = {
     val list = promiseToFuture(query.get()).map(docs => docs.docs.map(doc => decode(doc, decoder).withKey(Key(doc.ref.path))).toList)
     //if(log.isLoggable(FINEST)) log.finest(s"query : $query \nquery results:$list")
     list
   }
 
-  def group[T <: Entity](using tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = {
+  def group[T <: Entity](implicit tag: ClassTag[T], decoder: Decoder[T]): Future[List[T]] = {
     runQuery(collectionGroup[T])
   }
 
-  def collectionGroup[T <: Entity](using tag: ClassTag[T]) = {
+  def collectionGroup[T <: Entity](implicit tag: ClassTag[T]) = {
     val key = makeKind(None)
     datastore.collectionGroup(key)
   }
@@ -143,15 +143,15 @@ object Storage extends StorageUtils {
 }
 
 trait StorageUtils{
-  def ref[T <: Entity](entity: T)(using tag: ClassTag[T]):Ref[T] = entity.key.fold(Ref[T](makeKind(None),entity.id,None))(x => Ref[T](x.entityName,x.id,entity.key))
+  def ref[T <: Entity](entity: T)(implicit tag: ClassTag[T]):Ref[T] = entity.key.fold(Ref[T](makeKind(None),entity.id,None))(x => Ref[T](x.entityName,x.id,entity.key))
 
-  def key[T <: Entity](entity:T)(using tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(None), entity.id))
+  def key[T <: Entity](entity:T)(implicit tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(None), entity.id))
 
-  def key[T <: Entity](id:String)(using tag: ClassTag[T]):Key = Key(None,makeKind(None), id)
+  def key[T <: Entity](id:String)(implicit tag: ClassTag[T]):Key = Key(None,makeKind(None), id)
   
-  def key[T <: Entity](parentKey:Option[Key], entity:T)(using tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(parentKey), entity.id))
+  def key[T <: Entity](parentKey:Option[Key], entity:T)(implicit tag: ClassTag[T]):Key = entity.key.getOrElse(Key(None,makeKind(parentKey), entity.id))
 
-  private[data] def makeKind[T](parent:Option[Key])(using tag: ClassTag[T]) = s"${parent.fold("")(x =>s"${x.key}/")}${tag.runtimeClass.getSimpleName.toLowerCase}"
+  private[data] def makeKind[T](parent:Option[Key])(implicit tag: ClassTag[T]) = s"${parent.fold("")(x =>s"${x.key}/")}${tag.runtimeClass.getSimpleName.toLowerCase}"
 
 
 }

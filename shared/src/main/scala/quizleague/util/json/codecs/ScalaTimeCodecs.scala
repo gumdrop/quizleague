@@ -6,33 +6,35 @@ import java.time._
 
 object ScalaTimeCodecs {
 
-  given Encoder[LocalDate] = Encoder.encodeString.contramap[LocalDate](_.toString)
 
-  given Decoder[LocalDate] = Decoder.decodeString.emap { str =>
+
+  implicit val encodeLocalDate: Encoder[LocalDate] = Encoder.encodeString.contramap[LocalDate](_.toString)
+
+  implicit val decodeLocalDate: Decoder[LocalDate] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(LocalDate.parse(str)).leftMap(t => "LocalDate")
   }
 
-  given Encoder[Year] = Encoder.encodeInt.contramap[Year](_.getValue)
+  implicit val encodeYear: Encoder[Year] = Encoder.encodeInt.contramap[Year](_.getValue)
 
-  given Decoder[Year] = Decoder.decodeInt.emap { str =>
+  implicit val decodeYear: Decoder[Year] = Decoder.decodeInt.emap { str =>
     Either.catchNonFatal(Year.of(str)).leftMap(t => "Year")
   }
   
-  given Encoder[LocalTime] = Encoder.encodeString.contramap[LocalTime](_.toString)
+  implicit val encodeLocalTime: Encoder[LocalTime] = Encoder.encodeString.contramap[LocalTime](_.toString)
 
-  given Decoder[LocalTime] = Decoder.decodeString.emap { str =>
+  implicit val decodeLocalTime: Decoder[LocalTime] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(LocalTime.parse(str)).leftMap(t => "LocalTime")
   }
   
-  given Encoder[Duration] = Encoder.encodeLong.contramap[Duration](_.getSeconds)
+  implicit val encodeDuration: Encoder[Duration] = Encoder.encodeLong.contramap[Duration](_.getSeconds)
 
-  given Decoder[Duration] = Decoder.decodeLong.emap { str =>
+  implicit val decodeDuration: Decoder[Duration] = Decoder.decodeLong.emap { str =>
     Either.catchNonFatal(Duration.ofSeconds(str)).leftMap(t => "Duration")
   }
     
-  given Encoder[LocalDateTime] = Encoder.encodeString.contramap[LocalDateTime](_.toString)
+  implicit val encodeLocalDateTime: Encoder[LocalDateTime] = Encoder.encodeString.contramap[LocalDateTime](_.toString)
 
-  given Decoder[LocalDateTime] = Decoder.decodeString.emap { str =>
+  implicit val decodeLocalDateTime: Decoder[LocalDateTime] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(LocalDateTime.parse(str)).leftMap(t => "LocalDateTime")
   }
 
