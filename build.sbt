@@ -68,6 +68,7 @@ lazy val server = (project in file("server"))
 lazy val devServer = taskKey[Unit]("copy test JS")
 lazy val prodServer = taskKey[Unit]("copy test JS")
 lazy val release = taskKey[Unit]("release to prod")
+lazy val releaseNoCache = taskKey[Unit]("release to prod with --nocache")
 lazy val releaseTest = taskKey[Unit]("release to test")
 lazy val prodClient = taskKey[Unit]("copy release JS")
 lazy val copyTestConnection = taskKey[Unit]("copy test connection file")
@@ -75,6 +76,7 @@ lazy val copyConnection = taskKey[Unit]("copy connection file")
 lazy val devClient = taskKey[Unit]("copy dev JS")
 lazy val buildAppFile = taskKey[Unit]("build app.yaml")
 lazy val releaseToProd = taskKey[Unit]("Execute the shell script")
+lazy val releaseToProdNoCache = taskKey[Unit]("Execute the shell script")
 lazy val releaseToTest = taskKey[Unit]("Execute the shell script")
 lazy val localClient= taskKey[Unit]("Build the dev client")
 lazy val buildClient= taskKey[Unit]("Build the prod client")
@@ -137,6 +139,10 @@ releaseToTest := {
 }
 
 releaseToProd := {
+  "gcloud beta app deploy server/app.yaml --quiet --project=chiltern-ql-firestore --no-cache"!
+}
+
+releaseToProdNoCache := {
   "gcloud app deploy server/app.yaml --quiet --project=chiltern-ql-firestore"!
 }
 
@@ -154,4 +160,12 @@ release := Def.sequential(
   Compile / prodClient,
   Compile / buildAppFile,
   releaseToProd
+).value
+
+releaseNoCache := Def.sequential(
+  copyConnection,
+  Compile / prodServer,
+  Compile / prodClient,
+  Compile / buildAppFile,
+  releaseToProdNoCache
 ).value

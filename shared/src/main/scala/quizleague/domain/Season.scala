@@ -4,7 +4,7 @@ import io.circe.Codec
 
 import java.time.Year
 
-import quizleague.util.json.codecs.ScalaTimeCodecs._
+import quizleague.util.json.codecs.ScalaTimeCodecs.*
 
 case class Season(
     id:String,
