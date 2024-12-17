@@ -52,7 +52,7 @@ object CalendarViewService extends SeasonWatchService{
       case _ => js.Array()
     }
 
-    def singletons = comps.map(cs => cs.flatMap(singletonEvents _))
+    def singletons = comps.map(cs => cs.flatMap(singletonEvents))
 
     def seasons = season.map(s => s.calendar.map(e => EventWrapper(e)))
 

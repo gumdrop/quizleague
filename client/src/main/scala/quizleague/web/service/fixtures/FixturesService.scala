@@ -61,7 +61,7 @@ trait FixturesPutService extends PutService[Fixtures] with FixturesGetService{
   def instance(competition:Competition, fixtures:js.Array[Fixtures]) = {
     
     def findNextDate(c:LeagueCompetition) = {
-      (fixtures.sortBy(_.date)(Desc)).headOption.map(x => LocalDate parse(x.date).plusWeeks(1)).getOrElse(dateToLocalDate(new Date(Date.now())))
+      (fixtures.sortBy(_.date)(Desc)).headOption.map(x => LocalDate `parse`(x.date).plusWeeks(1)).getOrElse(dateToLocalDate(new Date(Date.now())))
     }
     
     def weekText = s"Week ${fixtures.length + 1}"

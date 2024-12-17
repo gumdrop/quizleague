@@ -111,8 +111,8 @@ object CalendarComponent extends ItemComponentConfig[Season] with RouteComponent
     
     subscription("venues"){(c:facade) => venues()}
 
-    method("addEvent")({addEvent _}:js.ThisFunction)
-    method("deleteEvent")({deleteEvent _}:js.ThisFunction)
+    method("addEvent")({addEvent}:js.ThisFunction)
+    method("deleteEvent")({deleteEvent}:js.ThisFunction)
     
 }
     

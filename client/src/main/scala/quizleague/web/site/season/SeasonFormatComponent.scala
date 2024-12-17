@@ -9,7 +9,7 @@ trait SeasonFormatComponent {
 
   def formatSeason(season: js.UndefOr[Season]) = season.fold("")(s => SeasonFormat.format(s))
 
-  method("formatSeason")(formatSeason _)
+  method("formatSeason")(formatSeason)
 }
 
 object SeasonFormat{

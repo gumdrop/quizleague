@@ -88,7 +88,7 @@ object FixturesService extends FixturesGetService {
     competitionFixtures(CompetitionService.firstClassCompetitions(seasonId))
   }
 
-  def competitionFixtures(competitions:Observable[js.Array[_ <: Competition]]):Observable[js.Array[Fixtures]] = {
+  def competitionFixtures(competitions:Observable[js.Array[? <: Competition]]):Observable[js.Array[Fixtures]] = {
       val interim = competitions.map(_.map(c => FixturesService.list(c.key)))
 
       interim.flatMap(o => combineLatest(o.toSeq).map(_.toJSArray.flatten))

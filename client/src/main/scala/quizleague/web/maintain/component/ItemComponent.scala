@@ -28,14 +28,14 @@ trait ItemComponentConfig[T <: Model] extends Component{
   
   val paramName = "id"
 
-  val service:GetService[T] with PutService[T]
+  val service:GetService[T] & PutService[T]
   def parentKey(c:facade):String
   
   def editText(c:facade, textId:String) = {
       c.$router.push(s"/maintain/text/$textId")
   }
   
-  def obsFromParam[X <: Model](c:facade, param:String, service:GetService[X] with PutService[X] = service) = service.get(service.key(c.pkey,c.$route.params(param))).map(i => service.cache(i))
+  def obsFromParam[X <: Model](c:facade, param:String, service:GetService[X] & PutService[X] = service) = service.get(service.key(c.pkey,c.$route.params(param))).map(i => service.cache(i))
   def item(c:facade):Observable[T] = obsFromParam(c, paramName)
 
   def save(c:facade) = {
@@ -49,12 +49,12 @@ trait ItemComponentConfig[T <: Model] extends Component{
   
   subscription("item")(c => obsFromParam(c,paramName))
 
-  method("save")({save _}:js.ThisFunction)
-  method("cancel")({cancel _}:js.ThisFunction)
-  method("editText")({editText _}:js.ThisFunction)
+  method("save")({save}:js.ThisFunction)
+  method("cancel")({cancel}:js.ThisFunction)
+  method("editText")({editText}:js.ThisFunction)
 
   data("valid",false)
-  data("pkey")(parentKey _)
+  data("pkey")(parentKey)
 }
 
 @js.native
@@ -72,9 +72,9 @@ trait ItemListComponentConfig[T <: Model] extends Component{
  
   def sort(items:js.Array[T]) = items.sortBy(_.id)
   
-  val service:GetService[T] with PutService[T]
+  val service:GetService[T] & PutService[T]
   
-  subscription("items")(c => service.list().map(sort _))
+  subscription("items")(c => service.list().map(sort))
   
   method("add")({(c:facade) => {
     val i = service.instance()

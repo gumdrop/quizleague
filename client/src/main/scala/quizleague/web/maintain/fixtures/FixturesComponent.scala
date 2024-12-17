@@ -123,11 +123,11 @@ object FixturesComponent extends CompetitionComponentConfig{
     c.$router.back()
   }
 
-  method("addFixture")({addFixture _ }:js.ThisFunction)
-  method("setVenue")({setVenue _ }:js.ThisFunction)
-  method("unusedTeams")({unusedTeams _ }:js.ThisFunction)
-  method("save")({save _ }:js.ThisFunction)
-  method("removeFixture")({removeFixture _ }:js.ThisFunction)
+  method("addFixture")({addFixture }:js.ThisFunction)
+  method("setVenue")({setVenue }:js.ThisFunction)
+  method("unusedTeams")({unusedTeams }:js.ThisFunction)
+  method("save")({save }:js.ThisFunction)
+  method("removeFixture")({removeFixture }:js.ThisFunction)
   
   subscription("fxs")(c => obsFromParam(c,"fixturesId", FixturesService))
   subscription("fixtures")(c => obsFromParam(c,"fixturesId", FixturesService).flatMap(_.fixture))
@@ -201,9 +201,9 @@ object FixtureComponent extends Component{
   //subscription("fx")(c => c.fixture.obs.map(f => FixtureService.cache(f)).map(x => {c.teamManager.take(x.home);c.teamManager.take(x.away);x}))
   
 
-  method("editText")({editText _ }:js.ThisFunction)
-  method("addResult")({addResult _ }:js.ThisFunction)
-  method("save")({save _})
+  method("editText")({editText }:js.ThisFunction)
+  method("addResult")({addResult }:js.ThisFunction)
+  method("save")({save})
 
 }
     

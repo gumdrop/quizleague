@@ -9,10 +9,10 @@ import com.felstar.scalajs.vue.VuetifyComponent
 
 trait GridSizeComponentConfig extends Component{
   
-  type facade <: VueRxComponent with VuetifyComponent
+  type facade <: VueRxComponent & VuetifyComponent
   
   def gridSize(c:facade) = js.Dictionary("grid-list-sm" -> c.$vuetify.breakpoint.xsOnly, "grid-list-lg" -> c.$vuetify.breakpoint.mdAndUp)
-  computed("gridSize")({gridSize _}:js.ThisFunction)
+  computed("gridSize")({gridSize}:js.ThisFunction)
 
 }
 

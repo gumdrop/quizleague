@@ -55,7 +55,7 @@ object GlobalTextComponent extends ItemComponentConfig[GlobalText] with RouteCom
   
   def sort(c:facade, entries:js.Array[TextEntry]) = entries.sortBy(_.name)
 
-  method("sort")({sort _}:js.ThisFunction)
+  method("sort")({sort}:js.ThisFunction)
   method("add")({ (c: facade) =>
       {
         val i = service.entryInstance()

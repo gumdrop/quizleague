@@ -31,7 +31,7 @@ trait ChatComponent extends VueRxComponent {
 }
 
 object ChatComponent extends Component with DialogComponentConfig{
-  type facade = ChatComponent with DialogComponent
+  type facade = ChatComponent & DialogComponent
   val name = "ql-chat"
   val template = """
   <fragment v-if="chat" >

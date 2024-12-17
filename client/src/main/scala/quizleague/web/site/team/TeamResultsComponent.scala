@@ -27,7 +27,7 @@ object TeamResultsPage extends RouteComponent with GridSizeComponentConfig {
 
 object TeamResultsComponent extends Component {
   
-  type facade = SeasonIdComponent with IdComponent
+  type facade = SeasonIdComponent & IdComponent
   val name = "ql-all-team-results"
   val template = """<ql-fixtures-simple :fixtures="fixtures(id,seasonId)" :inlineDetails="true"></ql-fixtures-simple>"""
   method("fixtures")((teamId:String,seasonId:String) => FixtureService.teamResults(teamId, seasonId))

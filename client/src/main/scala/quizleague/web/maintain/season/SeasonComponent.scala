@@ -83,10 +83,10 @@ object SeasonComponent extends ItemComponentConfig[Season] with RouteComponent {
     }
 
   subscription("competitions")((c:facade) => item(c).flatMap(_.competition))
-  method("removeCompetition")({removeCompetition _}:js.ThisFunction)
-  method("addCompetition")({addCompetition _}:js.ThisFunction)
-  method("calendar")({calendar _}:js.ThisFunction)
-  method("editCompetition")({editCompetition _}:js.ThisFunction)
+  method("removeCompetition")({removeCompetition}:js.ThisFunction)
+  method("addCompetition")({addCompetition}:js.ThisFunction)
+  method("calendar")({calendar}:js.ThisFunction)
+  method("editCompetition")({editCompetition}:js.ThisFunction)
 
   data("types",CompetitionType.values.map(_.toString()).toJSArray)
   data("selectedType",null)

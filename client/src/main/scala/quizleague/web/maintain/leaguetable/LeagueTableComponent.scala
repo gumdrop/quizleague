@@ -140,11 +140,11 @@ object LeagueTableComponent extends ItemComponentConfig[LeagueTable] with RouteC
 
   def teams() = SelectUtils.model[Team](FilteredTeamService)(_.name)
 
-  method("unusedTeams")({unusedTeams _ }:js.ThisFunction)
-  method("addRow")({addRow _ }:js.ThisFunction)
-  method("removeRow")({removeRow _ }:js.ThisFunction)
-  method("sort")({sort _ }:js.ThisFunction)
-  method("recalculate")({recalculate _ }:js.ThisFunction)
+  method("unusedTeams")({unusedTeams }:js.ThisFunction)
+  method("addRow")({addRow }:js.ThisFunction)
+  method("removeRow")({removeRow }:js.ThisFunction)
+  method("sort")({sort }:js.ThisFunction)
+  method("recalculate")({recalculate }:js.ThisFunction)
 
       
   data("teamManager",null)

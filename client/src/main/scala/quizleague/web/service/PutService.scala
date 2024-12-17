@@ -14,7 +14,7 @@ import rxscalajs.subjects.ReplaySubject
 import quizleague.web.store.Storage.*
 
 trait PutService[T <: Model] {
-  this: GetService[T] with ComponentNames=>
+  this: GetService[T] & ComponentNames=>
 
   type U <: Entity
  

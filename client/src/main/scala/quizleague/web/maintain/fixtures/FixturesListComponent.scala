@@ -50,6 +50,6 @@ object FixturesListComponent extends CompetitionComponentConfig with FixturesNam
   
   subscription("fs")(c => item(c).flatMap(_.fixtures).map(_.sortBy(_.date)))
 
-  method("add")({add _}:js.ThisFunction)
+  method("add")({add}:js.ThisFunction)
 }
     

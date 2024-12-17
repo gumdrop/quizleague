@@ -11,7 +11,7 @@ object CalendarEndpoints {
 
     private val root = "/calendar"
     def configure(app:Application):Application = {
-        app.get(s"$root/team/:teamId", getTeamCalendar _)
+        app.get(s"$root/team/:teamId", getTeamCalendar)
     }
 
     private def getTeamCalendar(req: Request, res: Response):Unit = param("teamId",req)

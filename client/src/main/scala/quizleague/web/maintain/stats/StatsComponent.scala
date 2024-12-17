@@ -54,7 +54,7 @@ object StatsComponent extends RouteComponent{
   data("complete",false)
   data("resultText","Not yet uploaded")
   data("season", null)
-  method("regenerate")({regenerate _}:js.ThisFunction)
+  method("regenerate")({regenerate}:js.ThisFunction)
   subscription("seasons")(c => seasons())
   
 }

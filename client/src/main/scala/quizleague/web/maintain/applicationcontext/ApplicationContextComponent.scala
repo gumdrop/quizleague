@@ -102,8 +102,8 @@ object ApplicationContextComponent extends ItemComponentConfig[ApplicationContex
    subscription("textSets"){c => textSets()}
    subscription("seasons"){c => seasons()}
 
-   method("removeAlias")({removeAlias _}:js.ThisFunction)
-   method("addAlias")({addAlias _}:js.ThisFunction)
+   method("removeAlias")({removeAlias}:js.ThisFunction)
+   method("addAlias")({addAlias}:js.ThisFunction)
 
    data("user",null)
    data("alias",null)

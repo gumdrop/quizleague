@@ -142,9 +142,9 @@ object SiteComponent extends Component {
   subscription("sidemenu")(c => SiteService.sidemenu)
   subscription("user")(c => LoginService.userProfile)
   computedGetSet("drawer")({
-    drawerGet _
+    drawerGet
   }: js.ThisFunction)({
-    drawerSet _
+    drawerSet
   }: js.ThisFunction)
 
   def menuItem(name: String, to: String, icon: String) = $(name = name, to = to, icon = icon)

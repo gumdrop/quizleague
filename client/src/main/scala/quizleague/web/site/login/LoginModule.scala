@@ -30,13 +30,13 @@ object LoginModule extends Module{
   override val routes = @@(
     RouteConfig(path = "/login",
       components = Map("default" -> {() => js.dynamicImport{LoginPage}}, "title" -> title),
-      beforeEnter = LoginService.noAuthRouteGuard _),
+      beforeEnter = LoginService.noAuthRouteGuard),
     RouteConfig(path = "/login/signin",
       components = Map("default" -> {() => js.dynamicImport{LoginCheckComponent}}, "title" -> title),
-      beforeEnter = LoginService.noAuthRouteGuard _),
+      beforeEnter = LoginService.noAuthRouteGuard),
     RouteConfig(path = "/login/profile",
       components = Map("default" -> {() => js.dynamicImport{ProfileEditComponent}}, "title" -> {() => js.dynamicImport{ProfileEditTitleComponent}}),
-      beforeEnter = LoginService.routeGuard _),
+      beforeEnter = LoginService.routeGuard),
     RouteConfig(path = "/login/failed",
       components = Map("default" -> {() => js.dynamicImport{LoginFailedComponent}}, "title" -> title))
   )
@@ -194,7 +194,7 @@ object LoginService{
 
   private def toObservable[T](promise:js.Promise[T]) = {
     val subject = ReplaySubject[T]()
-    promise.`then`(subject.next _).`catch`(e => subject.error(e.asInstanceOf[js.Any]))
+    promise.`then`(subject.next).`catch`(e => subject.error(e.asInstanceOf[js.Any]))
     subject.take(1)
   }
 

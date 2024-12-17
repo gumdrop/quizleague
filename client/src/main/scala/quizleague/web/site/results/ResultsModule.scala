@@ -33,11 +33,11 @@ object ResultsModule extends Module {
     RouteConfig(
       path = "/results/submit/instructions",
       components = Map("default" -> {() => js.dynamicImport{SubmitResultsInstructionsComponent}},  "sidenav" -> menu, "title" -> {() => js.dynamicImport{SubmitResultsTitleComponent}}),
-      beforeEnter = LoginService.noAuthRouteGuard _),
+      beforeEnter = LoginService.noAuthRouteGuard),
     RouteConfig(
       path = "/results/submit",
       components = Map("default" -> {() => js.dynamicImport{SubmitResultsComponent}},  "sidenav" -> menu, "title" -> {() => js.dynamicImport{SubmitResultsTitleComponent}}),
-      beforeEnter = LoginService.routeGuard _),
+      beforeEnter = LoginService.routeGuard),
 
     RouteConfig(path = "/results", redirect = "/results/all"))
 

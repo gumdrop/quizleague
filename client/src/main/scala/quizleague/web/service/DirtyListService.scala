@@ -5,7 +5,7 @@ import quizleague.web.model.{Key, Model}
 import rxscalajs.Observable
 
 trait DirtyListService[T <: Model] extends PutService[T] {
-  this: GetService[T] with ComponentNames =>
+  this: GetService[T] & ComponentNames =>
 
   var dirtyKeys = Set[Key]()
   var deleteKeys = Set[Key]()
@@ -47,7 +47,7 @@ trait DirtyListService[T <: Model] extends PutService[T] {
 
   def saveAllDirty() = {
     dirtyKeys.map(k => getDom(k.id)).foreach { save(_) }
-    deleteKeys.foreach {doDelete _}
+    deleteKeys.foreach {doDelete}
     deleteKeys = Set()
     deleteKeys = Set()
   }

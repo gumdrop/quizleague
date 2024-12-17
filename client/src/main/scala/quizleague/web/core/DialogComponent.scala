@@ -18,7 +18,7 @@ trait DialogComponentConfig extends Component{
   def dialogSize(c:facade) = js.Dictionary("fullscreen" -> c.$vuetify.breakpoint.smAndDown)
   
   prop("show")
-  computed("dialogSize")({dialogSize _}:js.ThisFunction)
+  computed("dialogSize")({dialogSize}:js.ThisFunction)
   watch("show")((c:facade, a:js.Any) => c.$emit("show",c.show))
   method("close")({(c:facade) => c.show = false}:js.ThisFunction)
 }

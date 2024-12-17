@@ -19,7 +19,7 @@ object AllFixturesPage extends RouteComponent{
 
 object AllFixturesComponent extends Component with GridSizeComponentConfig{
   val name = "ql-all-fixtures"
-  type facade = SeasonIdComponent with VuetifyComponent
+  type facade = SeasonIdComponent & VuetifyComponent
   val template = """
     <v-container v-if="fixtures" v-bind="gridSize" fluid>
     <v-layout column>

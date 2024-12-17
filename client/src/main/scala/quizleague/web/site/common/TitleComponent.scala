@@ -26,6 +26,6 @@ object TitleComponent extends Component{
     
   }
   subscription("leagueName")(c => ApplicationContextService.get().map(_.leagueName))
-  method("setTitle")({setTitle _}:js.ThisFunction)
+  method("setTitle")({setTitle}:js.ThisFunction)
       
 }

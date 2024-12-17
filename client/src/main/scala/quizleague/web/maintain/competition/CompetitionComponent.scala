@@ -51,10 +51,10 @@ trait CompetitionComponentConfig extends ItemComponentConfig[Competition] with R
 
   subscription("season"){(c:facade) => SeasonService.get(c.$route.params("seasonId"))}
   
-  method("fixtures")({fixtures _}:js.ThisFunction)
-  method("toTable")({toTable _}:js.ThisFunction)
-  method("removeTable")({removeTable _}:js.ThisFunction)
+  method("fixtures")({fixtures}:js.ThisFunction)
+  method("toTable")({toTable}:js.ThisFunction)
+  method("removeTable")({removeTable}:js.ThisFunction)
   subscription("tables")(c => item(c).flatMap(_.leaguetable))
-  method("addTable")({addTable _}:js.ThisFunction)
+  method("addTable")({addTable}:js.ThisFunction)
   
 }
