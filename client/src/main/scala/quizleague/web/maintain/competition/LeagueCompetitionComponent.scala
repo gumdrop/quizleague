@@ -54,7 +54,7 @@ object LeagueCompetitionComponent extends CompetitionComponentConfig{
   }
   
   def subsidiaries(seasonId:String):Observable[js.Array[Competition]] = {
-    SeasonService.get(seasonId).flatMap(_.competition.map(_.filter(filterSubs _)))
+    SeasonService.get(seasonId).flatMap(_.competition.map(_.filter(filterSubs)))
   }
   
   def copyFixturesToSubsidiary(c:facade, item:LeagueCompetition, subsidiary:LeagueCompetition) = {
@@ -67,7 +67,7 @@ object LeagueCompetitionComponent extends CompetitionComponentConfig{
   data("showProgress", false)
   data("subsidiary", null)
   subscription("subsidiaries")(c => subsidiaries(c.$route.params("seasonId")))
-  method("copyFixturesToSubsidiary")({copyFixturesToSubsidiary _}:js.ThisFunction)
+  method("copyFixturesToSubsidiary")({copyFixturesToSubsidiary}:js.ThisFunction)
   
  
 

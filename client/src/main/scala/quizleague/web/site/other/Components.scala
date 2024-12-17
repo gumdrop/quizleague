@@ -169,9 +169,9 @@ object AliasContactDialog extends Component with DialogComponentConfig{
   data("email","")
   data("text","")
   data("valid",false)
-  method("submit")({submit _}:js.ThisFunction)
-  method("required")(required _)
-  method("isEmail")(isEmail _)
+  method("submit")({submit}:js.ThisFunction)
+  method("required")(required)
+  method("isEmail")(isEmail)
 
 }
 

@@ -62,8 +62,8 @@ object VenueComponent extends Component with GridSizeComponentConfig{
   props("id")
   subscription("venue","id")(v => VenueService.get(v.id))
   method("lineBreaks")((s: String) => s.replaceAll("\\n", "<br>"))
-  method("embeddedUrl")(embeddedUrl _)
-  method("linkUrl")(linkUrl _)
+  method("embeddedUrl")(embeddedUrl)
+  method("linkUrl")(linkUrl)
 
 
 }

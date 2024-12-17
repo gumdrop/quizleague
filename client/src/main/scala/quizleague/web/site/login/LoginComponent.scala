@@ -98,8 +98,8 @@ object LoginPage extends RouteComponent with NoSideMenu{
   }
 
   data("email", null)
-  method("login"){login _:js.ThisFunction}
-  method("doPasswordLogin"){passwordLogin _:js.ThisFunction}
+  method("login"){login:js.ThisFunction}
+  method("doPasswordLogin"){passwordLogin:js.ThisFunction}
 
 
   
@@ -156,8 +156,8 @@ object PasswordLoginComponent extends Component{
   prop("email")
   prop("forward")
   prop("registered")
-  method("register"){register _:js.ThisFunction}
-  method("login"){login _ :js.ThisFunction}
+  method("register"){register:js.ThisFunction}
+  method("login"){login :js.ThisFunction}
 }
 
 object LoginTitleComponent extends RouteComponent{
@@ -181,7 +181,7 @@ object LoginCheckComponent extends RouteComponent with NoSideMenu{
 
   val template = """<v-layout align-center justify-center row fill-height style="font-size:72pt;opacity:0.6;">Please Wait...{{check($route.query.forward)}}</v-layout>"""
 
-  method("check"){LoginService.check _ :js.ThisFunction}
+  method("check"){LoginService.check :js.ThisFunction}
 
 
 }
@@ -202,7 +202,7 @@ trait ProfileEditComponent extends VueRxComponent{
 }
 object ProfileEditComponent extends RouteComponent with NoSideMenu with GridSizeComponentConfig{
 
-  override type facade = ProfileEditComponent with LoginPage with VueRxComponent with VuetifyComponent
+  override type facade = ProfileEditComponent & LoginPage & VueRxComponent & VuetifyComponent
 
   val template="""
 <v-container v-bind="gridSize" fluid>

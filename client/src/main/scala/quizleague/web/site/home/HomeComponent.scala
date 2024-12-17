@@ -96,7 +96,7 @@ object HomePageTabsComponent extends Component {
     components(HomePageLeagueTable, NextFixturesComponent, LatestResultsComponent, EventsComponent)
     data("activeTab", 0)
     data("tabsHandle", null)
-    method("haltTabs")({haltTabs _}:js.ThisFunction)
+    method("haltTabs")({haltTabs}:js.ThisFunction)
 
     subscription("appData")(_ => ApplicationContextService.get())
 
@@ -104,7 +104,7 @@ object HomePageTabsComponent extends Component {
 
     def haltTabs(c: facade) = clearInterval(c.tabsHandle)
 
-    override val beforeDestroy = {haltTabs _}:js.ThisFunction
+    override val beforeDestroy = {haltTabs}:js.ThisFunction
 
     override val mounted = {(c:facade) => {
       c.tabsHandle = setInterval(5000)(nextTab(c))
@@ -226,5 +226,5 @@ object HomePageLeagueTable extends Component{
   subscription("tables", "seasonId")(c => LeagueTableService.leagueTables(c.seasonId).map(_.map(_.key)))
   
   def justify(c: facade) = $("justify-space-around" -> "$vuetify.breakpoint.smAndUp")
-  computed("justify")({ justify _ }: js.ThisFunction)
+  computed("justify")({ justify }: js.ThisFunction)
 }

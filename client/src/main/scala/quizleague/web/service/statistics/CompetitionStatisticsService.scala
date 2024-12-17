@@ -31,7 +31,7 @@ trait CompetitionStatisticsGetService extends GetService[CompetitionStatistics] 
     new CompetitionStatistics(
       s.id,
       s.competitionName,
-      s.results.map(toModel _).toJSArray)
+      s.results.map(toModel).toJSArray)
 
   private def toModel(e:DomResultEntry):ResultEntry = new ResultEntry(
     e.seasonText.getOrElse(null),
@@ -57,7 +57,7 @@ trait CompetitionStatisticsPutService extends PutService[CompetitionStatistics] 
     teamService.refOption(s.team),
     s.position)
 
-  protected def mapIn(s: CompetitionStatistics) = Dom(s.id, s.competitionName, s.results.map(toDom _).toList )
+  protected def mapIn(s: CompetitionStatistics) = Dom(s.id, s.competitionName, s.results.map(toDom).toList )
   override protected def make() = withKey(Dom(newId, "", List()), null)
 
   override def enc(item: Dom) = item.asJson

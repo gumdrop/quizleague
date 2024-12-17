@@ -73,12 +73,12 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
   
   def getFixtures(c:facade, user:LoggedInUser) = {
     c.showProgress = true
-    FixtureService.fixturesForResultSubmission(user.team.id).subscribe(handleFixtures(c) _)
+    FixtureService.fixturesForResultSubmission(user.team.id).subscribe(handleFixtures(c))
   }
   
   def handleFixtures(c:facade)(fixtures:js.Array[Fixture]):Unit = {
     c.hasResults = fixtures.exists(_.result != null)
-    c.fixtures = if(c.hasResults) fixtures else fixtures.map(Fixture.addBlankResult _)
+    c.fixtures = if(c.hasResults) fixtures else fixtures.map(Fixture.addBlankResult)
     c.showProgress = false
   }
   
@@ -110,11 +110,11 @@ object SubmitResultsComponent extends RouteComponent with DialogComponentConfig{
   subscription("appData")(c => ApplicationContextService.get())
   subscription("user")(c => LoginService.userProfile)
 
-  method("submit")({submit _}:js.ThisFunction)
-  method("preSubmit")({preSubmit _}:js.ThisFunction)
-  method("cancel")({cancel _}:js.ThisFunction)
-  method("required")(Functions.required _)
-  method("getFixtures")({getFixtures _}:js.ThisFunction)
+  method("submit")({submit}:js.ThisFunction)
+  method("preSubmit")({preSubmit}:js.ThisFunction)
+  method("cancel")({cancel}:js.ThisFunction)
+  method("required")(Functions.required)
+  method("getFixtures")({getFixtures}:js.ThisFunction)
   data("hasResults",false)
   data("fixtures", js.Array())
   data("reportText",null)

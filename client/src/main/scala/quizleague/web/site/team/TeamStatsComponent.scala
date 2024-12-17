@@ -139,10 +139,10 @@ object TeamStatsAllSeasonsComponent extends Component{
 trait GraphSizeComponentConfig extends Component{
   import js.DynamicImplicits._
   
-  type facade <: VueRxComponent with VuetifyComponent
+  type facade <: VueRxComponent & VuetifyComponent
   
   def width(c:facade) = if(c.$vuetify.breakpoint.xsOnly) "300px" else "400px"
-  computed("width")({width _}:js.ThisFunction)
+  computed("width")({width}:js.ThisFunction)
 
 }
 
@@ -410,7 +410,7 @@ object HeadToHeadComponent extends Component{
       js.Array(c.teamId).concat
         (c.chips
         .map(_.value.id))
-        .map(StatisticsService.allTeamStats _)
+        .map(StatisticsService.allTeamStats)
         .toSeq)
     .map(_.toJSArray)
 
@@ -423,9 +423,9 @@ object HeadToHeadComponent extends Component{
 
   subscription("stats","teamId")( c => StatisticsService.allTeamStats(c.teamId))
   subscription("teams")(c => SelectUtils.model[Team](TeamService)(_.name).map(_.filter(_.value.id != c.teamId)))
-  subscription("allSeasons", "chips")(allSeasons _)
+  subscription("allSeasons", "chips")(allSeasons)
 
-  method("remove")({remove _}:js.ThisFunction)
+  method("remove")({remove}:js.ThisFunction)
 }
 
 
@@ -492,7 +492,7 @@ object HeadToHeadAverageScoreComponent extends Component with GraphSizeComponent
 trait HeadToHeadResultsComponent extends VueRxComponent with VuetifyComponent{
   val stats:js.Array[Statistics]
   val teams:js.Array[SelectWrapper[Team]]
-  var rows:js.Array[_]
+  var rows:js.Array[?]
 }
 
 object HeadToHeadResultsComponent extends Component with GraphSizeComponentConfig{
@@ -527,7 +527,7 @@ object HeadToHeadResultsComponent extends Component with GraphSizeComponentConfi
   private def filter(c:facade):js.Array[HeadToHead] = c.stats
     .flatMap(_.seasonStats.headToHead)
     .groupBy(_.team.id).filter(h => c.teams.exists(_.value.id == h._1))
-    .values.map(_.fold(new HeadToHead(null,0,0,0))((h1:HeadToHead,h2:HeadToHead) => h1 plus h2)).toJSArray
+    .values.map(_.fold(new HeadToHead(null,0,0,0))((h1:HeadToHead,h2:HeadToHead) => h1 `plus` h2)).toJSArray
 
   private def items(items:js.Array[HeadToHead]) = Observable.combineLatest(items.map(x => x.team.obs.map(t => literal(team=t.shortName, win=x.win,lose=x.lose,draw=x.draw))).toSeq).map(_.toJSArray)
 

@@ -62,7 +62,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
 
   //val LOG: Logger = Logger.getLogger(this.getClass.getName)
   
-  val cache = Map(stats.map(s => (s.team.id,s)): _*)
+  val cache = Map(stats.map(s => (s.team.id,s))*)
 
   def doIt:Future[List[Statistics]] = {
     //LOG.warning("starting doit")
@@ -101,7 +101,7 @@ class StatsWorker(fixture: Fixture, date:LocalDate, season: Season, tables: List
       comp <- StatsWorker.leagueComp(season)
       tables <- list[LeagueTable](comp.key)
     } yield {
-      val table = tables.filter(_.rows.exists(_.team.id == team.id)).map(ref _).head
+      val table = tables.filter(_.rows.exists(_.team.id == team.id)).map(ref).head
       cache.getOrElseUpdate(team.id, Statistics(uuid().toString, team, Ref[Season]("season", season.id), table))
     }
   }

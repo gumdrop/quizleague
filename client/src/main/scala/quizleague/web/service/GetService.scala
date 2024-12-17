@@ -30,7 +30,7 @@ trait GetService[T <: Model] {
   private var listObservables: Map[String, Observable[js.Array[U]]] = Map()
 
   def get(id: String): Observable[T] = get(key(id))
-  def get(key: ModKey): Observable[T] = items.get(key.id).fold(getFromStorage(key).map(mapOutWithKey _).map(postProcess _))(Observable.just(_))
+  def get(key: ModKey): Observable[T] = items.get(key.id).fold(getFromStorage(key).map(mapOutWithKey).map(postProcess))(Observable.just(_))
   def getRO(id: String): RefObservable[T] =  getRefObs(id)
   def getRO(key:Key) = getRefObs(key)
   def key(id:String):ModKey = key(null,id)
@@ -42,7 +42,7 @@ trait GetService[T <: Model] {
   def list(parentKey:Option[Key]): Observable[js.Array[T]] = list(parentKey.map(k => ModKey(k.key)).getOrElse(null))
   def list(parentKey:ModKey=null): Observable[js.Array[T]] = listFromStorage(parentKey).map(c => c.map(u => mapOutWithKey(u)))
   def groupQuery():Query = collectionGroup(uriRoot)
-  protected def runQuery(query:Query):Observable[js.Array[T]] = listFromQuery(query).map(_.map(mapOutWithKey _))
+  protected def runQuery(query:Query):Observable[js.Array[T]] = listFromQuery(query).map(_.map(mapOutWithKey))
 
   def flush() = items.clear()
 
@@ -59,7 +59,7 @@ trait GetService[T <: Model] {
 
       onSnapshot(query, subject.inner)
 
-      subject.map(q => q.docs.map(d => dec(d.data()).fold(e => {throw e}, u => u.withKey(Key(d.ref.path))))).map(_.filter(filterList _))
+      subject.map(q => q.docs.map(d => dec(d.data()).fold(e => {throw e}, u => u.withKey(Key(d.ref.path))))).map(_.filter(filterList))
    
   }
 

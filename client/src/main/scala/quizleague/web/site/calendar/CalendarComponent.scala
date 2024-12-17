@@ -20,7 +20,7 @@ object CalendarPage extends RouteComponent with NoSideMenu{
 }
 
 object CalendarComponent extends Component with GridSizeComponentConfig{
-  type facade = SeasonIdComponent with VuetifyComponent
+  type facade = SeasonIdComponent & VuetifyComponent
   val name = "ql-calendar" 
   val template = """
   <v-container v-bind="gridSize" class="ql-calendar" fluid >
@@ -65,18 +65,18 @@ object CalendarComponent extends Component with GridSizeComponentConfig{
   subscription("items", "seasonId")(c => CalendarViewService.events(c.seasonId))
   subscription("viewType")(c => CalendarViewService.viewType)
   components(FixturesEventComponent,CalendarEventComponent,CompetitionEventComponent, CalendarCalendarComponent)
-  method("colour"){colour _}
-  method("icon"){icon _}
+  method("colour"){colour}
+  method("icon"){icon}
 
   def dense(c:facade) = js.Dictionary("dense" -> c.$vuetify.breakpoint.xsOnly)
-  computed("dense")({dense _}:js.ThisFunction)
+  computed("dense")({dense}:js.ThisFunction)
   
 }
 
 
 object CalendarCalendarComponent extends Component{
 
-  type facade = SeasonIdComponent with VuetifyComponent
+  type facade = SeasonIdComponent & VuetifyComponent
 
   val name = "ql-calendar-calendar"
 
@@ -166,8 +166,8 @@ object CalendarCalendarComponent extends Component{
 
   subscription( "dateMap", "seasonId")(c => CalendarViewService.calendarEvents(c.seasonId))
 
-  method("colour"){CalendarComponent.colour _}
-  method("icon"){CalendarComponent.icon _}
+  method("colour"){CalendarComponent.colour}
+  method("icon"){CalendarComponent.icon}
 
   components(FixturesEventComponent,CalendarEventComponent,CompetitionEventComponent)
 }

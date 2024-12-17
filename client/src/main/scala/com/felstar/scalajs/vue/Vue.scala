@@ -30,7 +30,7 @@ class Vue extends js.Object {
   val $value: js.Any = js.native
   val $slots: js.Dynamic = js.native
   // Data
-  type Callback = js.Function2[_, _, Unit]
+  type Callback = js.Function2[?, ?, Unit]
   def $watch(expOrFn: js.Any, callback: js.Function): Unwatch = js.native
   def $watch(expOrFn: js.Any, callback: Callback): Unwatch = js.native
   def $watch(expOrFn: js.Any, callback: Callback, options: js.Any): Unwatch = js.native
@@ -136,8 +136,8 @@ trait VueComponent extends Vue {
 @js.native
 trait VueRxComponent extends VueComponent {
   
-  def $subscribeTo[A](obs:ObservableFacade[_], fn:js.Function):Unit = js.native
-  def $subscribeTo[A](obs:ObservableFacade[_], sub:ObservableFacade[_]):Unit = js.native
+  def $subscribeTo[A](obs:ObservableFacade[?], fn:js.Function):Unit = js.native
+  def $subscribeTo[A](obs:ObservableFacade[?], sub:ObservableFacade[?]):Unit = js.native
   
   def $watchAsObservable(exp:String, options:js.Any):ObservableFacade[js.Any] = js.native
   def $watchAsObservable(exp:String):ObservableFacade[js.Any] = js.native

@@ -37,9 +37,9 @@ object LeagueTableRecalculator
       table.copy(rows = newRows).withKey(table.key)
     }  
     
-    val rows:List[LeagueTableRow] = fixtures.flatMap(makeRows _)
+    val rows:List[LeagueTableRow] = fixtures.flatMap(makeRows)
     
-    tables.map(applyRows(rows) _)
+    tables.map(applyRows(rows))
     
 
     

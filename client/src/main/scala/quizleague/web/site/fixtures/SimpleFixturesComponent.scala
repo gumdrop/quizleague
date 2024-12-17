@@ -58,7 +58,7 @@ trait FixtureLineComponent extends VueRxComponent {
 }
 
 object FixtureLineComponent extends Component with TableUtils with DialogComponentConfig{
-  type facade = FixtureLineComponent with VuetifyComponent with DialogComponent
+  type facade = FixtureLineComponent & VuetifyComponent & DialogComponent
   val name = "ql-fixture-line"
   val template = s"""
         <fragment>
@@ -130,7 +130,7 @@ object FixtureLineComponent extends Component with TableUtils with DialogCompone
   prop("inlineDetails")
   subscription("parent")(_.fixture.parent)
   subscription("reports")(c => if(c.fixture.result != null) c.fixture.result.report else Observable.just(js.Array()))
-  method("nameClass")(nameClass _ )
+  method("nameClass")(nameClass )
   method("filter")((home:Team, away:Team) => s"#${home.handle}vs${away.handle}")
 
  }

@@ -23,7 +23,7 @@ object AllResultsPage extends RouteComponent{
 
 object AllResultsComponent extends Component with GridSizeComponentConfig{
   val name = "ql-all-results"
-  type facade = SeasonIdComponent with VuetifyComponent
+  type facade = SeasonIdComponent & VuetifyComponent
   val template = """
     <v-container v-bind="gridSize" fluid>
     <v-layout column  v-if="fixtures">

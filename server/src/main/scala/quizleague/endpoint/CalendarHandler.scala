@@ -52,7 +52,7 @@ UID:${event.date}.$uidPart.chilternquizleague.uk
 DESCRIPTION:$text
 SUMMARY:$text
 DTSTART:${toUtc(event.date.atTime(event.time))}
-DTEND:${toUtc(event.date.atTime(event.time plus event.duration))}
+DTEND:${toUtc(event.date.atTime(event.time `plus` event.duration))}
 ${venue.map(v => s"""LOCATION:${v.name}, $address""").getOrElse("")}
 END:VEVENT
 """
@@ -84,7 +84,7 @@ UID:${fixtures.date}.$uidPart.chilternquizleague.uk
 DESCRIPTION:$text
 SUMMARY:$text
 DTSTART:${toUtc(fixtures.date.atTime(fixtures.start))}
-DTEND:${toUtc(fixtures.date.atTime(fixtures.start plus duration(competition)))}
+DTEND:${toUtc(fixtures.date.atTime(fixtures.start `plus` duration(competition)))}
 ${venue.map(v => s"""LOCATION:${v.name}, $address""").getOrElse("")}
 END:VEVENT
 """
@@ -101,7 +101,7 @@ UID:${fixtures.date}.$uidPart.chilternquizleague.uk
 DESCRIPTION:${description} ${fixtures.description}
 SUMMARY:${description} ${fixtures.description}
 DTSTART:${toUtc(fixtures.date.atTime(fixtures.start))}
-DTEND:${toUtc(fixtures.date.atTime(fixtures.start plus duration(competition)))}
+DTEND:${toUtc(fixtures.date.atTime(fixtures.start `plus` duration(competition)))}
 END:VEVENT
 """
 
@@ -131,7 +131,7 @@ END:VEVENT
         )
       }
 
-        var teamFixtures:List[(Competition with TeamCompetition, Fixtures, List[Fixture])] = List()
+        var teamFixtures:List[(Competition & TeamCompetition, Fixtures, List[Fixture])] = List()
 
         val t = team
         val gap = await{applicationContext()}

@@ -83,9 +83,9 @@ object FixturesService extends FixturesGetService with FixturesPutService{
      fixtures.map(_.map(fxs => {
        val fixtures1 = copy(fxs, competition.key)
        val saved1 = save(fixtures1).map(Seq(_))
-       val saved2 = fxs.fixture.map(_.map(f => copyFixture(f, fixtures1))).map(_.toSeq).map(combineLatest _).flatten
+       val saved2 = fxs.fixture.map(_.map(f => copyFixture(f, fixtures1))).map(_.toSeq).map(combineLatest).flatten
        combineLatest(Seq(saved1,saved2))
-     }).toSeq).map(combineLatest _).flatten.map(_.flatten.flatten)
+     }).toSeq).map(combineLatest).flatten.map(_.flatten.flatten)
 
   }
 

@@ -136,7 +136,7 @@ object Storage extends StorageUtils {
 
   private def promiseToFuture[T](fbPromise:FBPromise[T]) = {
     val promise = Promise[T]()
-    fbPromise.`then`(promise.success _)
+    fbPromise.`then`(promise.success)
     promise.future
  }
   

@@ -28,7 +28,7 @@ object ChartComponent extends Component{
   
   def createChart(c:facade) = c.chart = new Chart(c.$refs.chart, ChartParam(c.`type`, c.options, c.data))
   
-  method("createChart")({createChart _}:js.ThisFunction)
+  method("createChart")({createChart}:js.ThisFunction)
   
   override val mounted = ({(c:facade) => createChart(c)}:js.ThisFunction)
   override val beforeDestroy = ({(c:facade) => c.chart.destroy()}:js.ThisFunction)

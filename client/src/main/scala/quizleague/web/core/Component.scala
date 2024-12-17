@@ -30,7 +30,7 @@ trait RouteComponent extends Component{
 
 trait Component {
 
-  type facade <: VueComponent with VueRxComponent
+  type facade <: VueComponent & VueRxComponent
   
   val name: String
   def template: String
@@ -158,7 +158,7 @@ trait Component {
       val watchSubs = subParams.toMap.map{case (k, v) => {
         val subject = ReplaySubject[Any]()
         
-        val subscription = update(subject)(subscriptions(v)) _
+        val subscription = update(subject)(subscriptions(v))
         val watch = c.$watchAsObservable(k).subscribe( x=> subscription(c))
         
         (v, subscription)

@@ -41,7 +41,7 @@ object TeamModule extends Module{
           components = Map("default" -> {() => js.dynamicImport{StartTeamPage}}, "title" -> {() => js.dynamicImport{StartTeamTitleComponent}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/edit",
           components = Map("default" -> {() => js.dynamicImport{TeamEditPage}}, "sidenav" -> {() => js.dynamicImport{TeamMenuComponent}}),
-          beforeEnter = LoginService.routeGuard _),
+          beforeEnter = LoginService.routeGuard),
       RouteConfig(path = "/team/:id",
           components = Map("default" -> {() => js.dynamicImport{TeamPage}}, "title" -> {() => js.dynamicImport{TeamTitleComponent}},"sidenav" -> {() => js.dynamicImport{TeamMenuComponent}})),
       RouteConfig(path = "/team/:id/fixtures", 
@@ -64,7 +64,7 @@ object TeamService extends TeamGetService with RetiredFilter[Team] with PostServ
   override val venueService = VenueService
   
   def teamForEmail(email:String):Observable[js.Array[Team]] = {
-    command[List[U],String](List("site","team-for-email",email),None).map(_.map(mapOutSparse _).toJSArray)
+    command[List[U],String](List("site","team-for-email",email),None).map(_.map(mapOutSparse).toJSArray)
   }
 
   def teamForUser(userID:String):Observable[Option[Team]] = {
@@ -146,7 +146,7 @@ object StatisticsService extends StatisticsGetService{
   def positionData(stats:Statistics):ChartData = {
     ChartData(
         datasets = js.Array(DataSet("League Position", data = stats.weekStats.map(_.leaguePosition.asInstanceOf[js.Any]),lineTension=.2)), 
-        xLabels = stats.weekStats.map(formatDate _),
+        xLabels = stats.weekStats.map(formatDate),
     )
   }
   
@@ -156,14 +156,14 @@ object StatisticsService extends StatisticsGetService{
             DataSet("For", data = stats.weekStats.map(s => if(s.ignorable) null else s.pointsFor.asInstanceOf[js.Any]),lineTension=.2, fill=true, backgroundColor="rgba(150,150,150,.5)",borderColor=new Color(50,50,50)),
             DataSet("Against", data = stats.weekStats.map(s => if(s.ignorable) null else s.pointsAgainst.asInstanceOf[js.Any]),lineTension=.2,fill=true, backgroundColor="rgba(150,150,150,.7)", borderColor=Color.Red)    
         ), 
-        xLabels = stats.weekStats.map(formatDate _),
+        xLabels = stats.weekStats.map(formatDate),
     )
   }
   
   def cumuDiffData(stats:Statistics):ChartData = {
     ChartData(
         datasets = js.Array(DataSet("", data = stats.weekStats.map(s => if(s.ignorable) null else s.cumuPointsDifference.asInstanceOf[js.Any]),lineTension=.2)), 
-        xLabels = stats.weekStats.map(formatDate _),
+        xLabels = stats.weekStats.map(formatDate),
     )
   }
   
@@ -174,7 +174,7 @@ object StatisticsService extends StatisticsGetService{
             DataSet("For", data = stats.weekStats.map(s => if(s.ignorable) null else s.cumuPointsFor.asInstanceOf[js.Any]),lineTension=.2, fill=true, backgroundColor="rgba(150,150,150,.5)",borderColor=new Color(50,50,50)),
             DataSet("Against", data = stats.weekStats.map(s => if(s.ignorable) null else s.cumuPointsAgainst.asInstanceOf[js.Any]),lineTension=.2,fill=true, backgroundColor="rgba(150,150,150,.7)", borderColor=Color.Red)    
         ), 
-        xLabels = stats.weekStats.map(formatDate _),
+        xLabels = stats.weekStats.map(formatDate),
     )
   }
 
@@ -218,7 +218,7 @@ object StatisticsService extends StatisticsGetService{
        val data:js.Array[js.Any] =  sortedStats.map(x => (if(x.seasonStats.currentLeaguePosition == 0) null else x.seasonStats.currentLeaguePosition).asInstanceOf[js.Any])
         ChartData(
         datasets = js.Array(DataSet("League Position", data = data,lineTension=.2)),
-        xLabels = seasons.map(SeasonFormat.format _).toJSArray.sortBy(identity)
+        xLabels = seasons.map(SeasonFormat.format).toJSArray.sortBy(identity)
         )
       })
   }
@@ -240,7 +240,7 @@ object StatisticsService extends StatisticsGetService{
 
         Observable.combineLatest(datasets).map(d => ChartData(
           datasets = d.toJSArray,
-          xLabels = seasons.map(SeasonFormat.format _).toJSArray.sortBy(identity)
+          xLabels = seasons.map(SeasonFormat.format).toJSArray.sortBy(identity)
         ))
 
 
@@ -262,7 +262,7 @@ object StatisticsService extends StatisticsGetService{
             DataSet("Average Against", data = sortedStats.map(sts => (sts.seasonStats.runningPointsAgainst/fixCount(sts.weekStats)).asInstanceOf[js.Any]),lineTension=.2,fill=true,borderColor=Color.Red,backgroundColor="rgba(150,150,150,.7)")
     
         ), 
-        xLabels = seasons.map(SeasonFormat.format _).toJSArray.sortBy(identity)
+        xLabels = seasons.map(SeasonFormat.format).toJSArray.sortBy(identity)
         )
       }
       )
@@ -288,7 +288,7 @@ object StatisticsService extends StatisticsGetService{
 
         Observable.combineLatest(datasets).map(d => ChartData(
           datasets = d.toJSArray,
-          xLabels = seasons.map(SeasonFormat.format _).toJSArray.sortBy(identity)
+          xLabels = seasons.map(SeasonFormat.format).toJSArray.sortBy(identity)
         ))
 
 
