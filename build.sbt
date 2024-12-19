@@ -39,8 +39,8 @@ lazy val server = (project in file("server"))
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     libraryDependencies += "io.scalajs" %%% "express" % "0.4.3",
     libraryDependencies += "com.lihaoyi" %%% "castor" % "0.2.1",
-    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
-    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0",
     libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.23"
   )
 
@@ -60,8 +60,8 @@ lazy val server = (project in file("server"))
       scalaJSUseMainModuleInitializer := false,
 
       libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.4.0",
-      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
-      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
+      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0",
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.6",
 )
 
