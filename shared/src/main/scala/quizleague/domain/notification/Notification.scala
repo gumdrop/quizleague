@@ -6,8 +6,6 @@ import quizleague.domain.*
 import java.time.{LocalDateTime, ZonedDateTime}
 import quizleague.util.json.codecs.ScalaTimeCodecs.*
 
-import scala.io
-
 
 object NotificationTypeNames{
   
@@ -27,7 +25,7 @@ case class Notification(
   
 ) extends Entity derives Codec.AsObject
 
-sealed trait Payload
+sealed trait Payload derives Codec.AsObject
 
 case class ResultPayload(fixtureKey:String) extends Payload derives Codec.AsObject
 case class MaintainMessagePayload(message:String) extends Payload derives Codec.AsObject

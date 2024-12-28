@@ -3,7 +3,7 @@ package quizleague.domain
 import io.circe.Codec
 
 import java.time.{Duration, LocalDate, LocalDateTime, LocalTime}
-import quizleague.util.json.codecs.ScalaTimeCodecs._
+import quizleague.util.json.codecs.ScalaTimeCodecs.*
 
 case class Fixtures(
     id:String, 
