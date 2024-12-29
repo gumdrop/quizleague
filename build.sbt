@@ -1,6 +1,8 @@
-import scala.sys.process._
+import scala.sys.process.*
 import org.scalajs.linker.interface.ModuleInitializer
 import org.scalajs.linker.interface.ModuleSplitStyle
+
+import scala.language.postfixOps
 
 name := "Quiz League"
 
@@ -22,7 +24,7 @@ lazy val commonSettings = Seq(
 
 lazy val shared = (project in file("shared"))
   .enablePlugins(ScalaJSPlugin)
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.19" % "test"
 )
@@ -31,7 +33,7 @@ lazy val shared = (project in file("shared"))
 lazy val server = (project in file("server"))
   .dependsOn(shared)
   .enablePlugins(ScalaJSPlugin)
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(
     publish := {},
     publishLocal := {},
@@ -47,7 +49,7 @@ lazy val server = (project in file("server"))
   lazy val client = (project in file("client"))
     .dependsOn(shared)
     .enablePlugins(ScalaJSPlugin)
-    .settings(commonSettings: _*)
+    .settings(commonSettings *)
     .settings(
       scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule).withModuleSplitStyle(
         ModuleSplitStyle.SmallModulesFor(List("quizleague.web"))) },
@@ -59,9 +61,9 @@ lazy val server = (project in file("server"))
       },
       scalaJSUseMainModuleInitializer := false,
 
-      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.4.0",
-      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.5.0",
-      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.5.0",
+      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
+      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+      libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0",
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.6",
 )
 
@@ -102,7 +104,7 @@ prodServer := {
   IO.copyDirectory(jsrelease, file("./server"))
 }
 
-def copyConnectionFiles(gcpProject:String) = {
+def copyConnectionFiles(gcpProject:String): Unit = {
   val connection = file(s"./client/connections/Connection_$gcpProject.scala")
   val out = file("client/src/main/scala/quizleague/firestore/Connection.scala")
   IO.delete(out)
