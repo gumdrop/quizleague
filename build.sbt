@@ -6,7 +6,7 @@ import scala.language.postfixOps
 
 name := "Quiz League"
 
-val circeVersion = "0.14.10"
+val circeVersion = "0.14.13"
 
 lazy val commonSettings = Seq(
     organization := "quizleague",
