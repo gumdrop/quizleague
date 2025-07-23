@@ -61,7 +61,7 @@ lazy val server = (project in file("server"))
       },
       scalaJSUseMainModuleInitializer := false,
 
-      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
+      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.1",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
       libraryDependencies += "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0",
       libraryDependencies += "com.github.lukajcb" %%% "rxscala-js" % "0.15.6",
