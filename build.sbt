@@ -26,7 +26,7 @@ lazy val shared = (project in file("shared"))
   .enablePlugins(ScalaJSPlugin)
   .settings(commonSettings *)
   .settings(
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.19" % "test"
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.20" % "test"
 )
 
 
